@@ -2,6 +2,9 @@ class World {
   character = new Character();
   enemies = [new Chicken(), new Chicken(), new Chicken()];
   clouds = [new Cloud()];
+  backgroundObjects = [
+    new BackgroundObject("img/5_background/layers/3_third_layer/1.png"),
+  ];
   canvas;
   ctx;
 
@@ -12,34 +15,34 @@ class World {
   }
 
   draw() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas for the next frame
-    this.ctx.drawImage(
-      this.character.img,
-      this.character.x,
-      this.character.y,
-      this.character.width,
-      this.character.height,
-    );
+    // Clear the canvas for the next frame
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Draw the character on the canvas
+    this.addToMap(this.character);
+
     // Draw all enemies on the canvas
-    this.enemies.forEach((enemy) => {
-      this.ctx.drawImage(
-        enemy.img,
-        enemy.x,
-        enemy.y,
-        enemy.width,
-        enemy.height,
-      );
-    });
+    this.addObjectsToMap(this.enemies);
+
     // Draw all clouds on the canvas
-    this.clouds.forEach((cloud) => {
-      this.ctx.drawImage(
-        cloud.img,
-        cloud.x,
-        cloud.y,
-        cloud.width,
-        cloud.height,
-      );
+    this.addObjectsToMap(this.clouds);
+
+    // Draw all background objects on the canvas
+    this.addObjectsToMap(this.backgroundObjects);
+
+    // Call draw for the next frame, defined by Graphics Card
+    requestAnimationFrame(() => this.draw());
+  }
+
+  // Add multiple movable objects to the canvas
+  addObjectsToMap(objects) {
+    objects.forEach((obj) => {
+      this.addToMap(obj);
     });
-    requestAnimationFrame(() => this.draw()); // Call draw for the next frame, defined by Graphics Card
+  }
+
+  // Add a movable object to the canvas
+  addToMap(mo) {
+    this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
   }
 }
