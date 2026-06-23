@@ -1,6 +1,7 @@
 class World {
   character = new Character();
   enemies = [new Chicken(), new Chicken(), new Chicken()];
+  clouds = [new Cloud()];
   canvas;
   ctx;
 
@@ -27,6 +28,16 @@ class World {
         enemy.y,
         enemy.width,
         enemy.height,
+      );
+    });
+    // Draw all clouds on the canvas
+    this.clouds.forEach((cloud) => {
+      this.ctx.drawImage(
+        cloud.img,
+        cloud.x,
+        cloud.y,
+        cloud.width,
+        cloud.height,
       );
     });
     requestAnimationFrame(() => this.draw()); // Call draw for the next frame, defined by Graphics Card
