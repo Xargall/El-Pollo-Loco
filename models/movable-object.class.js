@@ -4,6 +4,9 @@ class MovableObject {
   img;
   height = 150;
   width = 100;
+  imageCache = [];
+  currentImage = 0;
+  speed = 0.15;
 
   // Load an image from the specified path
   loadImage(path) {
@@ -11,9 +14,22 @@ class MovableObject {
     this.img.src = path; // Set the image source
   }
 
+  // Load multiple images from an array of paths
+  loadImages(arr) {
+    arr.forEach((path) => {
+      let img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
+  }
+
   moveRight() {
     console.log("move right");
   }
 
-  moveLeft() {}
+  moveLeft() {
+    setInterval(() => {
+      this.x -= this.speed;
+    }, 1000 / 60)
+  }
 }
