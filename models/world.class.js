@@ -3,7 +3,9 @@ class World {
   enemies = [new Chicken(), new Chicken(), new Chicken()];
   clouds = [new Cloud()];
   backgroundObjects = [
-    new BackgroundObject("img/5_background/layers/3_third_layer/1.png"),
+    new BackgroundObject("img/5_background/layers/3_third_layer/1.png", 0),
+    new BackgroundObject("img/5_background/layers/2_second_layer/1.png", 0),
+    new BackgroundObject("img/5_background/layers/1_first_layer/1.png", 0),
   ];
   canvas;
   ctx;
@@ -18,6 +20,9 @@ class World {
     // Clear the canvas for the next frame
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    // Draw all background objects on the canvas
+    this.addObjectsToMap(this.backgroundObjects);
+
     // Draw the character on the canvas
     this.addToMap(this.character);
 
@@ -26,9 +31,6 @@ class World {
 
     // Draw all clouds on the canvas
     this.addObjectsToMap(this.clouds);
-
-    // Draw all background objects on the canvas
-    this.addObjectsToMap(this.backgroundObjects);
 
     // Call draw for the next frame, defined by Graphics Card
     requestAnimationFrame(() => this.draw());
