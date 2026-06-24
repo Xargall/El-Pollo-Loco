@@ -33,11 +33,14 @@ class MovableObject {
   }
 
   drawHitbox(ctx) {
-    ctx.beginPath();
-    ctx.lineWidth = '5';
-    ctx.strokeStyle = 'blue';
-    ctx.rect(this.x, this.y, this.width, this.height)
-    ctx.stroke();
+
+    if (this instanceof Character || this instanceof Chicken) {
+      ctx.beginPath();
+      ctx.lineWidth = '5';
+      ctx.strokeStyle = 'blue';
+      ctx.rect(this.x, this.y, this.width, this.height)
+      ctx.stroke();
+    }
   }
 
   // Load an image from the specified path
@@ -64,12 +67,17 @@ class MovableObject {
 
   moveRight() {
     this.x += this.speed;
-
   }
 
   moveLeft() {
     this.x -= this.speed;
-
-
+  }
+  
+  // collition detection chicken & character
+  isColliding(mo) {
+    return this.x + this.width > mo.x &&
+      this.y + this.height > mo.y &&
+      this.x < mo.x &&
+      this.y < mo.y + mo.height
   }
 }
