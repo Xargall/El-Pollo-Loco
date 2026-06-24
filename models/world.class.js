@@ -1,9 +1,7 @@
 class World {
   character = new Character();
 
-  enemies = level1.enemies;
-  clouds = level1.clouds;
-  backgroundObjects = level1.backgroundObjects;
+  level = level1;
 
   canvas;
   ctx;
@@ -29,16 +27,16 @@ class World {
     this.ctx.translate(this.camera_x, 0);
 
     // Draw all background objects on the canvas
-    this.addObjectsToMap(this.backgroundObjects);
+    this.addObjectsToMap(this.level.backgroundObjects);
 
     // Draw the character on the canvas
     this.addToMap(this.character);
 
     // Draw all enemies on the canvas
-    this.addObjectsToMap(this.enemies);
+    this.addObjectsToMap(this.level.enemies);
 
     // Draw all clouds on the canvas
-    this.addObjectsToMap(this.clouds);
+    this.addObjectsToMap(this.level.clouds);
 
     // Call draw for the next frame, defined by Graphics Card
     requestAnimationFrame(() => this.draw());
