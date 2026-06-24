@@ -1,11 +1,5 @@
-class MovableObject {
-  x = 120;
-  y = 280;
-  img;
-  height = 150;
-  width = 100;
-  imageCache = [];
-  currentImage = 0;
+class MovableObject extends DrawableObject {
+
   speed = 0.15;
   otherDirection = false;
   speedY = 0;
@@ -30,10 +24,6 @@ class MovableObject {
     this.speedY = 30;
   }
 
-  draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  }
-
   drawHitbox(ctx) {
 
     if (this instanceof Character || this instanceof Chicken) {
@@ -43,21 +33,6 @@ class MovableObject {
       ctx.rect(this.x, this.y, this.width, this.height)
       ctx.stroke();
     }
-  }
-
-  // Load an image from the specified path
-  loadImage(path) {
-    this.img = new Image(); // Create a new image object
-    this.img.src = path; // Set the image source
-  }
-
-  // Load multiple images from an array of paths
-  loadImages(arr) {
-    arr.forEach((path) => {
-      let img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
   }
 
   playAnimation(images) {
