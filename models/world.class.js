@@ -1,12 +1,11 @@
 class World {
   character = new Character();
-
   level = level1;
-
   canvas;
   ctx;
   keyboard;
   camera_x = 0;
+  statusBar = new Statusbar();
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -26,8 +25,8 @@ class World {
       this.level.enemies.forEach((enemy) => {
         if (this.character.isColliding(enemy)) {
           this.character.hit();
-          console.log("Energy =", this.character.energy);
-          
+          this.statusBar.setPercentage(this.character.energy);
+
 
         };
       })
@@ -42,6 +41,11 @@ class World {
 
     // Draw all background objects on the canvas
     this.addObjectsToMap(this.level.backgroundObjects);
+
+    this.ctx.translate(-this.camera_x, 0);  // Reset camera position, to fix Statusbar
+    //Draw Statusbar to Canvas
+    this.addToMap(this.statusBar);
+    this.ctx.translate(this.camera_x, 0);
 
     // Draw the character on the canvas
     this.addToMap(this.character);
