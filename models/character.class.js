@@ -69,6 +69,7 @@ class Character extends MovableObject {
 
   animate() {
     setInterval(() => {
+      if (this.isDead()) return;
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
@@ -89,7 +90,9 @@ class Character extends MovableObject {
 
     setInterval(() => {
       if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD)
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+          this.playAnimation(this.IMAGES_DEAD);
+        }
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT)
       } else if (this.isAboveGround()) {

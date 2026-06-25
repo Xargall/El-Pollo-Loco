@@ -63,9 +63,11 @@ class MovableObject extends DrawableObject {
   }
 
   hit() {
-    this.energy -= 5;
-    if (this.energy < 0) {
+    this.energy -= 10;
+    if (this.energy <= 0) {
       this.energy = 0;
+      this.speedY = 15;
+      this.currentImage = 0;
     } else {
       this.lastHit = new Date().getTime();
 
