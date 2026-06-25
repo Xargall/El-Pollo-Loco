@@ -35,6 +35,19 @@ const level1 = new Level(
         new BackgroundObject("assets/img/5_background/layers/1_first_layer/2.png", 719 * 3),
     ],
 
+    [
+        new CollectibleBottle(300, 380),
+        new CollectibleBottle(700, 380),
+        new CollectibleBottle(1200, 380),
+    ],
+
+    [
+
+        new CollectibleCoin(400, 300),
+        new CollectibleCoin(900, 300),
+        new CollectibleCoin(1500, 300),
+    ],
+
 
 
 

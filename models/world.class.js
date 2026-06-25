@@ -7,6 +7,10 @@ class World {
   camera_x = 0;
   statusBar = new Statusbar();
   throwableObjects = [];
+  bottleCount = 0;
+  coinCount = 0;
+  bottleStatusBar = new BottleStatusbar();
+  coinStatusBar = new CoinStatusbar();
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -29,6 +33,7 @@ class World {
     }, 1000 / 60)
     setInterval(() => {
       this.checkThrowObjects();
+      this.checkCollectibleCollisions();
     }, 200)
   }
 
@@ -44,7 +49,7 @@ class World {
       if (this.character.isCollidingFromAbove(enemy)) {
         this.character.bounce();
         enemy.hit();
-      } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
+      } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {  // only count hit on player if colliding with enemy and if Pepe hasn't been hurt before
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
       }
@@ -65,41 +70,54 @@ class World {
   checkThrowObjects() {
     if (this.character.isDead()) return;
 
-    if (this.keyboard.D) {
+    if (this.keyboard.D && this.bottleCount > 0) {
       let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
       this.throwableObjects.push(bottle);
+      this.bottleCount--;
+      this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
     }
   }
 
+  checkCollectibleCollisions() {
+    this.level.bottles = this.level.bottles.filter((bottle) => {
+      if (this.character.isColliding(bottle)) {
+        this.bottleCount++;
+        this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
+        return false;
+      }
+      return true;
+    });
+
+    this.level.coins = this.level.coins.filter((coin) => {
+      if (this.character.isColliding(coin)) {
+        this.coinCount++;
+        this.coinStatusBar.setPercentage(Math.min(this.coinCount * 20, 100));
+        return false;
+      }
+      return true;
+    });
+  }
+
   draw() {
-    // Clear the canvas for the next frame
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.translate(this.camera_x, 0);
 
-    // Draw all background objects on the canvas
     this.addObjectsToMap(this.level.backgroundObjects);
+    this.addObjectsToMap(this.level.bottles);
+    this.addObjectsToMap(this.level.coins);
 
-    this.ctx.translate(-this.camera_x, 0);  // Reset camera position, to fix Statusbar
-    //Draw Statusbar to Canvas
+    this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBar);
+    this.addToMap(this.bottleStatusBar);
+    this.addToMap(this.coinStatusBar);
     this.ctx.translate(this.camera_x, 0);
 
-    // Draw the character on the canvas
     this.addToMap(this.character);
-
-    // Draw throwable object to map
     this.addObjectsToMap(this.throwableObjects);
-
-    // Draw all enemies on the canvas
     this.addObjectsToMap(this.level.enemies);
-
-    // Draw all clouds on the canvas
     this.addObjectsToMap(this.level.clouds);
 
-    // Call draw for the next frame, defined by Graphics Card
     requestAnimationFrame(() => this.draw());
-
     this.ctx.translate(-this.camera_x, 0);
   }
 
