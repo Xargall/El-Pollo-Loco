@@ -24,11 +24,16 @@ class World {
   run() {
     setInterval(() => {
       this.checkCollisions();
+      this.checkBottleCollisions();
+      this.removeSplashedBottles();
     }, 1000 / 60)
     setInterval(() => {
-      this.checkBottleCollisions();
       this.checkThrowObjects();
     }, 200)
+  }
+
+  removeSplashedBottles() {
+    this.throwableObjects = this.throwableObjects.filter((bottle) => !bottle.isSplashDone());
   }
 
   checkCollisions() {
@@ -38,7 +43,7 @@ class World {
       if (this.character.isCollidingFromAbove(enemy)) {
         this.character.bounce();
         enemy.hit();
-      } else if (this.character.isColliding(enemy)) {
+      } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
       }
@@ -48,8 +53,9 @@ class World {
   checkBottleCollisions() {
     this.throwableObjects.forEach((bottle) => {
       this.level.enemies.forEach((enemy) => {
-        if (!enemy.isDead() && bottle.isColliding(enemy)) {
+        if (!enemy.isDead() && !bottle.isSplashing && bottle.isColliding(enemy)) {
           enemy.hit();
+          bottle.hit();
         }
       })
     })
