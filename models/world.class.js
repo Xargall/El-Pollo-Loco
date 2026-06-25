@@ -24,17 +24,34 @@ class World {
   run() {
     setInterval(() => {
       this.checkCollisions();
+    }, 1000 / 60)
+    setInterval(() => {
+      this.checkBottleCollisions();
       this.checkThrowObjects();
     }, 200)
   }
 
   checkCollisions() {
-    // Check collisions
     this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
+      if (enemy.isDead()) return;
+
+      if (this.character.isCollidingFromAbove(enemy)) {
+        this.character.bounce();
+        enemy.hit();
+      } else if (this.character.isColliding(enemy)) {
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
-      };
+      }
+    })
+  }
+
+  checkBottleCollisions() {
+    this.throwableObjects.forEach((bottle) => {
+      this.level.enemies.forEach((enemy) => {
+        if (!enemy.isDead() && bottle.isColliding(enemy)) {
+          enemy.hit();
+        }
+      })
     })
   }
 
