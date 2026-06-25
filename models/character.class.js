@@ -106,6 +106,7 @@ class Character extends MovableObject {
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
+        this.idleStart = new Date().getTime();
       }
 
       this.world.camera_x = -this.x + 100;
