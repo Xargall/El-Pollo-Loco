@@ -31,7 +31,7 @@ function generateLevel(options = {}) {
 
     const levelWidth = segments * SEGMENT_WIDTH;
 
-    const enemies = generateEnemies(chickenCount, levelWidth, hasEndboss);
+    const enemies = generateEnemies(chickenCount, levelWidth, hasEndboss, bottleCount);
     const clouds = generateClouds(segments, levelWidth);
     const backgroundObjects = generateBackgroundObjects(segments);
     const bottles = generateCollectibles(CollectibleBottle, bottleCount, levelWidth);
@@ -56,7 +56,7 @@ function generateBackgroundObjects(segments) {
     return objects;
 }
 
-function generateEnemies(chickenCount, levelWidth, hasEndboss) {
+function generateEnemies(chickenCount, levelWidth, hasEndboss, bottleCount) {
     const enemies = [];
     const positions = generateSpacedPositions(chickenCount, 250, levelWidth - 400, 120);
 
@@ -69,6 +69,7 @@ function generateEnemies(chickenCount, levelWidth, hasEndboss) {
     if (hasEndboss) {
         const endboss = new Endboss();
         endboss.x = levelWidth - 150;
+        endboss.energy = bottleCount * 5;
         enemies.push(endboss);
     }
 

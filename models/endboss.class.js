@@ -89,12 +89,14 @@ class Endboss extends MovableObject {
     }
 
     scheduleNextJump() {
-        let delay = 2000 + Math.random() * 3000; // zwischen 2 und 5 Sekunden
+        let delay = 2000 + Math.random() * 3000;
         setTimeout(() => {
-            if (this.hasNoticed) {
+            if (this.hasNoticed && !this.isDead()) { 
                 this.triggerRandomJump();
             }
-            this.scheduleNextJump(); // ruft sich selbst wieder auf
+            if (!this.isDead()) { 
+                this.scheduleNextJump();
+            }
         }, delay);
     }
 
@@ -105,13 +107,18 @@ class Endboss extends MovableObject {
         this.scheduleNextJump();
 
         setInterval(() => {
+            if (this.isDead()) return;
             if (this.hasNoticed) {
                 this.moveLeft();
             }
         }, 200)
 
         setInterval(() => {
-            if (this.isJumping) {
+            if (this.isDead()) {
+                if (this.currentImage < this.IMAGES_DEAD.length) {
+                    this.playAnimation(this.IMAGES_DEAD);
+                }
+            } else if (this.isJumping) {
                 this.playAnimation(this.IMAGES_ATTACK);
             } else if (this.hasNoticed) {
                 this.playAnimation(this.IMAGES_WALKING);
