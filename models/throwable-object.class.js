@@ -18,6 +18,8 @@ class ThrowableObject extends MovableObject {
 
     isSplashing = false;
 
+    breakSound = new Audio('assets/audio/throwable/bottleBreak.mp3');
+
     constructor(x, y) {
         super().loadImage(this.IMAGES_THROW[0]);
         this.loadImages(this.IMAGES_THROW);
@@ -26,6 +28,7 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60,
             this.width = 50;
+            this.breakSound.volume = 0.4;
         this.throw();
         this.animate();
     }

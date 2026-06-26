@@ -70,6 +70,7 @@ class World {
         if (!enemy.isDead() && !enemy.isHurt() && !bottle.isSplashing && bottle.isColliding(enemy)) {
           enemy.hit();
           bottle.hit();
+          bottle.breakSound.play().catch(() => { });
           if (enemy instanceof Endboss) {
             this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
             if (enemy.isDead()) {
@@ -95,6 +96,7 @@ class World {
   checkCollectibleCollisions() {
     this.level.bottles = this.level.bottles.filter((bottle) => {
       if (this.character.isColliding(bottle)) {
+        bottle.pickupSound.play().catch(() => { });
         this.bottleCount++;
         this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
         return false;
@@ -104,6 +106,7 @@ class World {
 
     this.level.coins = this.level.coins.filter((coin) => {
       if (this.character.isColliding(coin)) {
+        coin.pickupSound.play().catch(() => { });
         this.coinCount++;
         this.coinStatusBar.setPercentage(Math.min(this.coinCount * 20, 100));
         return false;
