@@ -11,6 +11,7 @@ class World {
   coinCount = 0;
   bottleStatusBar = new BottleStatusbar();
   coinStatusBar = new CoinStatusbar();
+  bossStatusBar = new EndbossStatusbar();
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -60,9 +61,12 @@ class World {
   checkBottleCollisions() {
     this.throwableObjects.forEach((bottle) => {
       this.level.enemies.forEach((enemy) => {
-        if (!enemy.isDead() && !bottle.isSplashing && bottle.isColliding(enemy)) {
+        if (!enemy.isDead() && !enemy.isHurt() && !bottle.isSplashing && bottle.isColliding(enemy)) {
           enemy.hit();
           bottle.hit();
+          if (enemy instanceof Endboss) {
+            this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
+          }
         }
       })
     })
@@ -118,6 +122,7 @@ class World {
     this.addToMap(this.statusBar);
     this.addToMap(this.bottleStatusBar);
     this.addToMap(this.coinStatusBar);
+    this.addToMap(this.bossStatusBar);
     this.ctx.translate(this.camera_x, 0);
 
     this.addToMap(this.character);

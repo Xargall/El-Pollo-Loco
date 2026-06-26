@@ -69,7 +69,8 @@ function generateEnemies(chickenCount, levelWidth, hasEndboss, bottleCount) {
     if (hasEndboss) {
         const endboss = new Endboss();
         endboss.x = levelWidth - 150;
-        endboss.energy = bottleCount * 5;
+        endboss.energy = bottleCount * 7.5;
+        endboss.maxEnergy = bottleCount * 7.5;
         enemies.push(endboss);
     }
 

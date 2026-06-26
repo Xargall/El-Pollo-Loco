@@ -91,10 +91,10 @@ class Endboss extends MovableObject {
     scheduleNextJump() {
         let delay = 2000 + Math.random() * 3000;
         setTimeout(() => {
-            if (this.hasNoticed && !this.isDead()) { 
+            if (this.hasNoticed && !this.isDead()) {
                 this.triggerRandomJump();
             }
-            if (!this.isDead()) { 
+            if (!this.isDead()) {
                 this.scheduleNextJump();
             }
         }, delay);
@@ -118,6 +118,8 @@ class Endboss extends MovableObject {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.playAnimation(this.IMAGES_DEAD);
                 }
+            } else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
             } else if (this.isJumping) {
                 this.playAnimation(this.IMAGES_ATTACK);
             } else if (this.hasNoticed) {
