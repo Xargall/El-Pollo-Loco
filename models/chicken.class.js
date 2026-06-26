@@ -2,6 +2,8 @@ class Chicken extends MovableObject {
   y = 370;
   height = 60;
   width = 70;
+  direction = -1;
+  isAwake = false;
 
   IMAGES_WALKING = [
     "assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
@@ -21,10 +23,42 @@ class Chicken extends MovableObject {
     this.animate();
   }
 
+  wakeUp() {
+    if (this.isAwake) return;
+    this.isAwake = true;
+    this.scheduleNextBehavior();
+  }
+
+  scheduleNextBehavior() {
+    let delay = 1500 + Math.random() * 2500;
+    setTimeout(() => {
+      if (!this.isDead()) {
+        this.pickRandomDirection();
+        this.scheduleNextBehavior();
+      }
+    }, delay)
+  }
+
+  pickRandomDirection() {
+    let choice = Math.random();
+    if (choice < 0.5) {
+      this.direction = -1;
+    } else if (choice < 0.8) {
+      this.direction = 1;
+    } else {
+      this.direction = 0;
+    }
+  }
+
   animate() {
     setInterval(() => {
-      if (!this.isDead()) {
+      if (this.isDead() || !this.isAwake) return;
+      if (this.direction === -1) {
         this.moveLeft();
+        this.otherDirection = false;
+      } else if (this.direction === 1) {
+        this.moveRight();
+        this.otherDirection = true;
       }
     }, 1000 / 60)
 

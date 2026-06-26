@@ -51,3 +51,7 @@ window.addEventListener('keyup', (event) => {
     keyboard.SPACE = false;
   }
 })
+
+function restartGame() {
+  location.reload();
+}

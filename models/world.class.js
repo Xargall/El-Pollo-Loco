@@ -12,11 +12,14 @@ class World {
   bottleStatusBar = new BottleStatusbar();
   coinStatusBar = new CoinStatusbar();
   bossStatusBar = new EndbossStatusbar();
+  gameWon = false;
+  winImage = new Image();
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard
+    this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
     this.draw();
     this.setWorld();
     this.run();
@@ -32,6 +35,7 @@ class World {
       this.checkBottleCollisions();
       this.removeSplashedBottles();
       this.checkEndbossTrigger();
+      this.checkChickenWakeup();
     }, 1000 / 60)
     setInterval(() => {
       this.checkThrowObjects();
@@ -66,6 +70,9 @@ class World {
           bottle.hit();
           if (enemy instanceof Endboss) {
             this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
+            if (enemy.isDead()) {
+              this.gameWon = true;
+            }
           }
         }
       })
@@ -110,8 +117,31 @@ class World {
     }
   }
 
+  checkChickenWakeup() {
+    const firstChickenX = Math.min(
+      ...this.level.enemies
+        .filter((enemy) => enemy instanceof Chicken || enemy instanceof BabyChicken)
+        .map((enemy) => enemy.x)
+    );
+
+    if (this.character.x > firstChickenX - 300) {
+      this.level.enemies.forEach((enemy) => {
+        if (enemy instanceof Chicken || enemy instanceof BabyChicken) {
+          enemy.wakeUp();
+        }
+      });
+    }
+  }
+
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (this.gameWon) {
+      this.ctx.drawImage(this.winImage, 0, 0, this.canvas.width, this.canvas.height);
+      this.showRestartButton();
+      return;
+    }
+
     this.ctx.translate(this.camera_x, 0);
 
     this.addObjectsToMap(this.level.backgroundObjects);
@@ -122,7 +152,12 @@ class World {
     this.addToMap(this.statusBar);
     this.addToMap(this.bottleStatusBar);
     this.addToMap(this.coinStatusBar);
-    this.addToMap(this.bossStatusBar);
+
+    const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (endboss && endboss.hasNoticed) {
+      this.addToMap(this.bossStatusBar);
+    }
+
     this.ctx.translate(this.camera_x, 0);
 
     this.addToMap(this.character);
@@ -165,5 +200,9 @@ class World {
   flipReverse(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();
+  }
+
+  showRestartButton() {
+    document.getElementById("restartButton").style.display = "block";
   }
 }

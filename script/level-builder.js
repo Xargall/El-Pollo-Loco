@@ -45,7 +45,6 @@ function generateLevel(options = {}) {
 
 function generateBackgroundObjects(segments) {
     const objects = [];
-    // Start bei -1, damit beim Levelstart links kein Loch im Hintergrund entsteht
     for (let segNum = -1; segNum < segments + 1; segNum++) {
         const x = segNum * SEGMENT_WIDTH;
         const variant = (segNum % 2 === 0) ? '1' : '2';

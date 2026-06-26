@@ -2,7 +2,8 @@ class BabyChicken extends MovableObject {
     y = 390;
     height = 40;
     width = 50;
-    direction = -1; // -1 = links, 1 = rechts, 0 = steht
+    direction = -1;
+    isAwake = false;
 
     IMAGES_WALKING = [
         "assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
@@ -22,6 +23,11 @@ class BabyChicken extends MovableObject {
         this.x = 200 + Math.random() * 1800;
         this.speed = 0.3 + Math.random() * 0.4; // etwas schneller als normale Hühner (0.15-0.45)
         this.animate();
+    }
+
+    wakeUp() {
+        if (this.isAwake) return;
+        this.isAwake = true;
         this.scheduleNextBehavior();
     }
 
@@ -59,7 +65,7 @@ class BabyChicken extends MovableObject {
         }, 1000 / 60)
 
         setInterval(() => {
-            if (this.isDead()) {
+            if (this.isDead() || !this.isAwake) {
                 this.playAnimation(this.IMAGES_DEAD);
             } else {
                 this.playAnimation(this.IMAGES_WALKING);
