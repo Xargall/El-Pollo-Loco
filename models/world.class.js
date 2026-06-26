@@ -57,6 +57,8 @@ class World {
         enemy.hit();
       } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {  // only count hit on player if colliding with enemy and if Pepe hasn't been hurt before
         this.character.hit();
+        this.character.damageSound.currentTime = 0;
+        this.character.damageSound.play();
         this.statusBar.setPercentage(this.character.energy);
       }
     })

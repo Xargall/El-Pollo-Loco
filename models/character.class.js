@@ -67,7 +67,14 @@ class Character extends MovableObject {
     'assets/img/2_character_pepe/4_hurt/H-43.png',
   ]
 
+  walkSound = new Audio('assets/audio/character/characterRun.mp3');
+  jumpSound = new Audio('assets/audio/character/characterJump.wav');
+  snoringSound = new Audio('assets/audio/character/characterSnoring.mp3');
+  damageSound = new Audio('assets/audio/character/characterDamage.mp3');
+  deadSound = new Audio('assets/audio/character/characterDead.wav');
+
   idleStart = new Date().getTime();
+  hasDeadSoundPlayed = false;
 
   world;
 
@@ -83,6 +90,12 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_HURT);
     this.applyGravity();
     this.animate();
+    this.walkSound.loop = true;
+    this.walkSound.volume = 0.3;
+    this.jumpSound.volume = 0.3;
+    this.snoringSound.loop = true;
+    this.snoringSound.volume = 0.3;
+    this.damageSound.volume = 0.4;
   }
 
   isLongIdle() {
@@ -106,7 +119,16 @@ class Character extends MovableObject {
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
+        this.jumpSound.currentTime = 0;
+        this.jumpSound.play();
         this.idleStart = new Date().getTime();
+      }
+
+      if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
+        this.walkSound.play();
+      } else {
+        this.walkSound.pause();
+        this.walkSound.currentTime = 0;
       }
 
       this.world.camera_x = -this.x + 100;
@@ -115,7 +137,13 @@ class Character extends MovableObject {
     // Dead-Animation: einmalig, langsam
     setInterval(() => {
       if (this.isDead() && this.currentImage < this.IMAGES_DEAD.length) {
-        this.playAnimation(this.IMAGES_DEAD);
+        if (!this.hasDeadSoundPlayed) {
+          this.deadSound.play();
+          this.hasDeadSoundPlayed = true;
+        }
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+          this.playAnimation(this.IMAGES_DEAD);
+        }
       }
     }, 200)
 
@@ -146,9 +174,21 @@ class Character extends MovableObject {
       if (!this.isDead() && !this.isHurt() && !this.isAboveGround() &&
         !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         if (this.isLongIdle()) {
+          if (this.snoringSound.paused) {
+            this.snoringSound.play().catch(() => { });
+          }
           this.playAnimation(this.IMAGES_IDLE_LONG);
         } else {
+          if (!this.snoringSound.paused) {
+            this.snoringSound.pause();
+            this.snoringSound.currentTime = 0;
+          }
           this.playAnimation(this.IMAGES_IDLE);
+        }
+      } else {
+        if (!this.snoringSound.paused) {
+          this.snoringSound.pause();
+          this.snoringSound.currentTime = 0;
         }
       }
     }, 200)
