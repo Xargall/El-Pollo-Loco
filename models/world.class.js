@@ -30,6 +30,7 @@ class World {
       this.checkCollisions();
       this.checkBottleCollisions();
       this.removeSplashedBottles();
+      this.checkEndbossTrigger();
     }, 1000 / 60)
     setInterval(() => {
       this.checkThrowObjects();
@@ -96,6 +97,13 @@ class World {
       }
       return true;
     });
+  }
+
+  checkEndbossTrigger() {
+    const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss)
+    if (endboss) {
+      endboss.checkTrigger(this.character.x);
+    }
   }
 
   draw() {
