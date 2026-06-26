@@ -74,6 +74,7 @@ class Endboss extends MovableObject {
         if (this.isJumping || !this.hasNoticed) return;
         this.isJumping = true;
         this.speedY = 25;
+        this.currentImage = 0;
 
         let jumpInterval = setInterval(() => {
             this.y -= this.speedY;
@@ -110,7 +111,9 @@ class Endboss extends MovableObject {
         }, 200)
 
         setInterval(() => {
-            if (this.hasNoticed) {
+            if (this.isJumping) {
+                this.playAnimation(this.IMAGES_ATTACK);
+            } else if (this.hasNoticed) {
                 this.playAnimation(this.IMAGES_WALKING);
             } else {
                 this.playAnimation(this.IMAGES_ALERT);
