@@ -24,6 +24,7 @@ function generateLevel(options = {}) {
     const {
         segments = 4,
         chickenCount = 6,
+        babyChickenCount = 4,
         hasEndboss = true,
         bottleCount = 5,
         coinPatternCount = 3,
@@ -31,7 +32,7 @@ function generateLevel(options = {}) {
 
     const levelWidth = segments * SEGMENT_WIDTH;
 
-    const enemies = generateEnemies(chickenCount, levelWidth, hasEndboss, bottleCount);
+    const enemies = generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss, bottleCount);
     const clouds = generateClouds(segments, levelWidth);
     const backgroundObjects = generateBackgroundObjects(segments);
     const bottles = generateCollectibles(CollectibleBottle, bottleCount, levelWidth);
@@ -56,15 +57,22 @@ function generateBackgroundObjects(segments) {
     return objects;
 }
 
-function generateEnemies(chickenCount, levelWidth, hasEndboss, bottleCount) {
+function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss, bottleCount) {
     const enemies = [];
-    const positions = generateSpacedPositions(chickenCount, 250, levelWidth - 400, 120);
+    const totalCount = chickenCount + babyChickenCount;
+    const positions = generateSpacedPositions(totalCount, 250, levelWidth - 400, 120);
 
-    positions.forEach((x) => {
+    for (let i = 0; i < chickenCount; i++) {
         const chicken = new Chicken();
-        chicken.x = x; // überschreibt die zufällige Startposition aus dem Constructor
+        chicken.x = positions[i];
         enemies.push(chicken);
-    });
+    }
+
+    for (let i = chickenCount; i < totalCount; i++) {
+        const babyChicken = new BabyChicken();
+        babyChicken.x = positions[i];
+        enemies.push(babyChicken);
+    }
 
     if (hasEndboss) {
         const endboss = new Endboss();
