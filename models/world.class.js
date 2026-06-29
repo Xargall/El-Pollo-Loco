@@ -28,7 +28,7 @@ class World {
     this.draw();
     this.setWorld();
     this.run();
-    this.backgroundMusic.volume = 0.6;
+    this.backgroundMusic.volume = 0.4;
   }
 
   setWorld() {
@@ -256,10 +256,8 @@ class World {
   stopAllSounds() {
     this.character.walkSound.pause();
     this.character.walkSound.currentTime = 0;
-
     this.character.snoringSound.pause();
     this.character.snoringSound.currentTime = 0;
-
     this.level.enemies.forEach((enemy) => {
       if (enemy.deadSound) {
         enemy.deadSound.pause();

@@ -18,8 +18,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-image: url(./assets/img/Background/mostafaelturkey36-desert-5112222.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 
   height: 100dvh;
+}
+
+h1 {
+  font-family: "zabars";
+  font-size: 6rem;
+  margin-bottom: 64px;
 }
 
 canvas {
@@ -29,7 +39,7 @@ canvas {
 
 #restartButton {
   position: absolute;
-  bottom: 250px;
+  bottom: 180px;
   width: 150px;
   height: 50px;
   background:
@@ -100,11 +110,13 @@ canvas {
 .screen-overlay {
   position: relative;
   width: 720px;
+  height: 480px;
   margin: 0 auto;
 }
 
 .start-bg {
   width: 100%;
+  height: 100%;
   display: block;
 }
 
@@ -113,9 +125,16 @@ canvas {
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-family: "zabars";
+  font-size: 2.1rem;
   font-weight: bold;
   color: #3a2510;
+  transition: all 250ms ease-in-out;
+}
+
+.start-btn:hover {
+  transform: scale(1.1);
+  transition: all 250ms ease-in-out;
 }
 
 .panel {

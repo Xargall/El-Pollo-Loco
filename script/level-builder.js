@@ -59,7 +59,7 @@ function generateBackgroundObjects(segments) {
 function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss, bottleCount) {
     const enemies = [];
     const totalCount = chickenCount + babyChickenCount;
-    const positions = generateSpacedPositions(totalCount, 250, levelWidth - 400, 120);
+    const positions = generateSpacedPositions(totalCount, 480, levelWidth - 400, 80);
 
     for (let i = 0; i < chickenCount; i++) {
         const chicken = new Chicken();
@@ -75,7 +75,7 @@ function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss,
 
     if (hasEndboss) {
         const endboss = new Endboss();
-        endboss.x = levelWidth - 150;
+        endboss.x = levelWidth - 100;
         endboss.energy = bottleCount * 7.5;
         endboss.maxEnergy = bottleCount * 7.5;
         enemies.push(endboss);
