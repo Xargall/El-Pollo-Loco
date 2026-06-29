@@ -1,6 +1,6 @@
 class World {
   character = new Character();
-  level = level1;
+  level;
   canvas;
   ctx;
   keyboard;
@@ -14,15 +14,21 @@ class World {
   bossStatusBar = new EndbossStatusbar();
   gameWon = false;
   winImage = new Image();
+  gameOver = false;
+  gameOverImage = new Image();
+  backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.wav');
 
-  constructor(canvas, keyboard) {
+  constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard
+    this.level = level;
     this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
+    this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
     this.draw();
     this.setWorld();
     this.run();
+    this.backgroundMusic.volume = 0.6;
   }
 
   setWorld() {
@@ -39,6 +45,7 @@ class World {
       this.removeSplashedBottles();
       this.checkEndbossTrigger();
       this.checkChickenWakeup();
+      this.checkGameOver();
     }, 1000 / 60)
     setInterval(() => {
       this.checkThrowObjects();
@@ -147,11 +154,37 @@ class World {
     }
   }
 
+  checkGameOver() {
+    if (this.gameOver) return;
+    if (this.character.isDead() && this.character.currentImage >= this.character.IMAGES_DEAD.length) {
+      this.gameOver = true;
+      this.stopAllSounds();
+    }
+  }
+
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     if (this.gameWon) {
-      this.ctx.drawImage(this.winImage, 0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.translate(this.camera_x, 0)
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.ctx.translate(-this.camera_x, 0);
+
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.drawImage(this.winImage, 60, 40, 600, 400);
+      this.showRestartButton();
+      return;
+    }
+
+    if (this.gameOver) {
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.ctx.translate(-this.camera_x, 0);
+
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.drawImage(this.gameOverImage, 60, 40, 600, 400);
       this.showRestartButton();
       return;
     }

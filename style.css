@@ -1,13 +1,135 @@
+@font-face {
+  font-family: "zabars";
+  src: url(./assets/fonts/Zabars.ttf);
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+html {
+  font-size: 16px;
+}
+
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  height: 100dvh;
 }
 
 canvas {
   background-color: black;
   display: block;
+}
+
+#restartButton {
+  position: absolute;
+  bottom: 250px;
+  width: 150px;
+  height: 50px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #a0522d 0px,
+      #a0522d 3px,
+      #8b4513 3px,
+      #8b4513 6px
+    ),
+    linear-gradient(180deg, #b5651d, #7a3b10);
+  background-blend-mode: overlay;
+  border: 4px solid #4a2510;
+  border-radius: 4px;
+  color: #f4e4c1;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 20px;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
+  box-shadow:
+    0 6px 0 #2e1505,
+    0 8px 10px rgba(0, 0, 0, 0.5),
+    inset 0 2px 4px rgba(255, 255, 255, 0.15),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 250ms ease;
+}
+
+/* Schrauben/Nägel in den Ecken */
+#restartButton::before,
+#restartButton::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #3a3a3a, #1a1a1a);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+#restartButton::before {
+  top: 6px;
+  left: 8px;
+}
+
+#restartButton::after {
+  bottom: 6px;
+  right: 8px;
+}
+
+#restartButton:hover {
+  filter: brightness(1.1);
+  transform: scale(1.1);
+  transition: all 250ms ease-in-out;
+}
+
+#restartButton:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #2e1505,
+    0 3px 5px rgba(0, 0, 0, 0.5),
+    inset 0 2px 4px rgba(255, 255, 255, 0.15),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.screen-overlay {
+  position: relative;
+  width: 720px;
+  margin: 0 auto;
+}
+
+.start-bg {
+  width: 100%;
+  display: block;
+}
+
+.start-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #3a2510;
+}
+
+.panel {
+  background: #2a2a2a;
+  color: white;
+  padding: 40px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.panel button {
+  margin: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 720px) {

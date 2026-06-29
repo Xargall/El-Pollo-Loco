@@ -2,10 +2,33 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
-function init() {
+function init(selectedLevel) {
+  document.getElementById("startScreen").style.display = "none";
   canvas = document.getElementById("canvas");
-  world = new World(canvas, keyboard);
+  canvas.style.display = "block";
+  world = new World(canvas, keyboard, selectedLevel);
+  world.backgroundMusic.play().catch(() => { });
+}
 
+function startGame(selectedLevel) {
+  closeAllPanels();
+  init(selectedLevel);
+}
+
+function openPanel(panelId) {
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById(panelId).style.display = "block";
+}
+
+function closePanel(panelId) {
+  document.getElementById(panelId).style.display = "none";
+  document.getElementById("startScreen").style.display = "block";
+}
+
+function closeAllPanels() {
+  document.getElementById("levelSelectPanel").style.display = "none";
+  document.getElementById("controlsPanel").style.display = "none";
+  document.getElementById("imprintPanel").style.display = "none";
 }
 
 window.addEventListener('keydown', (event) => {
