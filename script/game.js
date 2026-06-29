@@ -17,12 +17,12 @@ function startGame(selectedLevel) {
 
 function openPanel(panelId) {
   document.getElementById("startScreen").style.display = "none";
-  document.getElementById(panelId).style.display = "block";
+  document.getElementById(panelId).style.display = "flex";
 }
 
 function closePanel(panelId) {
   document.getElementById(panelId).style.display = "none";
-  document.getElementById("startScreen").style.display = "block";
+  document.getElementById("startScreen").style.display = "flex";
 }
 
 function closeAllPanels() {

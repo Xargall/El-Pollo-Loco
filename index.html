@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" translate="no">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -63,34 +63,58 @@
       </button>
     </div>
 
+    <div id="controlsPanel" class="screen-overlay panel" style="display: none;">
+      <h2>Steuerung</h2>
+      <div class="control-row">
+        <div class="key-group">
+          <span class="key">←</span>
+          <span class="key">→</span>
+        </div>
+        <span class="control-label">Move your Pepe!</span>
+      </div>
+      <div class="control-row">
+        <div class="key-group">
+          <span class="key key-wide">Space</span>
+        </div>
+        <span class="control-label">Let Pepe jump high!</span>
+      </div>
+      <div class="control-row">
+        <div class="key-group">
+          <span class="key">D</span>
+        </div>
+        <span class="control-label">Throw bottle with Pepe!</span>
+      </div>
+      <div class="back-row">
+        <button class="wood-btn" onclick="closePanel('controlsPanel')">
+          Zurück
+        </button>
+      </div>
+    </div>
+
     <div
       id="levelSelectPanel"
       class="screen-overlay panel"
       style="display: none;">
       <h2>Level wählen</h2>
-      <button onclick="startGame(level1)">Level 1</button>
-      <button onclick="startGame(level2)">Level 2</button>
-      <button onclick="closePanel('levelSelectPanel')" class="back-btn">
-        Zurück
-      </button>
-    </div>
-
-    <div id="controlsPanel" class="screen-overlay panel" style="display: none;">
-      <h2>Steuerung</h2>
-      <p>← / → : Bewegen</p>
-      <p>Leertaste : Springen</p>
-      <p>D : Flasche werfen</p>
-      <button onclick="closePanel('controlsPanel')" class="back-btn">
-        Zurück
-      </button>
+      <div class="button-row">
+        <button class="wood-btn" onclick="startGame(level1)">Level 1</button>
+        <button class="wood-btn" onclick="startGame(level2)">Level 2</button>
+      </div>
+      <div class="back-row">
+        <button class="wood-btn" onclick="closePanel('levelSelectPanel')">
+          Zurück
+        </button>
+      </div>
     </div>
 
     <div id="imprintPanel" class="screen-overlay panel" style="display: none;">
       <h2>Impressum</h2>
       <p>Dein Name / Kontaktinfo hier einfügen.</p>
-      <button onclick="closePanel('imprintPanel')" class="back-btn">
-        Zurück
-      </button>
+      <div class="back-row">
+        <button class="wood-btn" onclick="closePanel('imprintPanel')">
+          Zurück
+        </button>
+      </div>
     </div>
 
     <canvas
