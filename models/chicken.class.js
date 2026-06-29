@@ -20,7 +20,7 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
 
-    this.x = 480 + Math.random() * 1800; 
+    this.x = 480 + Math.random() * 1800;
     this.speed = 0.15 + Math.random() * 0.3;
     this.animate();
     this.deadSound.volume = 0.4;
@@ -29,6 +29,7 @@ class Chicken extends MovableObject {
   wakeUp() {
     if (this.isAwake) return;
     this.isAwake = true;
+    this.pickRandomDirection();
     this.scheduleNextBehavior();
   }
 
@@ -55,7 +56,7 @@ class Chicken extends MovableObject {
 
   animate() {
     setInterval(() => {
-      if (this.isDead() || (this.world && this.world.gameWon)) return;
+      if (this.isDead() || !this.isAwake || (this.world && this.world.gameWon)) return;
       if (this.direction === -1) {
         this.moveLeft();
         this.otherDirection = false;

@@ -61,6 +61,7 @@ class World {
     if (this.character.isDead()) return;
     this.level.enemies.forEach((enemy) => {
       if (enemy.isDead()) return;
+      if (enemy.isAwake === false) return;
 
       if (this.character.isCollidingFromAbove(enemy)) {
         this.character.bounce();
@@ -139,13 +140,7 @@ class World {
   }
 
   checkChickenWakeup() {
-    const firstChickenX = Math.min(
-      ...this.level.enemies
-        .filter((enemy) => enemy instanceof Chicken || enemy instanceof BabyChicken)
-        .map((enemy) => enemy.x)
-    );
-
-    if (this.character.x > firstChickenX - 300) {
+    if (this.character.x > 400) {
       this.level.enemies.forEach((enemy) => {
         if (enemy instanceof Chicken || enemy instanceof BabyChicken) {
           enemy.wakeUp();
