@@ -70,7 +70,9 @@
       <h2>Level wählen</h2>
       <button onclick="startGame(level1)">Level 1</button>
       <button onclick="startGame(level2)">Level 2</button>
-      <button onclick="closePanel('levelSelectPanel')">Zurück</button>
+      <button onclick="closePanel('levelSelectPanel')" class="back-btn">
+        Zurück
+      </button>
     </div>
 
     <div id="controlsPanel" class="screen-overlay panel" style="display: none;">
@@ -78,13 +80,17 @@
       <p>← / → : Bewegen</p>
       <p>Leertaste : Springen</p>
       <p>D : Flasche werfen</p>
-      <button onclick="closePanel('controlsPanel')">Zurück</button>
+      <button onclick="closePanel('controlsPanel')" class="back-btn">
+        Zurück
+      </button>
     </div>
 
     <div id="imprintPanel" class="screen-overlay panel" style="display: none;">
       <h2>Impressum</h2>
       <p>Dein Name / Kontaktinfo hier einfügen.</p>
-      <button onclick="closePanel('imprintPanel')">Zurück</button>
+      <button onclick="closePanel('imprintPanel')" class="back-btn">
+        Zurück
+      </button>
     </div>
 
     <canvas
