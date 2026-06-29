@@ -6,6 +6,7 @@ class MovableObject extends DrawableObject {
   acceleration = 2.5;
   energy = 100;
   lastHit = 0;
+  offset = { top: 0, bottom: 0, left: 0, right: 0, }
 
   applyGravity() {
     setInterval(() => {
@@ -45,12 +46,12 @@ class MovableObject extends DrawableObject {
     this.x -= this.speed;
   }
 
-  // collition detection chicken & character
+  // collision detection chicken & character
   isColliding(mo) {
-    return this.x + this.width > mo.x &&
-      this.y + this.height > mo.y &&
-      this.x < mo.x + mo.width &&
-      this.y < mo.y + mo.height
+    return this.x + this.width - this.offset.right > mo.x &&
+      this.y + this.height - this.offset.bottom> mo.y &&
+      this.x + this.offset.left < mo.x + mo.width &&
+      this.y + this.offset.top< mo.y + mo.height
   }
 
   isCollidingFromAbove(mo) {

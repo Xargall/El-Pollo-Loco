@@ -46,6 +46,7 @@ class World {
       this.checkEndbossTrigger();
       this.checkChickenWakeup();
       this.checkGameOver();
+      this.checkEndbossDefeatStatus();
     }, 1000 / 60)
     setInterval(() => {
       this.checkThrowObjects();
@@ -92,7 +93,7 @@ class World {
   checkBossDefeat(enemy) {
     if (enemy instanceof Endboss) {
       this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
-      if (enemy.isDead()) {
+      if (enemy.isDead() && enemy.currentImage >= enemy.IMAGES_DEAD.length) {
         this.gameWon = true;
         this.stopAllSounds();
       }
@@ -138,6 +139,16 @@ class World {
       endboss.checkTrigger(this.character.x);
     }
   }
+
+
+  checkEndbossDefeatStatus() {
+    const boss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (boss.isDead() && boss.currentImage >= boss.IMAGES_DEAD.length) {
+      this.gameWon = true;
+      this.stopAllSounds();
+    }
+  }
+
 
   checkChickenWakeup() {
     if (this.character.x > 400) {
