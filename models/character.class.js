@@ -105,6 +105,8 @@ class Character extends MovableObject {
 
   animate() {
     setInterval(() => {
+      if (this.isDead() || this.world.gameWon) return;
+
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
@@ -149,21 +151,21 @@ class Character extends MovableObject {
 
     // Hurt-Animation: schnell, kurzer Effekt
     setInterval(() => {
-      if (!this.isDead() && this.isHurt()) {
+      if (!this.isDead() && !this.world.gameWon && this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       }
     }, 100)
 
     // Jump-Animation: eigener, langsamerer Takt
     setInterval(() => {
-      if (!this.isDead() && !this.isHurt() && this.isAboveGround()) {
+      if (!this.isDead() && !this.world.gameWon && !this.isHurt() && this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
     }, 90)
 
     // Walking-Animation
     setInterval(() => {
-      if (!this.isDead() && !this.isHurt() && !this.isAboveGround() &&
+      if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         this.playAnimation(this.IMAGES_WALKING);
       }
@@ -171,7 +173,7 @@ class Character extends MovableObject {
 
     // Idle / Idle-Long-Animation
     setInterval(() => {
-      if (!this.isDead() && !this.isHurt() && !this.isAboveGround() &&
+      if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         if (this.isLongIdle()) {
           if (this.snoringSound.paused) {

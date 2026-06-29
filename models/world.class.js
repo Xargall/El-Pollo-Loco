@@ -27,6 +27,9 @@ class World {
 
   setWorld() {
     this.character.world = this;
+    this.level.enemies.forEach((enemy) => {
+      enemy.world = this;
+    })
   }
 
   run() {
@@ -83,6 +86,7 @@ class World {
       this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
       if (enemy.isDead()) {
         this.gameWon = true;
+        this.stopAllSounds();
       }
     }
   }
@@ -214,5 +218,24 @@ class World {
 
   showRestartButton() {
     document.getElementById("restartButton").style.display = "block";
+  }
+
+  stopAllSounds() {
+    this.character.walkSound.pause();
+    this.character.walkSound.currentTime = 0;
+
+    this.character.snoringSound.pause();
+    this.character.snoringSound.currentTime = 0;
+
+    this.level.enemies.forEach((enemy) => {
+      if (enemy.deadSound) {
+        enemy.deadSound.pause();
+        enemy.deadSound.currentTime = 0;
+      }
+      if (enemy.alertSound) {
+        enemy.alertSound.pause();
+        enemy.alertSound.currentTime = 0;
+      }
+    })
   }
 }

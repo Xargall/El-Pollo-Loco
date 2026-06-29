@@ -57,7 +57,7 @@ class BabyChicken extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if (this.isDead()) return;
+            if (this.isDead() || (this.world && this.world.gameWon)) return;
             if (this.direction === -1) {
                 this.moveLeft();
                 this.otherDirection = false;

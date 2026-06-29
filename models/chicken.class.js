@@ -55,7 +55,7 @@ class Chicken extends MovableObject {
 
   animate() {
     setInterval(() => {
-      if (this.isDead() || !this.isAwake) return;
+      if (this.isDead() || (this.world && this.world.gameWon)) return;
       if (this.direction === -1) {
         this.moveLeft();
         this.otherDirection = false;
@@ -72,7 +72,7 @@ class Chicken extends MovableObject {
           this.hasDeadSoundPlayed = true;
         }
         this.playAnimation(this.IMAGES_DEAD);
-      } else {
+      } else if (this.isAwake && !(this.world && this.world.gameWon)) {
         this.playAnimation(this.IMAGES_WALKING);
       }
     }, 200)
