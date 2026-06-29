@@ -1,4 +1,6 @@
 class Collectible extends DrawableObject {
+
+
     constructor(x, y, width, height, imagePath){
         super();
         this.x = x,

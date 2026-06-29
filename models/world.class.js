@@ -55,6 +55,7 @@ class World {
       if (this.character.isCollidingFromAbove(enemy)) {
         this.character.bounce();
         enemy.hit();
+        this.checkBossDefeat(enemy);
       } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {  // only count hit on player if colliding with enemy and if Pepe hasn't been hurt before
         this.character.hit();
         this.character.damageSound.currentTime = 0;
@@ -71,15 +72,19 @@ class World {
           enemy.hit();
           bottle.hit();
           bottle.breakSound.play().catch(() => { });
-          if (enemy instanceof Endboss) {
-            this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
-            if (enemy.isDead()) {
-              this.gameWon = true;
-            }
-          }
+          this.checkBossDefeat(enemy);
         }
       })
     })
+  }
+
+  checkBossDefeat(enemy) {
+    if (enemy instanceof Endboss) {
+      this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
+      if (enemy.isDead()) {
+        this.gameWon = true;
+      }
+    }
   }
 
   checkThrowObjects() {

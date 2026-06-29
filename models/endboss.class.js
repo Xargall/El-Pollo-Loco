@@ -6,6 +6,9 @@ class Endboss extends MovableObject {
     groundY = 60;
     isJumping = false;
     hasNoticed = false;
+    alertSound = new Audio('assets/audio/endboss/endbossApproach.wav');
+    deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
+    hasDeadSoundPlayed = false;
 
 
     IMAGES_ALERT = [
@@ -59,6 +62,7 @@ class Endboss extends MovableObject {
         this.x = 2500;
         this.speed = 5;
         this.animate();
+        this.alertSound.volume = 1;
 
     }
 
@@ -66,6 +70,8 @@ class Endboss extends MovableObject {
         if (!this.hasNoticed && characterX > this.x - 500) {
             this.hasNoticed = true;
             this.currentImage = 0;
+            this.alertSound.play().catch((error) => { console.log('Sound-Fehler:', error); })
+
         }
 
     }
@@ -75,6 +81,9 @@ class Endboss extends MovableObject {
         this.isJumping = true;
         this.speedY = 25;
         this.currentImage = 0;
+        this.alertSound.currentTime = 0;
+        this.alertSound.play().catch((error) => { console.log('Sound-Fehler:', error); });
+
 
         let jumpInterval = setInterval(() => {
             this.y -= this.speedY;
@@ -115,6 +124,10 @@ class Endboss extends MovableObject {
 
         setInterval(() => {
             if (this.isDead()) {
+                if (!this.hasDeadSoundPlayed) {
+                    this.deadSound.play().catch(() => { });
+                    this.hasDeadSoundPlayed = true;
+                }
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.playAnimation(this.IMAGES_DEAD);
                 }

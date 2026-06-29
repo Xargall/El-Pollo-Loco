@@ -4,6 +4,8 @@ class BabyChicken extends MovableObject {
     width = 50;
     direction = -1;
     isAwake = false;
+    deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
+    hasDeadSoundPlayed = false;
 
     IMAGES_WALKING = [
         "assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
@@ -23,6 +25,7 @@ class BabyChicken extends MovableObject {
         this.x = 200 + Math.random() * 1800;
         this.speed = 0.3 + Math.random() * 0.4; // etwas schneller als normale Hühner (0.15-0.45)
         this.animate();
+        this.deadSound.volume = 0.4;
     }
 
     wakeUp() {
@@ -65,9 +68,13 @@ class BabyChicken extends MovableObject {
         }, 1000 / 60)
 
         setInterval(() => {
-            if (this.isDead() || !this.isAwake) {
+            if (this.isDead()) {
+                if (!this.hasDeadSoundPlayed) {
+                    this.deadSound.play().catch(() => { });
+                    this.hasDeadSoundPlayed = true;
+                }
                 this.playAnimation(this.IMAGES_DEAD);
-            } else {
+            } else if (this.isAwake) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 150) // etwas schnellere Lauf-Animation als normale Hühner (200ms)
