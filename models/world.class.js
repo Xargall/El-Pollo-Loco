@@ -114,28 +114,28 @@ class World {
     }
   }
 
-checkCollectibleCollisions() {
-  this.level.bottles = this.level.bottles.filter((bottle) => {
-    if (this.character.isColliding(bottle)) {
-      bottle.pickupSound.play().catch(() => {});
-      this.bottleCount++;
-      this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
-      return false;
-    }
-    return true;
-  });
+  checkCollectibleCollisions() {
+    this.level.bottles = this.level.bottles.filter((bottle) => {
+      if (this.character.isColliding(bottle)) {
+        bottle.pickupSound.play().catch(() => { });
+        this.bottleCount++;
+        this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
+        return false;
+      }
+      return true;
+    });
 
-  this.level.coins = this.level.coins.filter((coin) => {
-    if (this.character.isColliding(coin)) {
-      coin.pickupSound.play().catch(() => {});
-      this.coinCount++;
-      let percentage = (this.coinCount / this.totalCoins) * 100;
-      this.coinStatusBar.setPercentage(percentage);
-      return false;
-    }
-    return true;
-  });
-}
+    this.level.coins = this.level.coins.filter((coin) => {
+      if (this.character.isColliding(coin)) {
+        coin.pickupSound.play().catch(() => { });
+        this.coinCount++;
+        let percentage = (this.coinCount / this.totalCoins) * 100;
+        this.coinStatusBar.setPercentage(percentage);
+        return false;
+      }
+      return true;
+    });
+  }
 
   checkEndbossTrigger() {
     const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss)
@@ -186,7 +186,7 @@ checkCollectibleCollisions() {
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(this.winImage, 60, 40, 600, 400);
-      this.showRestartButton();
+      this.showWinButtons();
       return;
     }
 
@@ -198,7 +198,7 @@ checkCollectibleCollisions() {
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(this.gameOverImage, 60, 40, 600, 400);
-      this.showRestartButton();
+      this.showGameOverButtons();
       return;
     }
 
@@ -264,6 +264,20 @@ checkCollectibleCollisions() {
 
   showRestartButton() {
     document.getElementById("restartButton").style.display = "block";
+  }
+
+  showGameOverButtons() {
+    document.getElementById("restartButton").style.display = "inline-block";
+    document.getElementById("mainMenuButton").style.display = "inline-block";
+    document.getElementById("nextLevelButton").style.display = "none";
+    document.getElementById("endScreenButtons").style.display = "flex";
+  }
+
+  showWinButtons() {
+    document.getElementById("restartButton").style.display = "none";
+    document.getElementById("mainMenuButton").style.display = "inline-block";
+    document.getElementById("nextLevelButton").style.display = "inline-block";
+    document.getElementById("endScreenButtons").style.display = "flex";
   }
 
   stopAllSounds() {

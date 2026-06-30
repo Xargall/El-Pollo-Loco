@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let currentLevelCreator = null;
 
 function init(selectedLevel) {
   document.getElementById("startScreen").style.display = "none";
@@ -10,9 +11,10 @@ function init(selectedLevel) {
   world.backgroundMusic.play().catch(() => { });
 }
 
-function startGame(selectedLevel) {
+function startGame(levelCreator) {
   closeAllPanels();
-  init(selectedLevel);
+  currentLevelCreator = levelCreator;
+  init(levelCreator());
 }
 
 function openPanel(panelId) {
@@ -29,6 +31,23 @@ function closeAllPanels() {
   document.getElementById("levelSelectPanel").style.display = "none";
   document.getElementById("controlsPanel").style.display = "none";
   document.getElementById("imprintPanel").style.display = "none";
+}
+
+function restartGame() {
+  document.getElementById("endScreenButtons").style.display = "none";
+  init(currentLevelCreator())
+}
+
+function goToMainMenu() {
+  document.getElementById("endScreenButtons").style.display = "none";
+  canvas.style.display = "none";
+  document.getElementById("startScreen").style.display = "block";
+}
+
+function loadNextLevel() {
+  document.getElementById("endScreenButtons").style.display = "none";
+  currentLevelCreator = (currentLevelCreator === createLevel1) ? createLevel2 : createLevel1;
+  init(currentLevelCreator());
 }
 
 window.addEventListener('keydown', (event) => {
