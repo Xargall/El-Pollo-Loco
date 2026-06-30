@@ -28,7 +28,7 @@ class World {
     this.draw();
     this.setWorld();
     this.run();
-    this.backgroundMusic.volume = 0.4;
+    this.backgroundMusic.volume = 0.2;
   }
 
   setWorld() {
@@ -74,7 +74,8 @@ class World {
         this.character.damageSound.play().catch(() => { });;
         this.statusBar.setPercentage(this.character.energy);
       }
-    })
+    });
+    this.character.lastY = this.character.y;
   }
 
   checkBottleCollisions() {
@@ -143,9 +144,12 @@ class World {
 
   checkEndbossDefeatStatus() {
     const boss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
-    if (boss.isDead() && boss.currentImage >= boss.IMAGES_DEAD.length) {
-      this.gameWon = true;
-      this.stopAllSounds();
+    if (this.gameWon) return;
+    if (boss) {
+      if (boss.isDead() && boss.currentImage >= boss.IMAGES_DEAD.length) {
+        this.gameWon = true;
+        this.stopAllSounds();
+      }
     }
   }
 
