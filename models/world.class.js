@@ -76,7 +76,7 @@ class World {
         this.checkBossDefeat(enemy);
       } else if (this.character.isColliding(enemy) && !this.character.isHurt() && this.character.speedY <= 0) {  // only count hit on player if colliding with enemy and if Pepe hasn't been hurt before
         this.character.hit();
-        let text = new DamageText(enemy.x, enemy.y, "-1");
+        let text = new DamageText(this.character.x + this.character.offset.left, this.character.y + this.character.offset.top, "-1");
         this.damageTexts.push(text);
         this.character.damageSound.currentTime = 0;
         this.character.damageSound.play().catch(() => { });
@@ -219,6 +219,7 @@ class World {
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.clouds);
 
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBar);
@@ -235,7 +236,7 @@ class World {
     this.addToMap(this.character);
     this.addObjectsToMap(this.throwableObjects);
     this.addObjectsToMap(this.level.enemies);
-    this.addObjectsToMap(this.level.clouds);
+
 
     this.damageTexts.forEach((dt) => {
       this.ctx.fillStyle = 'red';
