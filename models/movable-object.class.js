@@ -49,15 +49,15 @@ class MovableObject extends DrawableObject {
   // collision detection chicken & character
   isColliding(mo) {
     return this.x + this.width - this.offset.right > mo.x &&
-      this.y + this.height - this.offset.bottom> mo.y &&
+      this.y + this.height - this.offset.bottom > mo.y &&
       this.x + this.offset.left < mo.x + mo.width &&
-      this.y + this.offset.top< mo.y + mo.height
+      this.y + this.offset.top < mo.y + mo.height
   }
 
   isCollidingFromAbove(mo) {
     return this.isColliding(mo) &&
       this.speedY < 0 &&
-      (this.lastY + this.height) < (mo.y + mo.height * 0.65);
+      (this.lastY + this.height - this.offset.bottom) <= mo.y;
   }
 
   bounce() {

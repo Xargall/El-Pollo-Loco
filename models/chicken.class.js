@@ -4,6 +4,7 @@ class Chicken extends MovableObject {
   width = 70;
   direction = -1;
   isAwake = false;
+  energy = 20;
   deadSound = new Audio('assets/audio/chicken/chickenDead.mp3');
   hasDeadSoundPlayed = false;
 
@@ -77,10 +78,6 @@ class Chicken extends MovableObject {
         this.playAnimation(this.IMAGES_WALKING);
       }
     }, 200)
-  }
-
-  hit() {
-    this.energy = 0; // ein Treffer reicht
   }
 
 }

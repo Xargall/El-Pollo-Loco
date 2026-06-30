@@ -94,6 +94,3 @@ window.addEventListener('keyup', (event) => {
   }
 })
 
-function restartGame() {
-  location.reload();
-}

@@ -28,6 +28,7 @@
     <script src="./models/status-bar-bottle.class.js"></script>
     <script src="./models/status-bar-coins.class.js"></script>
     <script src="./models/status-bar-endboss.class.js"></script>
+    <script src="./models/damage-text.class.js"></script>
     <script src="./models/world.class.js"></script>
     <script src="./script/level-builder.js"></script>
     <script src="./levels/level1.js"></script>
@@ -71,7 +72,7 @@
         id="controlsPanel"
         class="screen-overlay panel"
         style="display: none;">
-        <h2>Steuerung</h2>
+        <h2>Controls</h2>
         <div class="control-row">
           <div class="key-group">
             <span class="key">←</span>
@@ -93,7 +94,7 @@
         </div>
         <div class="back-row">
           <button class="wood-btn" onclick="closePanel('controlsPanel')">
-            Zurück
+            Back
           </button>
         </div>
       </div>
@@ -102,14 +103,18 @@
         id="levelSelectPanel"
         class="screen-overlay panel"
         style="display: none;">
-        <h2>Level wählen</h2>
+        <h2>Choose Level</h2>
         <div class="button-row">
-          <button class="wood-btn" onclick="startGame(createLevel1)">Level 1</button>
-          <button class="wood-btn" onclick="startGame(createLevel2)">Level 2</button>
+          <button class="wood-btn" onclick="startGame(createLevel1)">
+            Level 1
+          </button>
+          <button class="wood-btn" onclick="startGame(createLevel2)">
+            Level 2
+          </button>
         </div>
         <div class="back-row">
           <button class="wood-btn" onclick="closePanel('levelSelectPanel')">
-            Zurück
+            Back
           </button>
         </div>
       </div>
@@ -122,7 +127,7 @@
         <p>Dein Name / Kontaktinfo hier einfügen.</p>
         <div class="back-row">
           <button class="wood-btn" onclick="closePanel('imprintPanel')">
-            Zurück
+            Back
           </button>
         </div>
       </div>

@@ -18,6 +18,7 @@ class World {
   gameOver = false;
   gameOverImage = new Image();
   backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.wav');
+  damageTexts = [];
 
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
@@ -45,6 +46,7 @@ class World {
       this.checkCollisions();
       this.checkBottleCollisions();
       this.removeSplashedBottles();
+      this.removeExpiredDamageTexts();
       this.checkEndbossTrigger();
       this.checkChickenWakeup();
       this.checkGameOver();
@@ -69,11 +71,15 @@ class World {
       if (this.character.isCollidingFromAbove(enemy)) {
         this.character.bounce();
         enemy.hit();
+        let text = new DamageText(enemy.x, enemy.y, "-1");
+        this.damageTexts.push(text);
         this.checkBossDefeat(enemy);
-      } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {  // only count hit on player if colliding with enemy and if Pepe hasn't been hurt before
+      } else if (this.character.isColliding(enemy) && !this.character.isHurt() && this.character.speedY <= 0) {  // only count hit on player if colliding with enemy and if Pepe hasn't been hurt before
         this.character.hit();
+        let text = new DamageText(enemy.x, enemy.y, "-1");
+        this.damageTexts.push(text);
         this.character.damageSound.currentTime = 0;
-        this.character.damageSound.play().catch(() => { });;
+        this.character.damageSound.play().catch(() => { });
         this.statusBar.setPercentage(this.character.energy);
       }
     });
@@ -87,6 +93,8 @@ class World {
           enemy.hit();
           bottle.hit();
           bottle.breakSound.play().catch(() => { });
+          let text = new DamageText(enemy.x, enemy.y, "-1");
+          this.damageTexts.push(text);
           this.checkBossDefeat(enemy);
         }
       })
@@ -175,6 +183,10 @@ class World {
     }
   }
 
+  removeExpiredDamageTexts() {
+    this.damageTexts = this.damageTexts.filter((dt) => !dt.isExpired());
+  }
+
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -224,6 +236,12 @@ class World {
     this.addObjectsToMap(this.throwableObjects);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.clouds);
+
+    this.damageTexts.forEach((dt) => {
+      this.ctx.fillStyle = 'red';
+      this.ctx.font = 'bold 20px Georgia';
+      this.ctx.fillText(dt.text, dt.x, dt.y);
+    });
 
     requestAnimationFrame(() => this.draw());
     this.ctx.translate(-this.camera_x, 0);
