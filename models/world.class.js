@@ -9,6 +9,7 @@ class World {
   throwableObjects = [];
   bottleCount = 0;
   coinCount = 0;
+  totalCoins = 0;
   bottleStatusBar = new BottleStatusbar();
   coinStatusBar = new CoinStatusbar();
   bossStatusBar = new EndbossStatusbar();
@@ -23,6 +24,7 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard
     this.level = level;
+    this.totalCoins = this.level.coins.length;
     this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
     this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
     this.draw();
@@ -112,27 +114,28 @@ class World {
     }
   }
 
-  checkCollectibleCollisions() {
-    this.level.bottles = this.level.bottles.filter((bottle) => {
-      if (this.character.isColliding(bottle)) {
-        bottle.pickupSound.play().catch(() => { });
-        this.bottleCount++;
-        this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
-        return false;
-      }
-      return true;
-    });
+checkCollectibleCollisions() {
+  this.level.bottles = this.level.bottles.filter((bottle) => {
+    if (this.character.isColliding(bottle)) {
+      bottle.pickupSound.play().catch(() => {});
+      this.bottleCount++;
+      this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
+      return false;
+    }
+    return true;
+  });
 
-    this.level.coins = this.level.coins.filter((coin) => {
-      if (this.character.isColliding(coin)) {
-        coin.pickupSound.play().catch(() => { });
-        this.coinCount++;
-        this.coinStatusBar.setPercentage(Math.min(this.coinCount * 20, 100));
-        return false;
-      }
-      return true;
-    });
-  }
+  this.level.coins = this.level.coins.filter((coin) => {
+    if (this.character.isColliding(coin)) {
+      coin.pickupSound.play().catch(() => {});
+      this.coinCount++;
+      let percentage = (this.coinCount / this.totalCoins) * 100;
+      this.coinStatusBar.setPercentage(percentage);
+      return false;
+    }
+    return true;
+  });
+}
 
   checkEndbossTrigger() {
     const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss)
