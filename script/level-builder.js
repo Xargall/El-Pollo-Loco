@@ -61,13 +61,13 @@ function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss,
     const totalCount = chickenCount + babyChickenCount;
     const positions = generateSpacedPositions(totalCount, 450, levelWidth - 400, 80);
 
-    for (let i = 0; i < chickenCount; i++) {
+    for (let i = 0; i < chickenCount && i < positions.length; i++) {
         const chicken = new Chicken();
         chicken.x = positions[i];
         enemies.push(chicken);
     }
 
-    for (let i = chickenCount; i < totalCount; i++) {
+    for (let i = chickenCount; i < totalCount && i < positions.length; i++) {
         const babyChicken = new BabyChicken();
         babyChicken.x = positions[i];
         enemies.push(babyChicken);

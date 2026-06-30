@@ -57,7 +57,7 @@ class MovableObject extends DrawableObject {
   isCollidingFromAbove(mo) {
     return this.isColliding(mo) &&
       this.speedY < 0 &&
-      (this.y + this.height) < (mo.y + mo.height * 0.65);
+      (this.lastY + this.height) < (mo.y + mo.height * 0.65);
   }
 
   bounce() {
