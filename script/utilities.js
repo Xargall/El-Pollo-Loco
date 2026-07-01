@@ -39,3 +39,21 @@ function drawDamageTexts(ctx, damageTexts) {
 function calculatePercentage(current, max) {
     return (current / max) * 100;
 }
+
+function getGameWonState(ctx, camera_x, canvas, winImage, level) {
+    ctx.translate(camera_x, 0);
+    addObjectsToMap(ctx, level.backgroundObjects);
+    ctx.translate(-camera_x, 0);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(winImage, 60, 40, 600, 400);
+}
+
+function getGameOverState(ctx, camera_x, canvas, gameOverImage, level) {
+    ctx.translate(camera_x, 0);
+    addObjectsToMap(ctx, level.backgroundObjects);
+    ctx.translate(-camera_x, 0);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(gameOverImage, 60, 40, 600, 400);
+}
