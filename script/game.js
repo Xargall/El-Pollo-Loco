@@ -7,6 +7,7 @@ function init(selectedLevel) {
   document.getElementById("startScreen").style.display = "none";
   canvas = document.getElementById("canvas");
   canvas.style.display = "block";
+  showGameControls();
   world = new World(canvas, keyboard, selectedLevel);
   world.backgroundMusic.play().catch(() => { });
 }
@@ -39,6 +40,7 @@ function restartGame() {
 }
 
 function goToMainMenu() {
+  hideGameControls()
   document.getElementById("endScreenButtons").style.display = "none";
   canvas.style.display = "none";
   document.getElementById("startScreen").style.display = "block";
@@ -93,4 +95,12 @@ window.addEventListener('keyup', (event) => {
     keyboard.SPACE = false;
   }
 })
+
+function showGameControls() {
+  document.getElementById("gameControls").style.display = "flex";
+}
+
+function hideGameControls() {
+  document.getElementById("gameControls").style.display = "none";
+}
 

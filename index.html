@@ -139,11 +139,15 @@
         </video>
       </div>
 
-      <canvas
-        id="canvas"
-        width="720px"
-        height="480px"
-        style="display: none;"></canvas>
+      <canvas id="canvas" width="720px" height="480px" style="display: none;">
+      </canvas>
+
+      <div id="gameControls" style="display: none;">
+        <button id="homeButton" class="game-icon-btn" onclick="goToMainMenu()">
+          <img src="./assets/icons/home.svg" alt="Home" />
+        </button>
+      </div>
+
       <div
         id="endScreenButtons"
         class="end-screen-buttons"
