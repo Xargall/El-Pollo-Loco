@@ -20,6 +20,8 @@ class World {
   backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.wav');
   damageTexts = [];
   lastNoBottleWarning = null;
+  lastBottleWarning = null;
+  lastThrowTime = null;
 
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
@@ -112,18 +114,26 @@ class World {
   checkThrowObjects() {
     if (this.character.isDead()) return;
     if (!this.keyboard.D) return;
+
+    const now = Date.now();
+
     if (this.bottleCount === 0) {
-      const now = Date.now();
-      if (!this.lastNoBottleWarning || now - this.lastBottleWarning > 1500) {
-        this.damageTexts.push(new DamageText(this.character.x + this.character.offset.left, this.character.y + this.character.offset.top, "No Bottles to throw!"));
+      if (!this.lastBottleWarning || now - this.lastBottleWarning > 1500) {
+        this.damageTexts.push(new DamageText(
+          this.character.x + this.character.offset.left,
+          this.character.y + this.character.offset.top,
+          "No Bottles to throw!"
+        ));
         this.lastBottleWarning = now;
       }
       return;
     }
-    if (this.keyboard.D && this.bottleCount > 0) {
+
+    if (!this.lastThrowTime || now - this.lastThrowTime > 800) {
       let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
       this.throwableObjects.push(bottle);
       this.bottleCount--;
+      this.lastThrowTime = now;
       this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
     }
   }
