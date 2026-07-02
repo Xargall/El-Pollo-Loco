@@ -80,12 +80,14 @@ canvas {
 .panel {
   background: #2a2a2a;
   color: white;
-  padding: 40px;
+  padding: clamp(16px, 3vw, 40px);
   text-align: center;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  min-height: 400px;
+  min-height: unset;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .wood-btn {
@@ -156,7 +158,7 @@ canvas {
 
 .panel p {
   font-family: "Georgia", serif;
-  font-size: 18px;
+  font-size: clamp(12px, 2vw, 18px);
   margin: 10px 0;
   color: #f4e4c1;
 }
@@ -175,8 +177,8 @@ canvas {
   color: #f4e4c1;
   font-family: "Georgia", serif;
   font-weight: bold;
-  font-size: 18px;
-  padding: 8px 14px;
+  font-size: clamp(10px, 1.8vw, 18px);
+  padding: clamp(4px, 1vw, 8px) clamp(8px, 1.5vw, 14px);
   box-shadow:
     0 3px 0 #0a0a0a,
     inset 0 1px 2px rgba(255, 255, 255, 0.2);
@@ -185,29 +187,29 @@ canvas {
 }
 
 .key-wide {
-  padding: 8px 24px;
+  padding: clamp(4px, 1vw, 8px) clamp(16px, 2.5vw, 24px);
 }
 
 .control-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin: 14px 0;
+  gap: clamp(8px, 2vw, 16px);
+  margin: clamp(6px, 1.5vw, 14px) 0;
 }
 
 .key-group {
   display: flex;
   justify-content: flex-end; /* Tasten rechtsbündig innerhalb der festen Breite */
   gap: 8px;
-  width: 120px; /* feste Breite, an die größte Tastengruppe angepasst */
+  width: auto; /* feste Breite, an die größte Tastengruppe angepasst */
 }
 
 .control-label {
   font-family: "Georgia", serif;
-  font-size: 18px;
+  font-size: clamp(12px, 2vw, 18px);
   color: #f4e4c1;
-  width: 220px; /* feste Breite für gleichmäßigen Textbeginn */
+  width: auto;
   text-align: left;
 }
 
