@@ -98,9 +98,48 @@ window.addEventListener('keyup', (event) => {
 
 function showGameControls() {
   document.getElementById("gameControls").style.display = "flex";
+  showTouchControls();
 }
 
 function hideGameControls() {
   document.getElementById("gameControls").style.display = "none";
+  hideTouchControls();
+}
+
+function initTouchControls() {
+  const buttons = [
+    { id: 'btn-left', key: 'LEFT' },
+    { id: 'btn-right', key: 'RIGHT' },
+    { id: 'btn-jump', key: 'SPACE' },
+    { id: 'btn-throw', key: 'D' },
+  ];
+
+  buttons.forEach(({ id, key }) => {
+    const btn = document.getElementById(id);
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      keyboard[key] = true;
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      keyboard[key] = false;
+    });
+  });
+}
+
+function showTouchControls() {
+  if (navigator.maxTouchPoints > 0) {
+    document.getElementById('touchControls').classList.add('visible');
+    initTouchControls();
+  }
+}
+
+function hideTouchControls() {
+  document.getElementById('touchControls').classList.remove('visible');
+}
+
+function toggleTouchControls() {
+  const tc = document.getElementById('touchControls');
+  tc.classList.toggle('visible');
 }
 
