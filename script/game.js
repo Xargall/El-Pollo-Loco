@@ -148,7 +148,11 @@ function toggleTouchControls() {
 function toggleFullscreen() {
   const container = document.querySelector('.game-container');
   if (!document.fullscreenElement) {
-    container.requestFullscreen();
+    if (container.requestFullscreen) {
+      container.requestFullscreen();
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    }
   } else {
     document.exitFullscreen();
   }
