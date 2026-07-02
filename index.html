@@ -139,7 +139,12 @@
         </video>
       </div>
 
-      <canvas id="canvas" width="720px" height="480px" style="display: none;">
+      <canvas
+        id="canvas"
+        width="720px"
+        height="480px"
+        style="display: none;"
+        tabindex="0">
       </canvas>
 
       <div id="touchControls">
@@ -160,6 +165,12 @@
       <div id="gameControls" style="display: none;">
         <button id="homeButton" class="game-icon-btn" onclick="goToMainMenu()">
           <img src="./assets/icons/home.png" alt="Home" />
+        </button>
+        <button
+          id="fullscreenButton"
+          class="game-icon-btn"
+          onclick="toggleFullscreen()">
+          <img src="./assets/icons/expand.png" alt="Fullscreen" />
         </button>
       </div>
 

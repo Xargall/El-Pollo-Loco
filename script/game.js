@@ -143,3 +143,13 @@ function toggleTouchControls() {
   tc.classList.toggle('visible');
 }
 
+function toggleFullscreen() {
+  const container = document.querySelector('.game-container');
+  if (!document.fullscreenElement) {
+    container.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+  canvas.focus();
+}
+
