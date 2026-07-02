@@ -22,6 +22,8 @@ class World {
   lastNoBottleWarning = null;
   lastBottleWarning = null;
   lastThrowTime = null;
+  intervalId1;
+  intervalId2;
 
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
@@ -45,7 +47,7 @@ class World {
   }
 
   run() {
-    setInterval(() => {
+    this.intervalId1 = setInterval(() => {
       this.checkCollisions();
       this.checkBottleCollisions();
       this.removeSplashedBottles();
@@ -54,8 +56,9 @@ class World {
       this.checkChickenWakeup();
       this.checkGameOver();
       this.checkEndbossDefeatStatus();
+      this.checkAllEnemiesDefeated();
     }, 1000 / 60);
-    setInterval(() => {
+    this.intervalId2 = setInterval(() => {
       this.checkThrowObjects();
       this.checkCollectibleCollisions();
     }, 200);
@@ -108,6 +111,17 @@ class World {
         this.gameWon = true;
         this.stopAllSounds();
       }
+    }
+  }
+
+  checkAllEnemiesDefeated() {
+    if (this.gameWon) return;
+    const hasEndboss = this.level.enemies.some(e => e instanceof Endboss);
+    if (hasEndboss) return;
+    const allDead = this.level.enemies.every(e => e.isDead());
+    if (allDead) {
+      this.gameWon = true;
+      this.stopAllSounds();
     }
   }
 
@@ -284,5 +298,15 @@ class World {
         enemy.alertSound.currentTime = 0;
       }
     });
+  }
+
+  destroy() {
+    clearInterval(this.intervalId1);
+    clearInterval(this.intervalId2);
+    this.character.destroy();
+    this.level.enemies.forEach(e => e.destroy());
+    this.level.clouds.forEach(c => c.destroy());
+    this.throwableObjects.forEach(b => b.destroy());
+    this.stopAllSounds();
   }
 }

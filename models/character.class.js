@@ -4,6 +4,12 @@ class Character extends MovableObject {
   y = 80;
   lastY = 80;
   speed = 10;
+  intervalId1;
+  intervalId2;
+  intervalId3;
+  intervalId4;
+  intervalId5;
+  intervalId6;
 
   offset = { top: 110, bottom: 10, left: 25, right: 30, };
 
@@ -107,7 +113,7 @@ class Character extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
+    this.intervalId1 = setInterval(() => {
       if (this.isDead() || this.world.gameWon) return;
 
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -141,7 +147,7 @@ class Character extends MovableObject {
     }, 1000 / 60)
 
     // Dead-Animation: einmalig, langsam
-    setInterval(() => {
+    this.intervalId2 = setInterval(() => {
       if (this.isDead() && this.currentImage < this.IMAGES_DEAD.length) {
         if (!this.hasDeadSoundPlayed) {
           this.deadSound.play();
@@ -154,21 +160,21 @@ class Character extends MovableObject {
     }, 200)
 
     // Hurt-Animation: schnell, kurzer Effekt
-    setInterval(() => {
+    this.intervalId3 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       }
     }, 100)
 
     // Jump-Animation: eigener, langsamerer Takt
-    setInterval(() => {
+    this.intervalId4 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
     }, 90)
 
     // Walking-Animation
-    setInterval(() => {
+    this.intervalId5 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         this.playAnimation(this.IMAGES_WALKING);
@@ -176,7 +182,7 @@ class Character extends MovableObject {
     }, 150)
 
     // Idle / Idle-Long-Animation
-    setInterval(() => {
+    this.intervalId6 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         if (this.isLongIdle()) {
@@ -202,5 +208,15 @@ class Character extends MovableObject {
 
   jumpHigh() {
     this.speedY = 42;
+  }
+
+  destroy() {
+    super.destroy();
+    clearInterval(this.intervalId1);
+    clearInterval(this.intervalId2);
+    clearInterval(this.intervalId3);
+    clearInterval(this.intervalId4);
+    clearInterval(this.intervalId5);
+    clearInterval(this.intervalId6);
   }
 }

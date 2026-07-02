@@ -7,9 +7,10 @@ class MovableObject extends DrawableObject {
   energy = 100;
   lastHit = 0;
   offset = { top: 0, bottom: 0, left: 0, right: 0, }
+  gravityIntervalId;
 
   applyGravity() {
-    setInterval(() => {
+    this.gravityIntervalId = setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
@@ -84,5 +85,9 @@ class MovableObject extends DrawableObject {
     let timepassed = new Date().getTime() - this.lastHit  //Difference in ms, Date() => milliseconds since 01.01.1970
     timepassed = timepassed / 1000; //Difference in seconds
     return timepassed < 1;
+  }
+
+  destroy() {
+    clearInterval(this.gravityIntervalId);
   }
 }

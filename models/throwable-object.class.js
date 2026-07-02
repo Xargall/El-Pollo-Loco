@@ -1,4 +1,7 @@
 class ThrowableObject extends MovableObject {
+    intervalId1;
+    intervalId2;
+    intervalId3;
 
     IMAGES_THROW = [
         'assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
@@ -28,7 +31,7 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60,
             this.width = 50;
-            this.breakSound.volume = 0.4;
+        this.breakSound.volume = 0.4;
         this.throw();
         this.animate();
     }
@@ -37,13 +40,13 @@ class ThrowableObject extends MovableObject {
         this.speedY = 30;
 
         // Gravity function specifically for throw object => prevents bottle from falling after hit
-        setInterval(() => {
+        this.intervalId1 = setInterval(() => {
             if (this.isSplashing) return;
             this.y -= this.speedY;
             this.speedY -= this.acceleration;
         }, 1000 / 25)
 
-        setInterval(() => {
+        this.intervalId2 = setInterval(() => {
             if (this.isSplashing) return;
             this.x += 10
         }, 25)
@@ -51,7 +54,7 @@ class ThrowableObject extends MovableObject {
     }
 
     animate() {
-        setInterval(() => {
+        this.intervalId3 = setInterval(() => {
             if (this.isSplashing) {
                 if (this.currentImage < this.IMAGES_SPLASH.length) {
                     this.playAnimation(this.IMAGES_SPLASH);
@@ -63,6 +66,14 @@ class ThrowableObject extends MovableObject {
 
 
     }
+
+    destroy() {
+        super.destroy();
+        clearInterval(this.intervalId1);
+        clearInterval(this.intervalId2);
+        clearInterval(this.intervalId3);
+    }
+
     hit() {
         if (this.isSplashing) return; // verhindert mehrfaches Auslösen
         this.isSplashing = true;

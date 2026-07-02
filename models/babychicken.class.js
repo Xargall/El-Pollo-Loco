@@ -20,6 +20,8 @@ class BabyChicken extends MovableObject {
     deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
     /** @type {boolean} Ensures the death sound is only played once. */
     hasDeadSoundPlayed = false;
+    intervalId1;
+    intervalId2;
 
     /** @type {string[]} Animation frames for the walking state. */
     IMAGES_WALKING = [
@@ -92,7 +94,7 @@ class BabyChicken extends MovableObject {
      * Movement runs at 60fps, animation frames update every 150ms.
      */
     animate() {
-        setInterval(() => {
+        this.intervalId1 = setInterval(() => {
             if (this.isDead() || (this.world && this.world.gameWon)) return;
             if (this.direction === -1) {
                 this.moveLeft();
@@ -103,7 +105,7 @@ class BabyChicken extends MovableObject {
             }
         }, 1000 / 60);
 
-        setInterval(() => {
+        this.intervalId2 = setInterval(() => {
             if (this.isDead()) {
                 if (!this.hasDeadSoundPlayed) {
                     this.deadSound.play().catch(() => { });
@@ -114,6 +116,11 @@ class BabyChicken extends MovableObject {
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 150);
+    }
+    destroy() {
+        super.destroy();
+        clearInterval(this.intervalId1);
+        clearInterval(this.intervalId2);
     }
 
     /**

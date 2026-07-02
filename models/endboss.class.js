@@ -10,6 +10,8 @@ class Endboss extends MovableObject {
     deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
     hasDeadSoundPlayed = false;
     offset = { top: 140, bottom: 20, left: 20, right: 0, };
+    intervalId1;
+    intervalId2;
 
 
     IMAGES_ALERT = [
@@ -116,14 +118,14 @@ class Endboss extends MovableObject {
     animate() {
         this.scheduleNextJump();
 
-        setInterval(() => {
+        this.intervalId1 = setInterval(() => {
             if (this.isDead()) return;
             if (this.hasNoticed) {
                 this.moveLeft();
             }
         }, 200)
 
-        setInterval(() => {
+        this.intervalId2 = setInterval(() => {
             if (this.isDead()) {
                 if (!this.hasDeadSoundPlayed) {
                     this.deadSound.play().catch(() => { });
@@ -142,5 +144,11 @@ class Endboss extends MovableObject {
                 this.playAnimation(this.IMAGES_ALERT);
             }
         }, 150)
+    }
+
+    destroy() {
+        super.destroy();
+        clearInterval(this.intervalId1);
+        clearInterval(this.intervalId2);
     }
 }

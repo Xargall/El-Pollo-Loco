@@ -4,6 +4,7 @@ let keyboard = new Keyboard();
 let currentLevelCreator = null;
 
 function init(selectedLevel) {
+  if (world) world.destroy();
   document.getElementById("startScreen").style.display = "none";
   canvas = document.getElementById("canvas");
   canvas.style.display = "block";
@@ -40,6 +41,7 @@ function restartGame() {
 }
 
 function goToMainMenu() {
+  if (world) world.destroy();
   hideGameControls()
   document.getElementById("endScreenButtons").style.display = "none";
   canvas.style.display = "none";
