@@ -29,7 +29,7 @@ class DrawableObject {
 
     drawHitbox(ctx) {
 
-        if (this instanceof Character || this instanceof Chicken || this instanceof BabyChicken) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof BabyChicken || this instanceof Endboss) {
             ctx.beginPath();
             ctx.lineWidth = '5';
             ctx.strokeStyle = 'blue';
