@@ -5,7 +5,7 @@ class Character extends MovableObject {
   lastY = 80;
   speed = 10;
 
-  offset = {top: 110, bottom:10, left: 25, right: 30,};
+  offset = { top: 110, bottom: 10, left: 25, right: 30, };
 
   IMAGES_IDLE = [
     "assets/img/2_character_pepe/1_idle/idle/I-1.png",
@@ -123,17 +123,18 @@ class Character extends MovableObject {
       }
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
+        const noBottlesLeft = this.world.bottleCount === 0 && this.world.level.bottles.length === 0;
+        const boss = this.world.level.enemies.find(e => e instanceof Endboss);
+        const bossAlive = boss && !boss.isDead();
+
+        if (noBottlesLeft && bossAlive) {
+          this.jumpHigh();
+        } else {
+          this.jump();
+        }
         this.jumpSound.currentTime = 0;
         this.jumpSound.play();
         this.idleStart = new Date().getTime();
-      }
-
-      if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
-        this.walkSound.play();
-      } else {
-        this.walkSound.pause();
-        this.walkSound.currentTime = 0;
       }
 
       this.world.camera_x = -this.x + 100;
@@ -199,4 +200,7 @@ class Character extends MovableObject {
     }, 200)
   }
 
+  jumpHigh() {
+    this.speedY = 42;
+  }
 }
