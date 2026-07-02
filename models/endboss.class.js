@@ -9,6 +9,7 @@ class Endboss extends MovableObject {
     alertSound = new Audio('assets/audio/endboss/endbossApproach.wav');
     deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
     hasDeadSoundPlayed = false;
+    offset = { top: 140, bottom: 20, left: 20, right: 0, };
 
 
     IMAGES_ALERT = [
