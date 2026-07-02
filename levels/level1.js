@@ -1,3 +1,11 @@
+/**
+ * Creates and returns Level 1 of the game.
+ * Uses the level generator with predefined parameters
+ * to populate enemies, collectibles and the endboss.
+ *
+ * @returns {Level} A fully generated Level 1 instance.
+ */
+
 function createLevel1() {
     return generateLevel({
         segments: 4,
