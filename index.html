@@ -30,6 +30,9 @@
     <script src="./models/status-bar-endboss.class.js"></script>
     <script src="./models/damage-text.class.js"></script>
     <script src="./script/utilities.js"></script>
+    <script src="./script/sound-manager.js"></script>
+    <script src="./script/ui-manager.js"></script>
+    <script src="./script/world-renderer.js"></script>
     <script src="./models/world.class.js"></script>
     <script src="./script/level-builder.js"></script>
     <script src="./levels/level1.js"></script>
@@ -135,6 +138,28 @@
           E-Mail:
           <a href="mailto:mayer.mathias@proton.me">mayer.mathias@proton.me</a>
         </p>
+        <a
+          href="https://www.flaticon.com/de/kostenlose-icons/home-button"
+          title="home button Icons"
+          >Home button Icons erstellt von deha21 - Flaticon</a
+        >
+        <a
+          href="https://www.flaticon.com/free-icons/speaker"
+          title="speaker icons"
+          >Speaker icons created by Pixel perfect - Flaticon</a
+        >
+        <p>
+          "Jump Across" icon by
+          <a href="https://game-icons.net">game-icons.net</a>, by Delapouite,
+          licensed under
+          <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>
+        </p>
+        <p>
+          "Throwing Ball" icon by
+          <a href="https://game-icons.net">game-icons.net</a>, by Delapouite,
+          licensed under
+          <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>
+        </p>
         <div class="back-row">
           <button class="wood-btn" onclick="closePanel('imprintPanel')">
             Back
@@ -172,6 +197,9 @@
       <div id="gameControls" style="display: none;">
         <button id="homeButton" class="game-icon-btn" onclick="goToMainMenu()">
           <img src="./assets/icons/home.png" alt="Home" />
+        </button>
+        <button id="muteButton" class="game-icon-btn" onclick="toggleMute()">
+          <img id="muteIcon" src="./assets/icons/sound_on.png" alt="Mute" />
         </button>
         <button
           id="fullscreenButton"
