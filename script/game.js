@@ -2,6 +2,7 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 let currentLevelCreator = null;
+let isMuted = false;
 
 function init(selectedLevel) {
   if (world) world.destroy();
@@ -157,5 +158,14 @@ function toggleFullscreen() {
     document.exitFullscreen();
   }
   canvas.focus();
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  world.soundManager.setMasterVolume(isMuted);
+  document.getElementById('muteIcon').src = isMuted
+    ? './assets/icons/sound_off.png'
+    : './assets/icons/sound_on.png';
+  canvas.focus()
 }
 

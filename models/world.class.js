@@ -50,6 +50,8 @@ class World {
       enemy.registerSounds?.(this.soundManager);
     });
     this.soundManager.register('backgroundMusic', this.backgroundMusic, VOLUMES.backgroundMusic, true);
+    this.level.bottles.forEach(b => b.registerSounds(this.soundManager));
+    this.level.coins.forEach(c => c.registerSounds(this.soundManager));
   }
 
   run() {
@@ -235,71 +237,20 @@ class World {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     if (this.gameWon) {
       getGameWonState(this.ctx, this.camera_x, this.canvas, this.winImage, this.level);
-      this.showWinButtons();
+      showWinButtons();
       return;
     }
-
     if (this.gameOver) {
       getGameOverState(this.ctx, this.camera_x, this.canvas, this.gameOverImage, this.level);
-      this.showGameOverButtons();
+      showGameOverButtons();
       return;
     }
-
-    this.drawWorld();
-    this.drawHUD();
-    this.drawForeground();
-
+    drawWorld(this);
+    drawHUD(this);
+    drawForeground(this);
     requestAnimationFrame(() => this.draw());
-  }
-
-  drawWorld() {
-    this.ctx.translate(this.camera_x, 0);
-    addObjectsToMap(this.ctx, this.level.backgroundObjects);
-    addObjectsToMap(this.ctx, this.level.bottles);
-    addObjectsToMap(this.ctx, this.level.coins);
-    addObjectsToMap(this.ctx, this.level.clouds);
-    this.ctx.translate(-this.camera_x, 0);
-  }
-
-  drawHUD() {
-    addToMap(this.ctx, this.statusBar);
-    this.ctx.drawImage(this.pepeIcon, 250, 10, 40, 40);
-    this.ctx.fillStyle = "white";
-    this.ctx.font = 'bold 20px Georgia';
-    this.ctx.fillText(`x ${this.extraLives}`, 295, 45);
-    addToMap(this.ctx, this.bottleStatusBar);
-    addToMap(this.ctx, this.coinStatusBar);
-
-    const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
-    if (endboss && endboss.hasNoticed) {
-      addToMap(this.ctx, this.bossStatusBar);
-    }
-  }
-
-  drawForeground() {
-    this.ctx.translate(this.camera_x, 0);
-    addToMap(this.ctx, this.character);
-    addObjectsToMap(this.ctx, this.throwableObjects);
-    addObjectsToMap(this.ctx, this.level.enemies);
-    drawDamageTexts(this.ctx, this.damageTexts);
-    this.ctx.translate(-this.camera_x, 0);
-  }
-
-  showGameOverButtons() {
-    document.getElementById("restartButton").style.display = "inline-block";
-    document.getElementById("mainMenuButton").style.display = "inline-block";
-    document.getElementById("nextLevelButton").style.display = "none";
-    document.getElementById("endScreenButtons").style.display = "flex";
-  }
-
-  showWinButtons() {
-    document.getElementById("restartButton").style.display = "none";
-    document.getElementById("mainMenuButton").style.display = "inline-block";
-    document.getElementById("nextLevelButton").style.display = "inline-block";
-    document.getElementById("endScreenButtons").style.display = "flex";
   }
 
   stopAllSounds() {
