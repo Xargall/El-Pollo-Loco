@@ -24,6 +24,8 @@ class World {
   lastThrowTime = null;
   intervalId1;
   intervalId2;
+  extraLives = 0;
+  pepeIcon = new Image();
 
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
@@ -33,6 +35,7 @@ class World {
     this.totalCoins = this.level.coins.length;
     this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
     this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
+    this.pepeIcon.src = 'assets/icons/extraLife.png';
     this.backgroundMusic.volume = 0.2;
     this.draw();
     this.setWorld();
@@ -168,6 +171,9 @@ class World {
         coin.pickupSound.play().catch(() => { });
         this.coinCount++;
         this.coinStatusBar.setPercentage(calculatePercentage(this.coinCount, this.totalCoins));
+        if (this.coinCount / this.totalCoins >= 0.75 && this.extraLives === 0) {
+          this.extraLives = 1;
+        }
         return false;
       }
       return true;
@@ -203,8 +209,14 @@ class World {
   checkGameOver() {
     if (this.gameOver) return;
     if (this.character.isDead() && this.character.currentImage >= this.character.IMAGES_DEAD.length) {
-      this.gameOver = true;
-      this.stopAllSounds();
+      if (this.extraLives > 0) {
+        this.extraLives--;
+        this.character.energy = 100;
+        this.statusBar.setPercentage(100);
+      } else {
+        this.gameOver = true;
+        this.stopAllSounds();
+      }
     }
   }
 
@@ -249,6 +261,10 @@ class World {
 
   drawHUD() {
     addToMap(this.ctx, this.statusBar);
+    this.ctx.drawImage(this.pepeIcon, 250, 10, 40, 40);
+    this.ctx.fillStyle = "white";
+    this.ctx.font = 'bold 20px Georgia';
+    this.ctx.fillText(`x ${this.extraLives}`, 295, 45);
     addToMap(this.ctx, this.bottleStatusBar);
     addToMap(this.ctx, this.coinStatusBar);
 

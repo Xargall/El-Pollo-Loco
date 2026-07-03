@@ -12,6 +12,7 @@ class Endboss extends MovableObject {
     offset = { top: 140, bottom: 20, left: 20, right: 0, };
     intervalId1;
     intervalId2;
+    jumpTimeoutId;
 
 
     IMAGES_ALERT = [
@@ -102,7 +103,7 @@ class Endboss extends MovableObject {
 
     scheduleNextJump() {
         let delay = 2000 + Math.random() * 3000;
-        setTimeout(() => {
+        this.jumpTimeoutId = setTimeout(() => {
             if (this.hasNoticed && !this.isDead()) {
                 this.triggerRandomJump();
             }
@@ -150,5 +151,6 @@ class Endboss extends MovableObject {
         super.destroy();
         clearInterval(this.intervalId1);
         clearInterval(this.intervalId2);
+        clearTimeout(this.jumpTimeoutId);
     }
 }
