@@ -42,4 +42,10 @@ class SoundManager {
     isPlaying(name) {
         return this.sounds[name] && !this.sounds[name].paused;
     }
+
+    setMasterVolume(muted) {
+        Object.values(this.sounds).forEach(sound => {
+            sound.muted = muted;
+        });
+    }
 }

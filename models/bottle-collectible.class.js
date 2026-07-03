@@ -7,6 +7,7 @@
 class CollectibleBottle extends Collectible {
     /** @type {Audio} Sound played when the bottle is picked up. */
     pickupSound = new Audio('assets/audio/collectibles/bottleCollectSound.wav');
+    id;
 
     /**
      * Creates a new CollectibleBottle instance at the given position.
@@ -16,6 +17,10 @@ class CollectibleBottle extends Collectible {
      */
     constructor(x, y) {
         super(x, y, 50, 60, 'assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
-        this.pickupSound.volume = 0.4;
+        this.id = Math.random().toString(36).substr(2, 9); // Generate a unique ID for the bottle
+    }
+
+    registerSounds(soundManager) {
+        soundManager.register(`bottlePickup_${this.id}`, this.pickupSound, VOLUMES.bottleCollect, false);
     }
 }
