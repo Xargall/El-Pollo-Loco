@@ -2,6 +2,7 @@ class ThrowableObject extends MovableObject {
     intervalId1;
     intervalId2;
     intervalId3;
+    id;
 
     IMAGES_THROW = [
         'assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
@@ -31,7 +32,7 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60,
             this.width = 50;
-        this.breakSound.volume = 0.4;
+        this.id = Math.random().toString(36).substr(2, 9);
         this.throw();
         this.animate();
     }
@@ -82,6 +83,10 @@ class ThrowableObject extends MovableObject {
 
     isSplashDone() {
         return this.isSplashing && this.currentImage >= this.IMAGES_SPLASH.length;
+    }
+
+    registerSounds(soundManager) {
+        soundManager.register(`bottleBreak_${this.id}`, this.breakSound, VOLUMES.bottleBreak, false);
     }
 }
 

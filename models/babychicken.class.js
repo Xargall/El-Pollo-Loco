@@ -22,6 +22,7 @@ class BabyChicken extends MovableObject {
     hasDeadSoundPlayed = false;
     intervalId1;
     intervalId2;
+    id;
 
     /** @type {string[]} Animation frames for the walking state. */
     IMAGES_WALKING = [
@@ -47,7 +48,7 @@ class BabyChicken extends MovableObject {
         this.x = 200 + Math.random() * 1800;
         this.speed = 0.3 + Math.random() * 0.4;
         this.animate();
-        this.deadSound.volume = 0.4;
+        this.id = Math.random().toString(36).substr(2, 9);
     }
 
     /**
@@ -108,7 +109,7 @@ class BabyChicken extends MovableObject {
         this.intervalId2 = setInterval(() => {
             if (this.isDead()) {
                 if (!this.hasDeadSoundPlayed) {
-                    this.deadSound.play().catch(() => { });
+                    this.world.soundManager.play(`chickenDead_${this.id}`);
                     this.hasDeadSoundPlayed = true;
                 }
                 this.playAnimation(this.IMAGES_DEAD);
@@ -129,5 +130,9 @@ class BabyChicken extends MovableObject {
      */
     hit() {
         this.energy = 0;
+    }
+
+    registerSounds(soundManager) {
+        soundManager.register(`chickenDead_${this.id}`, this.deadSound, VOLUMES.chickenDead, false);
     }
 }

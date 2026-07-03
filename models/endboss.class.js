@@ -66,16 +66,13 @@ class Endboss extends MovableObject {
         this.x = 2500;
         this.speed = 5;
         this.animate();
-        this.alertSound.volume = 1;
-
     }
 
     checkTrigger(characterX) {
         if (!this.hasNoticed && characterX > this.x - 500) {
             this.hasNoticed = true;
             this.currentImage = 0;
-            this.alertSound.play().catch((error) => { console.log('Sound-Fehler:', error); })
-
+            this.world.soundManager.play('endbossAlert');
         }
 
     }
@@ -85,9 +82,8 @@ class Endboss extends MovableObject {
         this.isJumping = true;
         this.speedY = 25;
         this.currentImage = 0;
-        this.alertSound.currentTime = 0;
-        this.alertSound.play().catch((error) => { console.log('Sound-Fehler:', error); });
-
+        this.world.soundManager.stop('endbossAlert');
+        this.world.soundManager.play('endbossAlert');
 
         let jumpInterval = setInterval(() => {
             this.y -= this.speedY;
@@ -129,7 +125,7 @@ class Endboss extends MovableObject {
         this.intervalId2 = setInterval(() => {
             if (this.isDead()) {
                 if (!this.hasDeadSoundPlayed) {
-                    this.deadSound.play().catch(() => { });
+                    this.world.soundManager.play('endbossDead');
                     this.hasDeadSoundPlayed = true;
                 }
                 if (this.currentImage < this.IMAGES_DEAD.length) {
@@ -152,5 +148,10 @@ class Endboss extends MovableObject {
         clearInterval(this.intervalId1);
         clearInterval(this.intervalId2);
         clearTimeout(this.jumpTimeoutId);
+    }
+
+    registerSounds(soundManager) {
+        soundManager.register('endbossAlert', this.alertSound, VOLUMES.endbossAlert, false);
+        soundManager.register('endbossDead', this.deadSound, VOLUMES.endbossDead, false);
     }
 }

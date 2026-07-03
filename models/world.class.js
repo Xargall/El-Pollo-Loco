@@ -26,6 +26,7 @@ class World {
   intervalId2;
   extraLives = 0;
   pepeIcon = new Image();
+  soundManager = new SoundManager();
 
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
@@ -36,7 +37,6 @@ class World {
     this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
     this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
     this.pepeIcon.src = 'assets/icons/extraLife.png';
-    this.backgroundMusic.volume = 0.2;
     this.draw();
     this.setWorld();
     this.run();
@@ -44,9 +44,12 @@ class World {
 
   setWorld() {
     this.character.world = this;
+    this.character.registerSounds(this.soundManager);
     this.level.enemies.forEach((enemy) => {
       enemy.world = this;
+      enemy.registerSounds?.(this.soundManager);
     });
+    this.soundManager.register('backgroundMusic', this.backgroundMusic, VOLUMES.backgroundMusic, true);
   }
 
   run() {
@@ -85,8 +88,8 @@ class World {
           this.character.y + this.character.offset.top,
           "-1"
         ));
-        this.character.damageSound.currentTime = 0;
-        this.character.damageSound.play().catch(() => { });
+        this.soundManager.stop('characterDamage');
+        this.soundManager.play('characterDamage');
         this.statusBar.setPercentage(this.character.energy);
       }
     });
@@ -99,7 +102,7 @@ class World {
         if (!enemy.isDead() && !enemy.isHurt() && !bottle.isSplashing && bottle.isColliding(enemy)) {
           enemy.hit();
           bottle.hit();
-          bottle.breakSound.play().catch(() => { });
+          this.soundManager.play(`bottleBreak_${bottle.id}`);
           this.damageTexts.push(new DamageText(enemy.x, enemy.y, "-1"));
           this.checkBossDefeat(enemy);
         }
@@ -148,6 +151,8 @@ class World {
 
     if (!this.lastThrowTime || now - this.lastThrowTime > 800) {
       let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+      bottle.world = this;
+      bottle.registerSounds(this.soundManager);
       this.throwableObjects.push(bottle);
       this.bottleCount--;
       this.lastThrowTime = now;
@@ -298,22 +303,7 @@ class World {
   }
 
   stopAllSounds() {
-    this.character.walkSound.pause();
-    this.character.walkSound.currentTime = 0;
-    this.character.snoringSound.pause();
-    this.character.snoringSound.currentTime = 0;
-    this.backgroundMusic.pause();
-    this.backgroundMusic.currentTime = 0;
-    this.level.enemies.forEach((enemy) => {
-      if (enemy.deadSound) {
-        enemy.deadSound.pause();
-        enemy.deadSound.currentTime = 0;
-      }
-      if (enemy.alertSound) {
-        enemy.alertSound.pause();
-        enemy.alertSound.currentTime = 0;
-      }
-    });
+    this.soundManager.stopAll();
   }
 
   destroy() {
