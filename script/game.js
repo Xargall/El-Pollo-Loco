@@ -3,6 +3,7 @@ let world;
 let keyboard = new Keyboard();
 let currentLevelCreator = null;
 let isMuted = false;
+const LEVELS = [createLevel1, createLevel2, createLevel3];
 
 function init(selectedLevel) {
   if (world) world.destroy();
@@ -50,8 +51,10 @@ function goToMainMenu() {
 }
 
 function loadNextLevel() {
+  const currentIndex = LEVELS.indexOf(currentLevelCreator);
+  const nextIndex = (currentIndex + 1) % LEVELS.length;
+  currentLevelCreator = LEVELS[nextIndex];
   document.getElementById("endScreenButtons").style.display = "none";
-  currentLevelCreator = (currentLevelCreator === createLevel1) ? createLevel2 : createLevel1;
   init(currentLevelCreator());
 }
 

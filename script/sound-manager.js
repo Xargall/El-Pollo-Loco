@@ -1,5 +1,5 @@
 const VOLUMES = {
-    backgroundMusic: 0.2,
+    backgroundMusic: 0.1,
     characterWalk: 0.3,
     characterJump: 0.3,
     characterSnoring: 0.3,
@@ -9,9 +9,9 @@ const VOLUMES = {
     endbossDead: 0.4,
     chickenDead: 0.4,
     bottleBreak: 0.4,
-    gameOver: 0.8,
-    gameWon: 0.8,
-    oneUp: 0.8,
+    gameOver: 0.5,
+    gameWon: 0.5,
+    oneUp: 0.4,
 };
 
 class SoundManager {

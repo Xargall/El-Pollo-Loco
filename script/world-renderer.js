@@ -20,6 +20,17 @@ function drawHUD(world) {
     if (endboss && endboss.hasNoticed) {
         addToMap(world.ctx, world.bossStatusBar);
     }
+    const elapsed = (new Date().getTime() - world.levelBannerStart) / 1000;
+    if (elapsed < 3) {
+        const alpha = elapsed > 2 ? 1 - (elapsed - 2) : 1;
+        world.ctx.save();
+        world.ctx.globalAlpha = alpha;
+        world.ctx.fillStyle = 'black';
+        world.ctx.font = 'bold 48px zabars';
+        world.ctx.textAlign = 'center';
+        world.ctx.fillText(`Level ${world.levelNumber}`, 360, 180);
+        world.ctx.restore();
+    }
 }
 
 function drawForeground(world) {

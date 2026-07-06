@@ -30,9 +30,10 @@ class World {
   gameOverSound = new Audio('assets/audio/sound/ui/game-over.mp3');
   gameWonSound = new Audio('assets/audio/sound/ui/game-won.mp3');
   oneUpSound = new Audio('assets/audio/sound/ui/1-up.mp3');
+  levelBannerStart = new Date().getTime();
 
   constructor(canvas, keyboard, level) {
-    console.log('World created, gameWon:', this.gameWon);
+    this.levelNumber = LEVELS.indexOf(currentLevelCreator) + 1;
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
