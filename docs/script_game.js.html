@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: script/game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: script/game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @type {HTMLCanvasElement} The game canvas element. */
+let canvas;
+/** @type {World} The current World instance. */
+let world;
+/** @type {Keyboard} The global keyboard input state. */
+let keyboard = new Keyboard();
+/** @type {Function|null} The level creator function for the currently active level. */
+let currentLevelCreator = null;
+/** @type {boolean} Whether the game audio is currently muted. */
+let isMuted = false;
+/** @type {Function[]} Ordered list of all level creator functions. */
+const LEVELS = [createLevel1, createLevel2, createLevel3];
+/** @type {Audio} Background music played on the main menu. */
+const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.wav');
+menuMusic.loop = true;
+menuMusic.volume = 0.05;
+
+// Menu music starts on first user interaction to comply with browser autoplay policy.
+document.addEventListener('click', () => {
+  menuMusic.play().catch(() => { });
+}, { once: true });
+
+/**
+ * Initializes and starts the game with the given level.
+ * Destroys any existing World instance before creating a new one.
+ *
+ * @param {Level} selectedLevel - The level instance to load.
+ */
+function init(selectedLevel) {
+  if (world) world.destroy();
+  document.getElementById("startScreen").style.display = "none";
+  canvas = document.getElementById("canvas");
+  canvas.style.display = "block";
+  showGameControls();
+  world = new World(canvas, keyboard, selectedLevel);
+  world.backgroundMusic.play().catch(() => { });
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
+}
+
+/**
+ * Closes all panels, sets the current level creator, and starts the game.
+ *
+ * @param {Function} levelCreator - The level creator function to use.
+ */
+function startGame(levelCreator) {
+  closeAllPanels();
+  currentLevelCreator = levelCreator;
+  init(levelCreator());
+}
+
+/**
+ * Hides the start screen and opens the given panel.
+ *
+ * @param {string} panelId - The ID of the panel element to show.
+ */
+function openPanel(panelId) {
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById(panelId).style.display = "flex";
+}
+
+/**
+ * Closes the given panel and returns to the start screen.
+ *
+ * @param {string} panelId - The ID of the panel element to hide.
+ */
+function closePanel(panelId) {
+  document.getElementById(panelId).style.display = "none";
+  document.getElementById("startScreen").style.display = "flex";
+}
+
+/** Hides all overlay panels. */
+function closeAllPanels() {
+  document.getElementById("levelSelectPanel").style.display = "none";
+  document.getElementById("controlsPanel").style.display = "none";
+  document.getElementById("imprintPanel").style.display = "none";
+}
+
+/** Restarts the current level from the beginning. */
+function restartGame() {
+  document.getElementById("endScreenButtons").style.display = "none";
+  init(currentLevelCreator());
+}
+
+/** Destroys the current World, stops the game, and returns to the main menu. */
+function goToMainMenu() {
+  if (world) world.destroy();
+  hideGameControls();
+  document.getElementById("endScreenButtons").style.display = "none";
+  canvas.style.display = "none";
+  document.getElementById("startScreen").style.display = "block";
+  menuMusic.play().catch(() => { });
+}
+
+/**
+ * Advances to the next level in the LEVELS array.
+ * Wraps back to the first level after the last one.
+ */
+function loadNextLevel() {
+  const currentIndex = LEVELS.indexOf(currentLevelCreator);
+  const nextIndex = (currentIndex + 1) % LEVELS.length;
+  currentLevelCreator = LEVELS[nextIndex];
+  document.getElementById("endScreenButtons").style.display = "none";
+  init(currentLevelCreator());
+}
+
+window.addEventListener('keydown', (event) => {
+  if (event.keyCode == 68) keyboard.D = true;
+  if (event.keyCode == 39) keyboard.RIGHT = true;
+  if (event.keyCode == 37) keyboard.LEFT = true;
+  if (event.keyCode == 38) keyboard.UP = true;
+  if (event.keyCode == 40) keyboard.DOWN = true;
+  if (event.keyCode == 32) keyboard.SPACE = true;
+});
+
+window.addEventListener('keyup', (event) => {
+  if (event.keyCode == 68) keyboard.D = false;
+  if (event.keyCode == 39) keyboard.RIGHT = false;
+  if (event.keyCode == 37) keyboard.LEFT = false;
+  if (event.keyCode == 38) keyboard.UP = false;
+  if (event.keyCode == 40) keyboard.DOWN = false;
+  if (event.keyCode == 32) keyboard.SPACE = false;
+});
+
+/** Shows the in-game control buttons and touch controls. */
+function showGameControls() {
+  document.getElementById("gameControls").style.display = "flex";
+  showTouchControls();
+}
+
+/** Hides the in-game control buttons and touch controls. */
+function hideGameControls() {
+  document.getElementById("gameControls").style.display = "none";
+  hideTouchControls();
+}
+
+/**
+ * Binds touchstart and touchend events to all touch control buttons,
+ * mapping each to the corresponding keyboard key.
+ */
+function initTouchControls() {
+  const buttons = [
+    { id: 'btn-left', key: 'LEFT' },
+    { id: 'btn-right', key: 'RIGHT' },
+    { id: 'btn-jump', key: 'SPACE' },
+    { id: 'btn-throw', key: 'D' },
+  ];
+
+  buttons.forEach(({ id, key }) => {
+    const btn = document.getElementById(id);
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      keyboard[key] = true;
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      keyboard[key] = false;
+    });
+  });
+}
+
+/** Shows touch controls if the device supports touch input. */
+function showTouchControls() {
+  if (navigator.maxTouchPoints > 0) {
+    document.getElementById('touchControls').classList.add('visible');
+    initTouchControls();
+  }
+}
+
+/** Hides the touch control overlay. */
+function hideTouchControls() {
+  document.getElementById('touchControls').classList.remove('visible');
+}
+
+/** Toggles the visibility of the touch control overlay. */
+function toggleTouchControls() {
+  const tc = document.getElementById('touchControls');
+  tc.classList.toggle('visible');
+}
+
+/** Toggles fullscreen mode for the game container. */
+function toggleFullscreen() {
+  const container = document.querySelector('.game-container');
+  if (!document.fullscreenElement) {
+    if (container.requestFullscreen) {
+      container.requestFullscreen();
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    }
+  } else {
+    document.exitFullscreen();
+  }
+  canvas.focus();
+}
+
+/** Toggles mute state for all in-game sounds and updates the mute button icon. */
+function toggleMute() {
+  isMuted = !isMuted;
+  world.soundManager.setMasterVolume(isMuted);
+  document.getElementById('muteIcon').src = isMuted
+    ? './assets/icons/sound_off.png'
+    : './assets/icons/sound_on.png';
+  canvas.focus();
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#toggleTouchControls">toggleTouchControls</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#world">world</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Jul 06 2026 13:38:36 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

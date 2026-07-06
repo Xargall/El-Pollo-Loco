@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/world.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/world.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Central game controller. Creates and manages all game objects,
+ * runs the game loop, handles collisions, collectibles, sound, and game state.
+ */
+class World {
+  /** @type {Character} The player character instance. */
+  character = new Character();
+  /** @type {Level} The currently active level. */
+  level;
+  /** @type {HTMLCanvasElement} The game canvas element. */
+  canvas;
+  /** @type {CanvasRenderingContext2D} The canvas 2D rendering context. */
+  ctx;
+  /** @type {Keyboard} The current keyboard input state. */
+  keyboard;
+  /** @type {number} Horizontal camera offset for scrolling. */
+  camera_x = 0;
+  /** @type {Statusbar} The player health bar. */
+  statusBar = new Statusbar();
+  /** @type {ThrowableObject[]} All currently active thrown bottles. */
+  throwableObjects = [];
+  /** @type {number} Number of bottles the player currently holds. */
+  bottleCount = 0;
+  /** @type {number} Number of coins collected so far. */
+  coinCount = 0;
+  /** @type {number} Total number of coins in the level. */
+  totalCoins = 0;
+  /** @type {BottleStatusbar} The bottle count status bar. */
+  bottleStatusBar = new BottleStatusbar();
+  /** @type {CoinStatusbar} The coin collection status bar. */
+  coinStatusBar = new CoinStatusbar();
+  /** @type {EndbossStatusbar} The endboss health bar. */
+  bossStatusBar = new EndbossStatusbar();
+  /** @type {boolean} Whether the player has won the level. */
+  gameWon = false;
+  /** @type {HTMLImageElement} The win screen image. */
+  winImage = new Image();
+  /** @type {boolean} Whether the game is over. */
+  gameOver = false;
+  /** @type {HTMLImageElement} The game over screen image. */
+  gameOverImage = new Image();
+  /** @type {Audio} Background music for the level. */
+  backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.wav');
+  /** @type {DamageText[]} All currently active floating damage texts. */
+  damageTexts = [];
+  /** @type {number|null} Timestamp of the last "no bottles" warning. */
+  lastNoBottleWarning = null;
+  /** @type {number|null} Timestamp of the last bottle warning shown. */
+  lastBottleWarning = null;
+  /** @type {number|null} Timestamp of the last throw, used to enforce throw cooldown. */
+  lastThrowTime = null;
+  /** @type {number} Interval ID for the main game loop. */
+  intervalId1;
+  /** @type {number} Interval ID for the collectible and throw check loop. */
+  intervalId2;
+  /** @type {number} Number of extra lives remaining. */
+  extraLives = 0;
+  /** @type {HTMLImageElement} Icon displayed next to the extra life counter in the HUD. */
+  pepeIcon = new Image();
+  /** @type {SoundManager} The central sound manager instance. */
+  soundManager = new SoundManager();
+  /** @type {Audio} Sound played on game over. */
+  gameOverSound = new Audio('assets/audio/sound/ui/game-over.mp3');
+  /** @type {Audio} Sound played on winning. */
+  gameWonSound = new Audio('assets/audio/sound/ui/game-won.mp3');
+  /** @type {Audio} Sound played when an extra life is awarded. */
+  oneUpSound = new Audio('assets/audio/sound/ui/1-up.mp3');
+  /** @type {number} Timestamp of level start, used for the level banner fade-out. */
+  levelBannerStart = new Date().getTime();
+
+  /**
+   * Creates a new World instance and initializes all game systems.
+   *
+   * @param {HTMLCanvasElement} canvas - The game canvas element.
+   * @param {Keyboard} keyboard - The keyboard input state object.
+   * @param {Level} level - The level instance to play.
+   */
+  constructor(canvas, keyboard, level) {
+    this.levelNumber = LEVELS.indexOf(currentLevelCreator) + 1;
+    this.ctx = canvas.getContext("2d");
+    this.canvas = canvas;
+    this.keyboard = keyboard;
+    this.level = level;
+    this.totalCoins = this.level.coins.length;
+    this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
+    this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
+    this.pepeIcon.src = 'assets/icons/extraLife.png';
+    this.draw();
+    this.setWorld();
+    this.run();
+  }
+
+  /**
+   * Links all game objects to the world and registers their sounds
+   * with the SoundManager.
+   */
+  setWorld() {
+    this.character.world = this;
+    this.character.registerSounds(this.soundManager);
+    this.level.enemies.forEach((enemy) => {
+      enemy.world = this;
+      enemy.registerSounds?.(this.soundManager);
+    });
+    this.soundManager.register('backgroundMusic', this.backgroundMusic, VOLUMES.backgroundMusic, true);
+    this.level.bottles.forEach(b => b.registerSounds(this.soundManager));
+    this.level.coins.forEach(c => c.registerSounds(this.soundManager));
+    this.soundManager.register('gameOver', this.gameOverSound, VOLUMES.gameOver);
+    this.soundManager.register('gameWon', this.gameWonSound, VOLUMES.gameWon);
+    this.soundManager.register('oneUp', this.oneUpSound, VOLUMES.oneUp);
+  }
+
+  /**
+   * Starts the main game loops.
+   * The fast loop (60fps) handles collisions and game state checks.
+   * The slow loop (200ms) handles throwing and collectible pickups.
+   */
+  run() {
+    this.intervalId1 = setInterval(() => {
+      this.checkCollisions();
+      this.checkBottleCollisions();
+      this.removeSplashedBottles();
+      this.removeExpiredDamageTexts();
+      this.checkEndbossTrigger();
+      this.checkChickenWakeup();
+      this.checkGameOver();
+      this.checkEndbossDefeatStatus();
+      this.checkAllEnemiesDefeated();
+    }, 1000 / 60);
+    this.intervalId2 = setInterval(() => {
+      this.checkThrowObjects();
+      this.checkCollectibleCollisions();
+    }, 200);
+  }
+
+  /**
+   * Checks collisions between the character and all active enemies.
+   * Handles both stomp-from-above and side collisions.
+   */
+  checkCollisions() {
+    if (this.character.isDead()) return;
+    this.level.enemies.forEach((enemy) => {
+      if (enemy.isDead()) return;
+      if (enemy.isAwake === false) return;
+
+      if (this.character.isCollidingFromAbove(enemy)) {
+        this.character.bounce();
+        enemy.hit();
+        this.damageTexts.push(new DamageText(enemy.x, enemy.y, "-1"));
+        this.checkBossDefeat(enemy);
+      } else if (this.character.isColliding(enemy) &amp;&amp; !this.character.isHurt() &amp;&amp; this.character.speedY &lt;= 0) {
+        this.character.hit();
+        this.damageTexts.push(new DamageText(
+          this.character.x + this.character.offset.left,
+          this.character.y + this.character.offset.top,
+          "-1"
+        ));
+        this.soundManager.stop('characterDamage');
+        this.soundManager.play('characterDamage');
+        this.statusBar.setPercentage(this.character.energy);
+      }
+    });
+    this.character.lastY = this.character.y;
+  }
+
+  /**
+   * Checks collisions between thrown bottles and all active enemies.
+   * Triggers the bottle splash and enemy hit on contact.
+   */
+  checkBottleCollisions() {
+    this.throwableObjects.forEach((bottle) => {
+      this.level.enemies.forEach((enemy) => {
+        if (!enemy.isDead() &amp;&amp; !enemy.isHurt() &amp;&amp; !bottle.isSplashing &amp;&amp; bottle.isColliding(enemy)) {
+          enemy.hit();
+          bottle.hit();
+          this.soundManager.play(`bottleBreak_${bottle.id}`);
+          this.damageTexts.push(new DamageText(enemy.x, enemy.y, "-1"));
+          this.checkBossDefeat(enemy);
+        }
+      });
+    });
+  }
+
+  /**
+   * Updates the boss health bar and checks if the endboss death animation is complete.
+   * Acts as a fallback win trigger in case checkEndbossDefeatStatus fires late.
+   *
+   * @param {MovableObject} enemy - The enemy that was just hit.
+   */
+  checkBossDefeat(enemy) {
+    if (enemy instanceof Endboss) {
+      this.bossStatusBar.setPercentage(enemy.energy, enemy.maxEnergy);
+      if (enemy.isDead() &amp;&amp; enemy.currentImage >= enemy.IMAGES_DEAD.length) {
+        this.gameWon = true;
+        this.stopAllSounds();
+      }
+    }
+  }
+
+  /**
+   * Checks if all enemies are defeated in levels without an endboss.
+   * Triggers the win state if all enemies are dead.
+   */
+  checkAllEnemiesDefeated() {
+    if (this.gameWon) return;
+    const hasEndboss = this.level.enemies.some(e => e instanceof Endboss);
+    if (hasEndboss) return;
+    const allDead = this.level.enemies.length > 0 &amp;&amp; this.level.enemies.every(e => e.isDead());
+    if (allDead) {
+      this.gameWon = true;
+      this.stopAllSounds();
+      this.soundManager.play('gameWon');
+    }
+  }
+
+  /**
+   * Handles the D-key throw input.
+   * Enforces a cooldown between throws and shows a warning if no bottles are held.
+   */
+  checkThrowObjects() {
+    if (this.character.isDead()) return;
+    if (!this.keyboard.D) return;
+
+    const now = Date.now();
+
+    if (this.bottleCount === 0) {
+      if (!this.lastBottleWarning || now - this.lastBottleWarning > 1500) {
+        this.damageTexts.push(new DamageText(
+          this.character.x + this.character.offset.left,
+          this.character.y + this.character.offset.top,
+          "No Bottles to throw!"
+        ));
+        this.lastBottleWarning = now;
+      }
+      return;
+    }
+
+    if (!this.lastThrowTime || now - this.lastThrowTime > 800) {
+      let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+      bottle.world = this;
+      bottle.registerSounds(this.soundManager);
+      this.throwableObjects.push(bottle);
+      this.bottleCount--;
+      this.lastThrowTime = now;
+      this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
+    }
+  }
+
+  /**
+   * Checks for character collisions with collectible bottles and coins.
+   * Collecting 75% of all coins awards one extra life.
+   */
+  checkCollectibleCollisions() {
+    this.level.bottles = this.level.bottles.filter((bottle) => {
+      if (this.character.isColliding(bottle)) {
+        bottle.pickupSound.play().catch(() => { });
+        this.bottleCount++;
+        this.bottleStatusBar.setPercentage(Math.min(this.bottleCount * 20, 100));
+        return false;
+      }
+      return true;
+    });
+
+    this.level.coins = this.level.coins.filter((coin) => {
+      if (this.character.isColliding(coin)) {
+        coin.pickupSound.play().catch(() => { });
+        this.coinCount++;
+        this.coinStatusBar.setPercentage(calculatePercentage(this.coinCount, this.totalCoins));
+        if (this.coinCount / this.totalCoins >= 0.75 &amp;&amp; this.extraLives === 0) {
+          this.extraLives = 1;
+          this.soundManager.play('oneUp');
+        }
+        return false;
+      }
+      return true;
+    });
+  }
+
+  /**
+   * Forwards the character's current position to the endboss trigger check.
+   */
+  checkEndbossTrigger() {
+    const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (endboss) {
+      endboss.checkTrigger(this.character.x);
+    }
+  }
+
+  /**
+   * Polls the endboss death animation state and triggers the win condition
+   * once the animation has fully completed.
+   */
+  checkEndbossDefeatStatus() {
+    if (this.gameWon) return;
+    const boss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (boss &amp;&amp; boss.isDead() &amp;&amp; boss.currentImage >= boss.IMAGES_DEAD.length) {
+      this.gameWon = true;
+      this.stopAllSounds();
+      this.soundManager.play('gameWon');
+    }
+  }
+
+  /**
+   * Wakes up all chickens and baby chickens once the character
+   * has moved past x position 400.
+   */
+  checkChickenWakeup() {
+    if (this.character.x > 400) {
+      this.level.enemies.forEach((enemy) => {
+        if (enemy instanceof Chicken || enemy instanceof BabyChicken) {
+          enemy.wakeUp();
+        }
+      });
+    }
+  }
+
+  /**
+   * Checks whether the character's death animation has finished.
+   * Consumes an extra life if available, otherwise triggers game over.
+   */
+  checkGameOver() {
+    if (this.gameOver) return;
+    if (this.character.isDead() &amp;&amp; this.character.currentImage >= this.character.IMAGES_DEAD.length) {
+      if (this.extraLives > 0) {
+        this.extraLives--;
+        this.character.energy = 100;
+        this.statusBar.setPercentage(100);
+      } else {
+        this.gameOver = true;
+        this.stopAllSounds();
+        this.soundManager.play('gameOver');
+      }
+    }
+  }
+
+  /** Removes all bottles whose splash animation has finished. */
+  removeSplashedBottles() {
+    this.throwableObjects = this.throwableObjects.filter((bottle) => !bottle.isSplashDone());
+  }
+
+  /** Removes all damage texts that have been visible for more than 1 second. */
+  removeExpiredDamageTexts() {
+    this.damageTexts = this.damageTexts.filter((dt) => !dt.isExpired());
+  }
+
+  /**
+   * Main draw loop. Renders the win or game over screen if the game has ended,
+   * otherwise renders the world, HUD, and foreground each frame.
+   */
+  draw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (this.gameWon) {
+      getGameWonState(this.ctx, this.camera_x, this.canvas, this.winImage, this.level);
+      showWinButtons();
+      return;
+    }
+    if (this.gameOver) {
+      getGameOverState(this.ctx, this.camera_x, this.canvas, this.gameOverImage, this.level);
+      showGameOverButtons();
+      return;
+    }
+    drawWorld(this);
+    drawHUD(this);
+    drawForeground(this);
+    requestAnimationFrame(() => this.draw());
+  }
+
+  /** Stops all registered sounds via the SoundManager. */
+  stopAllSounds() {
+    this.soundManager.stopAll();
+  }
+
+  /**
+   * Cleans up all intervals, destroys all game objects, and stops all sounds.
+   * Should be called before creating a new World instance.
+   */
+  destroy() {
+    clearInterval(this.intervalId1);
+    clearInterval(this.intervalId2);
+    this.character.destroy();
+    this.level.enemies.forEach(e => e.destroy());
+    this.level.clouds.forEach(c => c.destroy());
+    this.throwableObjects.forEach(b => b.destroy());
+    this.stopAllSounds();
+  }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#toggleTouchControls">toggleTouchControls</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#world">world</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Jul 06 2026 13:38:36 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

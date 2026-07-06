@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: script/level-builder.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: script/level-builder.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @type {number} Width of one complete background segment in pixels. */
+const SEGMENT_WIDTH = 719;
+
+/**
+ * Predefined coin placement patterns.
+ * Each pattern is a function that takes a base X position and returns
+ * an array of {x, y} coordinates for individual coins.
+ *
+ * @type {Object.&lt;string, function(number): Array&lt;{x: number, y: number}>}
+ */
+const COIN_PATTERNS = {
+    arc: (baseX) => [
+        { x: baseX, y: 280 },
+        { x: baseX + 60, y: 180 },
+        { x: baseX + 120, y: 100 },
+        { x: baseX + 180, y: 180 },
+        { x: baseX + 240, y: 280 },
+    ],
+    vertical: (baseX) => [
+        { x: baseX, y: 280 },
+        { x: baseX, y: 180 },
+        { x: baseX, y: 80 },
+    ],
+    line: (baseX) => [
+        { x: baseX, y: 200 },
+        { x: baseX + 60, y: 200 },
+        { x: baseX + 120, y: 200 },
+    ],
+};
+
+/**
+ * Generates a complete Level instance from the given options.
+ *
+ * @param {Object} [options={}] - Level generation parameters.
+ * @param {number} [options.segments=4] - Number of background segments.
+ * @param {number} [options.chickenCount=6] - Number of regular chickens.
+ * @param {number} [options.babyChickenCount=4] - Number of baby chickens.
+ * @param {boolean} [options.hasEndboss=true] - Whether to include an endboss.
+ * @param {number} [options.bottleCount=5] - Number of collectible bottles.
+ * @param {number} [options.coinPatternCount=3] - Number of coin patterns to place.
+ * @returns {Level} A fully populated Level instance.
+ */
+function generateLevel(options = {}) {
+    const {
+        segments = 4,
+        chickenCount = 6,
+        babyChickenCount = 4,
+        hasEndboss = true,
+        bottleCount = 5,
+        coinPatternCount = 3,
+    } = options;
+
+    const levelWidth = segments * SEGMENT_WIDTH;
+
+    const enemies = generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss, bottleCount);
+    const clouds = generateClouds(segments, levelWidth);
+    const backgroundObjects = generateBackgroundObjects(segments);
+    const bottles = generateCollectibles(CollectibleBottle, bottleCount, levelWidth);
+    const coins = generateCoinPatterns(coinPatternCount, levelWidth);
+
+    const level = new Level(enemies, clouds, backgroundObjects, bottles, coins);
+    level.level_end_x = levelWidth - 200;
+    return level;
+}
+
+/**
+ * Generates the parallax background layers for all segments.
+ * Alternates between two visual variants per segment.
+ *
+ * @param {number} segments - Number of background segments.
+ * @returns {BackgroundObject[]} Array of background layer objects.
+ */
+function generateBackgroundObjects(segments) {
+    const objects = [];
+    for (let segNum = -1; segNum &lt; segments + 1; segNum++) {
+        const x = segNum * SEGMENT_WIDTH;
+        const variant = (segNum % 2 === 0) ? '1' : '2';
+        objects.push(new BackgroundObject('assets/img/5_background/layers/air.png', x));
+        objects.push(new BackgroundObject(`assets/img/5_background/layers/3_third_layer/${variant}.png`, x));
+        objects.push(new BackgroundObject(`assets/img/5_background/layers/2_second_layer/${variant}.png`, x));
+        objects.push(new BackgroundObject(`assets/img/5_background/layers/1_first_layer/${variant}.png`, x));
+    }
+    return objects;
+}
+
+/**
+ * Generates all enemies for the level with spaced random positions.
+ * Endboss energy scales with the number of bottles in the level.
+ *
+ * @param {number} chickenCount - Number of regular chickens to spawn.
+ * @param {number} babyChickenCount - Number of baby chickens to spawn.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @param {boolean} hasEndboss - Whether to add an endboss at the end.
+ * @param {number} bottleCount - Used to scale endboss energy.
+ * @returns {MovableObject[]} Array of enemy instances.
+ */
+function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss, bottleCount) {
+    const enemies = [];
+    const totalCount = chickenCount + babyChickenCount;
+    const positions = generateSpacedPositions(totalCount, 450, levelWidth - 400, 80);
+
+    for (let i = 0; i &lt; chickenCount &amp;&amp; i &lt; positions.length; i++) {
+        const chicken = new Chicken();
+        chicken.x = positions[i];
+        enemies.push(chicken);
+    }
+
+    for (let i = chickenCount; i &lt; totalCount &amp;&amp; i &lt; positions.length; i++) {
+        const babyChicken = new BabyChicken();
+        babyChicken.x = positions[i];
+        enemies.push(babyChicken);
+    }
+
+    if (hasEndboss) {
+        const endboss = new Endboss();
+        endboss.x = levelWidth - 100;
+        endboss.energy = bottleCount * 7.5;
+        endboss.maxEnergy = bottleCount * 7.5;
+        enemies.push(endboss);
+    }
+
+    return enemies;
+}
+
+/**
+ * Generates clouds with evenly spaced random positions across the level.
+ *
+ * @param {number} segments - Number of level segments, used to scale cloud count.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @returns {Cloud[]} Array of Cloud instances.
+ */
+function generateClouds(segments, levelWidth) {
+    const cloudCount = Math.max(3, Math.round(segments * 1.5));
+    const positions = generateSpacedPositions(cloudCount, 0, levelWidth, 200);
+
+    return positions.map((x) => {
+        const cloud = new Cloud();
+        cloud.x = x;
+        return cloud;
+    });
+}
+
+/**
+ * Generates a set of collectible instances at spaced random positions.
+ *
+ * @param {Function} ClassRef - The collectible class to instantiate (e.g. CollectibleBottle).
+ * @param {number} count - Number of collectibles to generate.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @returns {Collectible[]} Array of collectible instances.
+ */
+function generateCollectibles(ClassRef, count, levelWidth) {
+    const positions = generateSpacedPositions(count, 200, levelWidth - 200, 150);
+    return positions.map((x) => new ClassRef(x, 380));
+}
+
+/**
+ * Generates a set of random X positions with a minimum spacing between each.
+ * Falls back gracefully if not enough positions can be placed within the attempt limit.
+ *
+ * @param {number} count - Number of positions to generate.
+ * @param {number} minX - Minimum X boundary.
+ * @param {number} maxX - Maximum X boundary.
+ * @param {number} minSpacing - Minimum distance between any two positions.
+ * @returns {number[]} Sorted array of X positions.
+ */
+function generateSpacedPositions(count, minX, maxX, minSpacing) {
+    const positions = [];
+    let attempts = 0;
+    while (positions.length &lt; count &amp;&amp; attempts &lt; count * 50) {
+        const candidate = minX + Math.random() * (maxX - minX);
+        const tooClose = positions.some((p) => Math.abs(p - candidate) &lt; minSpacing);
+        if (!tooClose) {
+            positions.push(candidate);
+        }
+        attempts++;
+    }
+    return positions.sort((a, b) => a - b);
+}
+
+/**
+ * Generates coins arranged in random patterns across the level.
+ * Randomly selects from the available COIN_PATTERNS for each placement.
+ *
+ * @param {number} patternCount - Number of coin patterns to place.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @returns {CollectibleCoin[]} Array of CollectibleCoin instances.
+ */
+function generateCoinPatterns(patternCount, levelWidth) {
+    const patternTypes = Object.keys(COIN_PATTERNS);
+    const baseXPositions = generateSpacedPositions(patternCount, 250, levelWidth - 400, 300);
+
+    const coins = [];
+    baseXPositions.forEach((baseX) => {
+        const type = patternTypes[Math.floor(Math.random() * patternTypes.length)];
+        const points = COIN_PATTERNS[type](baseX);
+        points.forEach((p) => coins.push(new CollectibleCoin(p.x, p.y)));
+    });
+
+    return coins;
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#toggleTouchControls">toggleTouchControls</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#world">world</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Jul 06 2026 13:38:36 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
