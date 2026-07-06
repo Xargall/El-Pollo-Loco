@@ -27,8 +27,12 @@ class World {
   extraLives = 0;
   pepeIcon = new Image();
   soundManager = new SoundManager();
+  gameOverSound = new Audio('assets/audio/sound/ui/game-over.mp3');
+  gameWonSound = new Audio('assets/audio/sound/ui/game-won.mp3');
+  oneUpSound = new Audio('assets/audio/sound/ui/1-up.mp3');
 
   constructor(canvas, keyboard, level) {
+    console.log('World created, gameWon:', this.gameWon);
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
@@ -52,6 +56,9 @@ class World {
     this.soundManager.register('backgroundMusic', this.backgroundMusic, VOLUMES.backgroundMusic, true);
     this.level.bottles.forEach(b => b.registerSounds(this.soundManager));
     this.level.coins.forEach(c => c.registerSounds(this.soundManager));
+    this.soundManager.register('gameOver', this.gameOverSound, VOLUMES.gameOver);
+    this.soundManager.register('gameWon', this.gameWonSound, VOLUMES.gameWon);
+    this.soundManager.register('oneUp', this.oneUpSound, VOLUMES.oneUp);
   }
 
   run() {
@@ -125,11 +132,13 @@ class World {
   checkAllEnemiesDefeated() {
     if (this.gameWon) return;
     const hasEndboss = this.level.enemies.some(e => e instanceof Endboss);
+
     if (hasEndboss) return;
-    const allDead = this.level.enemies.every(e => e.isDead());
+    const allDead = this.level.enemies.length > 0 && this.level.enemies.every(e => e.isDead());
     if (allDead) {
       this.gameWon = true;
       this.stopAllSounds();
+      this.soundManager.play('gameWon');
     }
   }
 
@@ -180,6 +189,7 @@ class World {
         this.coinStatusBar.setPercentage(calculatePercentage(this.coinCount, this.totalCoins));
         if (this.coinCount / this.totalCoins >= 0.75 && this.extraLives === 0) {
           this.extraLives = 1;
+          this.soundManager.play('oneUp');
         }
         return false;
       }
@@ -200,6 +210,7 @@ class World {
     if (boss && boss.isDead() && boss.currentImage >= boss.IMAGES_DEAD.length) {
       this.gameWon = true;
       this.stopAllSounds();
+      this.soundManager.play('gameWon');
     }
   }
 
@@ -223,6 +234,7 @@ class World {
       } else {
         this.gameOver = true;
         this.stopAllSounds();
+        this.soundManager.play('gameOver');
       }
     }
   }

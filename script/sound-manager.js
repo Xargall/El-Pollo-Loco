@@ -9,6 +9,9 @@ const VOLUMES = {
     endbossDead: 0.4,
     chickenDead: 0.4,
     bottleBreak: 0.4,
+    gameOver: 0.8,
+    gameWon: 0.8,
+    oneUp: 0.8,
 };
 
 class SoundManager {
