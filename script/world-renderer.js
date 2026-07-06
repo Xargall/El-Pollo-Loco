@@ -1,3 +1,9 @@
+/**
+ * Renders the scrolling world layer: background, collectibles, and clouds.
+ * Applies and removes the camera offset around all draw calls.
+ *
+ * @param {World} world - The current World instance.
+ */
 function drawWorld(world) {
     world.ctx.translate(world.camera_x, 0);
     addObjectsToMap(world.ctx, world.level.backgroundObjects);
@@ -7,6 +13,13 @@ function drawWorld(world) {
     world.ctx.translate(-world.camera_x, 0);
 }
 
+/**
+ * Renders the HUD: health bar, bottle bar, coin bar, extra life counter,
+ * endboss health bar (when active), and the level banner on level start.
+ * All HUD elements are drawn in screen space, without camera offset.
+ *
+ * @param {World} world - The current World instance.
+ */
 function drawHUD(world) {
     addToMap(world.ctx, world.statusBar);
     world.ctx.drawImage(world.pepeIcon, 250, 10, 40, 40);
@@ -20,6 +33,7 @@ function drawHUD(world) {
     if (endboss && endboss.hasNoticed) {
         addToMap(world.ctx, world.bossStatusBar);
     }
+
     const elapsed = (new Date().getTime() - world.levelBannerStart) / 1000;
     if (elapsed < 3) {
         const alpha = elapsed > 2 ? 1 - (elapsed - 2) : 1;
@@ -33,6 +47,12 @@ function drawHUD(world) {
     }
 }
 
+/**
+ * Renders the foreground layer: character, thrown bottles, enemies, and damage texts.
+ * Applies and removes the camera offset around all draw calls.
+ *
+ * @param {World} world - The current World instance.
+ */
 function drawForeground(world) {
     world.ctx.translate(world.camera_x, 0);
     addToMap(world.ctx, world.character);

@@ -7,6 +7,8 @@
 class CollectibleBottle extends Collectible {
     /** @type {Audio} Sound played when the bottle is picked up. */
     pickupSound = new Audio('assets/audio/collectibles/bottleCollectSound.wav');
+    /** @type {string} Unique instance ID for sound registration. */
+
     id;
 
     /**
@@ -20,6 +22,12 @@ class CollectibleBottle extends Collectible {
         this.id = Math.random().toString(36).substr(2, 9); // Generate a unique ID for the bottle
     }
 
+    /**
+    * Registers the bottle's pickup sound with the given SoundManager.
+    * Uses the instance ID to avoid name collisions between multiple instances.
+    *
+    * @param {SoundManager} soundManager - The game's central sound manager.
+    */
     registerSounds(soundManager) {
         soundManager.register(`bottlePickup_${this.id}`, this.pickupSound, VOLUMES.bottleCollect, false);
     }

@@ -1,5 +1,13 @@
-const SEGMENT_WIDTH = 719; // Width for a one complete background segment
+/** @type {number} Width of one complete background segment in pixels. */
+const SEGMENT_WIDTH = 719;
 
+/**
+ * Predefined coin placement patterns.
+ * Each pattern is a function that takes a base X position and returns
+ * an array of {x, y} coordinates for individual coins.
+ *
+ * @type {Object.<string, function(number): Array<{x: number, y: number}>}
+ */
 const COIN_PATTERNS = {
     arc: (baseX) => [
         { x: baseX, y: 280 },
@@ -20,6 +28,18 @@ const COIN_PATTERNS = {
     ],
 };
 
+/**
+ * Generates a complete Level instance from the given options.
+ *
+ * @param {Object} [options={}] - Level generation parameters.
+ * @param {number} [options.segments=4] - Number of background segments.
+ * @param {number} [options.chickenCount=6] - Number of regular chickens.
+ * @param {number} [options.babyChickenCount=4] - Number of baby chickens.
+ * @param {boolean} [options.hasEndboss=true] - Whether to include an endboss.
+ * @param {number} [options.bottleCount=5] - Number of collectible bottles.
+ * @param {number} [options.coinPatternCount=3] - Number of coin patterns to place.
+ * @returns {Level} A fully populated Level instance.
+ */
 function generateLevel(options = {}) {
     const {
         segments = 4,
@@ -43,6 +63,13 @@ function generateLevel(options = {}) {
     return level;
 }
 
+/**
+ * Generates the parallax background layers for all segments.
+ * Alternates between two visual variants per segment.
+ *
+ * @param {number} segments - Number of background segments.
+ * @returns {BackgroundObject[]} Array of background layer objects.
+ */
 function generateBackgroundObjects(segments) {
     const objects = [];
     for (let segNum = -1; segNum < segments + 1; segNum++) {
@@ -56,6 +83,17 @@ function generateBackgroundObjects(segments) {
     return objects;
 }
 
+/**
+ * Generates all enemies for the level with spaced random positions.
+ * Endboss energy scales with the number of bottles in the level.
+ *
+ * @param {number} chickenCount - Number of regular chickens to spawn.
+ * @param {number} babyChickenCount - Number of baby chickens to spawn.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @param {boolean} hasEndboss - Whether to add an endboss at the end.
+ * @param {number} bottleCount - Used to scale endboss energy.
+ * @returns {MovableObject[]} Array of enemy instances.
+ */
 function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss, bottleCount) {
     const enemies = [];
     const totalCount = chickenCount + babyChickenCount;
@@ -84,22 +122,47 @@ function generateEnemies(chickenCount, babyChickenCount, levelWidth, hasEndboss,
     return enemies;
 }
 
+/**
+ * Generates clouds with evenly spaced random positions across the level.
+ *
+ * @param {number} segments - Number of level segments, used to scale cloud count.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @returns {Cloud[]} Array of Cloud instances.
+ */
 function generateClouds(segments, levelWidth) {
     const cloudCount = Math.max(3, Math.round(segments * 1.5));
     const positions = generateSpacedPositions(cloudCount, 0, levelWidth, 200);
 
     return positions.map((x) => {
         const cloud = new Cloud();
-        cloud.x = x; // überschreibt die zufällige Startposition aus dem Constructor
+        cloud.x = x;
         return cloud;
     });
 }
 
+/**
+ * Generates a set of collectible instances at spaced random positions.
+ *
+ * @param {Function} ClassRef - The collectible class to instantiate (e.g. CollectibleBottle).
+ * @param {number} count - Number of collectibles to generate.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @returns {Collectible[]} Array of collectible instances.
+ */
 function generateCollectibles(ClassRef, count, levelWidth) {
     const positions = generateSpacedPositions(count, 200, levelWidth - 200, 150);
     return positions.map((x) => new ClassRef(x, 380));
 }
 
+/**
+ * Generates a set of random X positions with a minimum spacing between each.
+ * Falls back gracefully if not enough positions can be placed within the attempt limit.
+ *
+ * @param {number} count - Number of positions to generate.
+ * @param {number} minX - Minimum X boundary.
+ * @param {number} maxX - Maximum X boundary.
+ * @param {number} minSpacing - Minimum distance between any two positions.
+ * @returns {number[]} Sorted array of X positions.
+ */
 function generateSpacedPositions(count, minX, maxX, minSpacing) {
     const positions = [];
     let attempts = 0;
@@ -114,6 +177,14 @@ function generateSpacedPositions(count, minX, maxX, minSpacing) {
     return positions.sort((a, b) => a - b);
 }
 
+/**
+ * Generates coins arranged in random patterns across the level.
+ * Randomly selects from the available COIN_PATTERNS for each placement.
+ *
+ * @param {number} patternCount - Number of coin patterns to place.
+ * @param {number} levelWidth - Total width of the level in pixels.
+ * @returns {CollectibleCoin[]} Array of CollectibleCoin instances.
+ */
 function generateCoinPatterns(patternCount, levelWidth) {
     const patternTypes = Object.keys(COIN_PATTERNS);
     const baseXPositions = generateSpacedPositions(patternCount, 250, levelWidth - 400, 300);

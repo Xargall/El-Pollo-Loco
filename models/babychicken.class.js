@@ -20,6 +20,7 @@ class BabyChicken extends MovableObject {
     deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
     /** @type {boolean} Ensures the death sound is only played once. */
     hasDeadSoundPlayed = false;
+    /** @type {string} Unique instance ID for sound registration. */
     intervalId1;
     intervalId2;
     id;
@@ -118,6 +119,11 @@ class BabyChicken extends MovableObject {
             }
         }, 150);
     }
+
+    /**
+    * Clears all intervals and calls the parent destroy method.
+    * Should be called when the Baby Chicken is removed from the game.
+    */
     destroy() {
         super.destroy();
         clearInterval(this.intervalId1);
@@ -131,7 +137,12 @@ class BabyChicken extends MovableObject {
     hit() {
         this.energy = 0;
     }
-
+    /**
+    * Registers the Baby Chicken's sounds with the given SoundManager.
+    * Uses the instance ID to avoid name collisions between multiple instances.
+    *
+    * @param {SoundManager} soundManager - The game's central sound manager.
+    */
     registerSounds(soundManager) {
         soundManager.register(`chickenDead_${this.id}`, this.deadSound, VOLUMES.chickenDead, false);
     }

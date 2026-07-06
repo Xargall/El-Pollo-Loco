@@ -1,20 +1,39 @@
+/**
+ * Represents the Endboss enemy in the game.
+ * Notices the player on approach, moves toward them, and performs
+ * random jumps as an attack. Requires multiple bottle hits to defeat.
+ *
+ * @extends MovableObject
+ */
 class Endboss extends MovableObject {
-
+    /** @type {number} Height of the Endboss in pixels. */
     height = 400;
+    /** @type {number} Width of the Endboss in pixels. */
     width = 250;
+    /** @type {number} Vertical starting position. */
     y = 60;
+    /** @type {number} Ground level Y position, used to reset after a jump. */
     groundY = 60;
+    /** @type {boolean} Whether the Endboss is currently performing a jump. */
     isJumping = false;
+    /** @type {boolean} Whether the Endboss has noticed the player and started moving. */
     hasNoticed = false;
+    /** @type {Audio} Sound played when the Endboss notices the player or jumps. */
     alertSound = new Audio('assets/audio/endboss/endbossApproach.wav');
+    /** @type {Audio} Sound played when the Endboss dies. */
     deadSound = new Audio('assets/audio/chicken/chickenDead2.mp3');
+    /** @type {boolean} Ensures the death sound is only played once. */
     hasDeadSoundPlayed = false;
-    offset = { top: 140, bottom: 20, left: 20, right: 0, };
+    /** @type {{top: number, bottom: number, left: number, right: number}} Hitbox offsets in pixels. */
+    offset = { top: 140, bottom: 20, left: 20, right: 0 };
+    /** @type {number} Interval ID for the movement loop. */
     intervalId1;
+    /** @type {number} Interval ID for the animation loop. */
     intervalId2;
+    /** @type {number} Timeout ID for the next scheduled jump, used for cleanup. */
     jumpTimeoutId;
 
-
+    /** @type {string[]} Animation frames for the alert state. */
     IMAGES_ALERT = [
         "assets/img/4_enemie_boss_chicken/2_alert/G5.png",
         "assets/img/4_enemie_boss_chicken/2_alert/G6.png",
@@ -26,6 +45,7 @@ class Endboss extends MovableObject {
         "assets/img/4_enemie_boss_chicken/2_alert/G12.png",
     ];
 
+    /** @type {string[]} Animation frames for the walking state. */
     IMAGES_WALKING = [
         "assets/img/4_enemie_boss_chicken/1_walk/G1.png",
         "assets/img/4_enemie_boss_chicken/1_walk/G2.png",
@@ -33,6 +53,7 @@ class Endboss extends MovableObject {
         "assets/img/4_enemie_boss_chicken/1_walk/G4.png",
     ];
 
+    /** @type {string[]} Animation frames for the attack (jump) state. */
     IMAGES_ATTACK = [
         'assets/img/4_enemie_boss_chicken/3_attack/G13.png',
         'assets/img/4_enemie_boss_chicken/3_attack/G14.png',
@@ -44,21 +65,27 @@ class Endboss extends MovableObject {
         'assets/img/4_enemie_boss_chicken/3_attack/G20.png',
     ];
 
+    /** @type {string[]} Animation frames for the hurt state. */
     IMAGES_HURT = [
         'assets/img/4_enemie_boss_chicken/4_hurt/G21.png',
         'assets/img/4_enemie_boss_chicken/4_hurt/G22.png',
         'assets/img/4_enemie_boss_chicken/4_hurt/G23.png',
     ];
 
+    /** @type {string[]} Animation frames for the death state. */
     IMAGES_DEAD = [
         'assets/img/4_enemie_boss_chicken/5_dead/G24.png',
         'assets/img/4_enemie_boss_chicken/5_dead/G25.png',
         'assets/img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
 
+    /**
+     * Creates a new Endboss instance.
+     * Loads all animation frames and starts the animation and jump loops.
+     */
     constructor() {
         super().loadImage(this.IMAGES_ALERT[0]);
-        this.loadImages(this.IMAGES_ALERT)
+        this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_HURT);
@@ -68,15 +95,24 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Checks if the player has come close enough to trigger the Endboss.
+     * Once triggered, starts the alert animation and sound.
+     *
+     * @param {number} characterX - The current horizontal position of the player.
+     */
     checkTrigger(characterX) {
         if (!this.hasNoticed && characterX > this.x - 500) {
             this.hasNoticed = true;
             this.currentImage = 0;
             this.world.soundManager.play('endbossAlert');
         }
-
     }
 
+    /**
+     * Triggers a jump attack if the Endboss is not already jumping.
+     * Plays the alert sound and runs a physics loop until landing.
+     */
     triggerRandomJump() {
         if (this.isJumping || !this.hasNoticed) return;
         this.isJumping = true;
@@ -94,9 +130,13 @@ class Endboss extends MovableObject {
                 this.isJumping = false;
                 clearInterval(jumpInterval);
             }
-        }, 1000 / 25)
+        }, 1000 / 25);
     }
 
+    /**
+     * Schedules the next jump after a random delay between 2 and 5 seconds.
+     * Keeps rescheduling itself until the Endboss is dead.
+     */
     scheduleNextJump() {
         let delay = 2000 + Math.random() * 3000;
         this.jumpTimeoutId = setTimeout(() => {
@@ -109,9 +149,11 @@ class Endboss extends MovableObject {
         }, delay);
     }
 
-
-
-
+    /**
+     * Starts the movement and animation loops.
+     * Movement runs every 200ms, animation updates every 150ms.
+     * Animation state is determined by current boss state (dead, hurt, jumping, walking, alert).
+     */
     animate() {
         this.scheduleNextJump();
 
@@ -120,7 +162,7 @@ class Endboss extends MovableObject {
             if (this.hasNoticed) {
                 this.moveLeft();
             }
-        }, 200)
+        }, 200);
 
         this.intervalId2 = setInterval(() => {
             if (this.isDead()) {
@@ -140,9 +182,12 @@ class Endboss extends MovableObject {
             } else {
                 this.playAnimation(this.IMAGES_ALERT);
             }
-        }, 150)
+        }, 150);
     }
 
+    /**
+     * Clears all intervals and timeouts and calls the parent destroy method.
+     */
     destroy() {
         super.destroy();
         clearInterval(this.intervalId1);
@@ -150,6 +195,11 @@ class Endboss extends MovableObject {
         clearTimeout(this.jumpTimeoutId);
     }
 
+    /**
+     * Registers the Endboss's sounds with the given SoundManager.
+     *
+     * @param {SoundManager} soundManager - The game's central sound manager.
+     */
     registerSounds(soundManager) {
         soundManager.register('endbossAlert', this.alertSound, VOLUMES.endbossAlert, false);
         soundManager.register('endbossDead', this.deadSound, VOLUMES.endbossDead, false);

@@ -1,5 +1,11 @@
+/**
+ * Represents the player health bar displayed in the HUD.
+ * Shows the character's current energy as a percentage bar.
+ *
+ * @extends DrawableObject
+ */
 class Statusbar extends DrawableObject {
-
+    /** @type {string[]} Image paths for each fill level of the status bar (0% to 100%). */
     IMAGES = [
         'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png',
         'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png',
@@ -7,10 +13,13 @@ class Statusbar extends DrawableObject {
         'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/60.png',
         'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png',
         'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png',
-    ]
-
+    ];
+    /** @type {number} Current fill percentage of the status bar. */
     percentage = 100;
 
+    /**
+     * Creates a new Statusbar instance and positions it in the HUD.
+     */
     constructor() {
         super();
         this.loadImages(this.IMAGES);
@@ -21,14 +30,23 @@ class Statusbar extends DrawableObject {
         this.setPercentage(100);
     }
 
+    /**
+     * Updates the status bar to reflect the given percentage.
+     *
+     * @param {number} percentage - The fill level to display (0–100).
+     */
     setPercentage(percentage) {
-        this.percentage = percentage;  // => percentage to index between 0 ... 5
+        this.percentage = percentage;
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[path];
-
-
     }
 
+    /**
+     * Resolves the correct image index based on the current percentage.
+     * Uses strict equality for 100% to ensure the full bar is shown only at max health.
+     *
+     * @returns {number} Index into the IMAGES array (0–5).
+     */
     resolveImageIndex() {
         if (this.percentage == 100) {
             return 5;

@@ -1,18 +1,35 @@
+/**
+ * Represents the player character Pepe.
+ * Handles movement, animation, sound, and input processing.
+ *
+ * @extends MovableObject
+ */
 class Character extends MovableObject {
+  /** @type {number} Height of the character in pixels. */
   height = 250;
+  /** @type {number} Width of the character in pixels. */
   width = 120;
+  /** @type {number} Vertical starting position. */
   y = 80;
+  /** @type {number} Vertical position from the previous frame, used for stomp detection. */
   lastY = 80;
+  /** @type {number} Horizontal movement speed. */
   speed = 10;
+  /** @type {number} Interval ID for the movement and input loop. */
   intervalId1;
+  /** @type {number} Interval ID for the death animation loop. */
   intervalId2;
+  /** @type {number} Interval ID for the hurt animation loop. */
   intervalId3;
+  /** @type {number} Interval ID for the jump animation loop. */
   intervalId4;
+  /** @type {number} Interval ID for the walking animation loop. */
   intervalId5;
+  /** @type {number} Interval ID for the idle animation loop. */
   intervalId6;
-
+  /** @type {{top: number, bottom: number, left: number, right: number}} Hitbox offsets in pixels. */
   offset = { top: 110, bottom: 10, left: 25, right: 30, };
-
+  /** @type {string[]} Animation frames for the short idle state. */
   IMAGES_IDLE = [
     "assets/img/2_character_pepe/1_idle/idle/I-1.png",
     "assets/img/2_character_pepe/1_idle/idle/I-2.png",
@@ -25,7 +42,7 @@ class Character extends MovableObject {
     "assets/img/2_character_pepe/1_idle/idle/I-9.png",
     "assets/img/2_character_pepe/1_idle/idle/I-10.png",
   ];
-
+  /** @type {string[]} Animation frames for the long idle (snoring) state. */
   IMAGES_IDLE_LONG = [
     'assets/img/2_character_pepe/1_idle/long_idle/I-11.png',
     'assets/img/2_character_pepe/1_idle/long_idle/I-12.png',
@@ -38,7 +55,7 @@ class Character extends MovableObject {
     'assets/img/2_character_pepe/1_idle/long_idle/I-19.png',
     'assets/img/2_character_pepe/1_idle/long_idle/I-20.png',
   ];
-
+  /** @type {string[]} Animation frames for the walking state. */
   IMAGES_WALKING = [
     "assets/img/2_character_pepe/2_walk/W-21.png",
     "assets/img/2_character_pepe/2_walk/W-22.png",
@@ -47,7 +64,7 @@ class Character extends MovableObject {
     "assets/img/2_character_pepe/2_walk/W-25.png",
     "assets/img/2_character_pepe/2_walk/W-26.png",
   ];
-
+  /** @type {string[]} Animation frames for the jumping state. */
   IMAGES_JUMPING = [
     "assets/img/2_character_pepe/3_jump/J-31.png",
     "assets/img/2_character_pepe/3_jump/J-32.png",
@@ -59,7 +76,7 @@ class Character extends MovableObject {
     "assets/img/2_character_pepe/3_jump/J-38.png",
     "assets/img/2_character_pepe/3_jump/J-39.png",
   ];
-
+  /** @type {string[]} Animation frames for the death state. */
   IMAGES_DEAD = [
     'assets/img/2_character_pepe/5_dead/D-51.png',
     'assets/img/2_character_pepe/5_dead/D-52.png',
@@ -69,26 +86,33 @@ class Character extends MovableObject {
     'assets/img/2_character_pepe/5_dead/D-56.png',
     'assets/img/2_character_pepe/5_dead/D-57.png',
   ]
-
+  /** @type {string[]} Animation frames for the hurt state. */
   IMAGES_HURT = [
     'assets/img/2_character_pepe/4_hurt/H-41.png',
     'assets/img/2_character_pepe/4_hurt/H-42.png',
     'assets/img/2_character_pepe/4_hurt/H-43.png',
   ]
-
+  /** @type {Audio} Sound played while walking. */
   walkSound = new Audio('assets/audio/character/characterRun.mp3');
+  /** @type {Audio} Sound played when jumping. */
   jumpSound = new Audio('assets/audio/character/characterJump.wav');
+  /** @type {Audio} Sound played during long idle. */
   snoringSound = new Audio('assets/audio/character/characterSnoring.mp3');
+  /** @type {Audio} Sound played when taking damage. */
   damageSound = new Audio('assets/audio/character/characterDamage.mp3');
+  /** @type {Audio} Sound played on death. */
   deadSound = new Audio('assets/audio/character/characterDead.wav');
-
+  /** @type {number} Timestamp of the last movement, used for idle detection. */
   idleStart = new Date().getTime();
+  /** @type {boolean} Ensures the death sound is only played once. */
   hasDeadSoundPlayed = false;
-
+  /** @type {World} Reference to the game world, set externally after construction. */
   world;
 
-
-
+  /**
+   * Creates a new Character instance.
+   * Loads all animation frames, applies gravity, and starts the animation loops.
+   */
   constructor() {
     super().loadImage("assets/img/2_character_pepe/1_idle/idle/I-1.png");
     this.loadImages(this.IMAGES_WALKING);
@@ -101,11 +125,21 @@ class Character extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Returns true if the character has been idle for more than 5 seconds.
+   *
+   * @returns {boolean}
+   */
   isLongIdle() {
     let timepassed = (new Date().getTime() - this.idleStart) / 1000;
     return timepassed > 5;
   }
 
+  /**
+   * Starts all animation and movement intervals.
+   * Handles input, camera tracking, and all animation states
+   * (movement, death, hurt, jump, walk, idle).
+   */
   animate() {
     this.intervalId1 = setInterval(() => {
       if (this.isDead() || this.world.gameWon) return;
@@ -113,7 +147,7 @@ class Character extends MovableObject {
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
-        this.idleStart = new Date().getTime(); // Bewegung zurücksetzen
+        this.idleStart = new Date().getTime();
       }
 
       if (this.world.keyboard.LEFT && this.x > 0) {
@@ -140,7 +174,6 @@ class Character extends MovableObject {
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60)
 
-    // Dead-Animation: einmalig, langsam
     this.intervalId2 = setInterval(() => {
       if (this.isDead() && this.currentImage < this.IMAGES_DEAD.length) {
         if (!this.hasDeadSoundPlayed) {
@@ -153,21 +186,18 @@ class Character extends MovableObject {
       }
     }, 200)
 
-    // Hurt-Animation: schnell, kurzer Effekt
     this.intervalId3 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       }
     }, 100)
 
-    // Jump-Animation: eigener, langsamerer Takt
     this.intervalId4 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
     }, 90)
 
-    // Walking-Animation
     this.intervalId5 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
@@ -180,7 +210,6 @@ class Character extends MovableObject {
       }
     }, 150)
 
-    // Idle / Idle-Long-Animation
     this.intervalId6 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
@@ -203,10 +232,17 @@ class Character extends MovableObject {
     }, 200)
   }
 
+  /**
+   * Triggers a high jump with increased speedY.
+   * Used when no bottles are left and the endboss is alive.
+   */
   jumpHigh() {
     this.speedY = 42;
   }
 
+  /**
+   * Clears all animation intervals and calls the parent destroy method.
+   */
   destroy() {
     super.destroy();
     clearInterval(this.intervalId1);
@@ -217,6 +253,11 @@ class Character extends MovableObject {
     clearInterval(this.intervalId6);
   }
 
+  /**
+   * Registers all character sounds with the given SoundManager.
+   *
+   * @param {SoundManager} soundManager - The game's central sound manager.
+   */
   registerSounds(soundManager) {
     soundManager.register('characterWalk', this.walkSound, VOLUMES.characterWalk, true);
     soundManager.register('characterJump', this.jumpSound, VOLUMES.characterJump, false);
