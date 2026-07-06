@@ -4,6 +4,13 @@ let keyboard = new Keyboard();
 let currentLevelCreator = null;
 let isMuted = false;
 const LEVELS = [createLevel1, createLevel2, createLevel3];
+const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.wav');
+menuMusic.loop = true;
+menuMusic.volume = 0.05;
+
+document.addEventListener('click', () => {
+  menuMusic.play().catch(() => { });
+}, { once: true });
 
 function init(selectedLevel) {
   if (world) world.destroy();
@@ -13,6 +20,8 @@ function init(selectedLevel) {
   showGameControls();
   world = new World(canvas, keyboard, selectedLevel);
   world.backgroundMusic.play().catch(() => { });
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
 }
 
 function startGame(levelCreator) {
@@ -48,6 +57,7 @@ function goToMainMenu() {
   document.getElementById("endScreenButtons").style.display = "none";
   canvas.style.display = "none";
   document.getElementById("startScreen").style.display = "block";
+  menuMusic.play().catch(() => { });
 }
 
 function loadNextLevel() {
