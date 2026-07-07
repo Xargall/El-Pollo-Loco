@@ -12,12 +12,15 @@ let isMuted = false;
 const LEVELS = [createLevel1, createLevel2, createLevel3];
 /** @type {Audio} Background music played on the main menu. */
 const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.wav');
-menuMusic.loop = true;
-menuMusic.volume = 0.05;
+const menuSoundManager = new SoundManager();
+menuSoundManager.register('menuMusic', menuMusic, 0.05, true);
+
 
 // Menu music starts on first user interaction to comply with browser autoplay policy.
 document.addEventListener('click', () => {
-  menuMusic.play().catch(() => { });
+  if (document.getElementById('startScreen').style.display !== 'none') {
+    menuSoundManager.play('menuMusic');
+  }
 }, { once: true });
 
 /**
@@ -33,9 +36,9 @@ function init(selectedLevel) {
   canvas.style.display = "block";
   showGameControls();
   world = new World(canvas, keyboard, selectedLevel);
-  world.backgroundMusic.play().catch(() => { });
-  menuMusic.pause();
-  menuMusic.currentTime = 0;
+  menuSoundManager.stop('menuMusic');
+  world.soundManager.play('backgroundMusic');
+
 }
 
 /**
@@ -44,6 +47,7 @@ function init(selectedLevel) {
  * @param {Function} levelCreator - The level creator function to use.
  */
 function startGame(levelCreator) {
+  menuSoundManager.stop('menuMusic');
   closeAllPanels();
   currentLevelCreator = levelCreator;
   init(levelCreator());
@@ -89,7 +93,7 @@ function goToMainMenu() {
   document.getElementById("endScreenButtons").style.display = "none";
   canvas.style.display = "none";
   document.getElementById("startScreen").style.display = "block";
-  menuMusic.play().catch(() => { });
+  menuSoundManager.play('menuMusic');
 }
 
 /**
@@ -196,6 +200,8 @@ function toggleFullscreen() {
 /** Toggles mute state for all in-game sounds and updates the mute button icon. */
 function toggleMute() {
   isMuted = !isMuted;
+  world.soundManager.setMasterVolume(isMuted);
+  menuSoundManager.setMasterVolume(isMuted);
   world.soundManager.setMasterVolume(isMuted);
   document.getElementById('muteIcon').src = isMuted
     ? './assets/icons/sound_off.png'

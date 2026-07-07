@@ -5,19 +5,21 @@
  * @type {Object.<string, number>}
  */
 const VOLUMES = {
-    backgroundMusic: 0.1,
-    characterWalk: 0.3,
-    characterJump: 0.3,
-    characterSnoring: 0.3,
-    characterDamage: 0.4,
+    backgroundMusic: 0.05,
+    characterWalk: 0.2,
+    characterJump: 0.2,
+    characterSnoring: 0.2,
+    characterDamage: 0.3,
     characterDead: 0.4,
     endbossAlert: 1.0,
     endbossDead: 0.4,
     chickenDead: 0.4,
+    bottleCollect: 0.4,
+    coinCollect: 0.1,
     bottleBreak: 0.4,
-    gameOver: 0.5,
-    gameWon: 0.5,
-    oneUp: 0.4,
+    gameOver: 0.4,
+    gameWon: 0.4,
+    oneUp: 0.3,
 };
 
 /**

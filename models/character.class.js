@@ -201,7 +201,7 @@ class Character extends MovableObject {
     this.intervalId5 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        if (this.world.soundManager.isPlaying('characterWalk')) {
+        if (!this.world.soundManager.isPlaying('characterWalk')) {
           this.world.soundManager.play('characterWalk');
         }
         this.playAnimation(this.IMAGES_WALKING);
@@ -214,12 +214,12 @@ class Character extends MovableObject {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
         !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         if (this.isLongIdle()) {
-          if (this.world.soundManager.isPlaying('characterSnoring')) {
+          if (!this.world.soundManager.isPlaying('characterSnoring')) {
             this.world.soundManager.play('characterSnoring');
           }
           this.playAnimation(this.IMAGES_IDLE_LONG);
         } else {
-          if (!this.world.soundManager.isPlaying('characterSnoring')) {
+          if (this.world.soundManager.isPlaying('characterSnoring')) {
             this.world.soundManager.stop('characterSnoring');
           }
           this.playAnimation(this.IMAGES_IDLE);
