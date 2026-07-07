@@ -1,0 +1,331 @@
+@startuml El_Pollo_Loco
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #ffffff
+  BorderColor #89b4fa
+  FontColor #cdd6f4
+  HeaderBackgroundColor #313244
+  ArrowColor #89dceb
+}
+skinparam package {
+  BackgroundColor #181825
+  BorderColor #585b70
+  FontColor #a6e3a1
+}
+
+' ─────────────────────────────────────────
+'  BASE CLASSES
+' ─────────────────────────────────────────
+
+package "Basis" {
+  class DrawableObject {
+    +x : number
+    +y : number
+    +height : number
+    +width : number
+    +img : HTMLImageElement
+    +imageCache : Object
+    +currentImage : number
+    --
+    +loadImage(path)
+    +loadImages(arr)
+    +draw(ctx)
+    +drawHitbox(ctx)
+  }
+
+  class MovableObject {
+    +speed : number
+    +otherDirection : boolean
+    +speedY : number
+    +acceleration : number
+    +energy : number
+    +lastHit : number
+    +offset : Object
+    -gravityIntervalId : number
+    --
+    +applyGravity()
+    +isAboveGround() : boolean
+    +jump()
+    +playAnimation(images)
+    +moveRight() / moveLeft()
+    +isColliding(mo) : boolean
+    +isCollidingFromAbove(mo) : boolean
+    +bounce()
+    +hit()
+    +isDead() : boolean
+    +isHurt() : boolean
+    +destroy()
+  }
+
+  DrawableObject <|-- MovableObject
+}
+
+' ─────────────────────────────────────────
+'  GAME OBJECTS
+' ─────────────────────────────────────────
+
+package "Spielfiguren" {
+  class Character {
+    +height / width / y : number
+    +speed : number
+    +offset : Object
+    +world : World
+    -intervalId1..6 : number
+    +IMAGES_IDLE / IDLE_LONG / WALKING\nJUMPING / DEAD / HURT : string[]
+    +walkSound / jumpSound / snoringSound\ndamageSound / deadSound : Audio
+    --
+    +isLongIdle() : boolean
+    +animate()
+    +destroy()
+    +registerSounds(sm)
+  }
+
+  class Chicken {
+    +direction : number
+    +isAwake : boolean
+    +energy : number
+    +id : string
+    +IMAGES_WALKING / DEAD : string[]
+    +deadSound : Audio
+    --
+    +wakeUp()
+    +pickRandomDirection()
+    +animate() / destroy()
+    +registerSounds(sm)
+  }
+
+  class BabyChicken {
+    +direction : number
+    +isAwake : boolean
+    +id : string
+    +IMAGES_WALKING / DEAD : string[]
+    +deadSound : Audio
+    --
+    +wakeUp()
+    +pickRandomDirection()
+    +hit()
+    +animate() / destroy()
+    +registerSounds(sm)
+  }
+
+  class Endboss {
+    +isJumping : boolean
+    +hasNoticed : boolean
+    +energy / maxEnergy : number
+    +offset : Object
+    +IMAGES_ALERT / WALKING / ATTACK\nHURT / DEAD : string[]
+    +alertSound / deadSound : Audio
+    --
+    +checkTrigger(characterX)
+    +triggerRandomJump()
+    +scheduleNextJump()
+    +animate() / destroy()
+    +registerSounds(sm)
+  }
+
+  class Cloud {
+    +y / width / height : number
+    -intervalId : number
+    --
+    +animate() / destroy()
+  }
+
+  class BackgroundObject {
+    +width : number
+    +height : number
+    --
+    +constructor(imagePath, x)
+  }
+
+  class ThrowableObject {
+    +isSplashing : boolean
+    +id : string
+    +IMAGES_THROW / SPLASH : string[]
+    +breakSound : Audio
+    --
+    +throw() / animate()
+    +hit()
+    +isSplashDone() : boolean
+    +destroy()
+    +registerSounds(sm)
+  }
+
+  MovableObject <|-- Character
+  MovableObject <|-- Chicken
+  MovableObject <|-- BabyChicken
+  MovableObject <|-- Endboss
+  MovableObject <|-- Cloud
+  MovableObject <|-- BackgroundObject
+  MovableObject <|-- ThrowableObject
+}
+
+' ─────────────────────────────────────────
+'  COLLECTIBLES
+' ─────────────────────────────────────────
+
+package "Sammelgegenstände" {
+  class Collectible {
+    +x / y / width / height : number
+    --
+    +constructor(x, y, width, height, imagePath)
+  }
+
+  class CollectibleBottle {
+    +id : string
+    +pickupSound : Audio
+    --
+    +registerSounds(sm)
+  }
+
+  class CollectibleCoin {
+    +id : string
+    +pickupSound : Audio
+    --
+    +registerSounds(sm)
+  }
+
+  DrawableObject <|-- Collectible
+  Collectible <|-- CollectibleBottle
+  Collectible <|-- CollectibleCoin
+}
+
+' ─────────────────────────────────────────
+'  HUD / STATUS BARS
+' ─────────────────────────────────────────
+
+package "HUD" {
+  class Statusbar {
+    +IMAGES : string[]
+    +percentage : number
+    --
+    +setPercentage(p)
+    +resolveImageIndex() : number
+  }
+
+  class BottleStatusbar {
+    +IMAGES : string[]
+    +percentage : number
+    --
+    +setPercentage(p)
+    +resolveImageIndex() : number
+  }
+
+  class CoinStatusbar {
+    +IMAGES : string[]
+    +percentage : number
+    --
+    +setPercentage(p)
+    +resolveImageIndex() : number
+  }
+
+  class EndbossStatusbar {
+    +IMAGES : string[]
+    +percentage : number
+    --
+    +setPercentage(current, max)
+    +resolveImageIndex() : number
+  }
+
+  DrawableObject <|-- Statusbar
+  DrawableObject <|-- BottleStatusbar
+  DrawableObject <|-- CoinStatusbar
+  DrawableObject <|-- EndbossStatusbar
+}
+
+' ─────────────────────────────────────────
+'  CORE SYSTEMS
+' ─────────────────────────────────────────
+
+package "Kernsysteme" {
+  class Level {
+    +enemies : MovableObject[]
+    +clouds : Cloud[]
+    +backgroundObjects : BackgroundObject[]
+    +bottles : CollectibleBottle[]
+    +coins : CollectibleCoin[]
+    +level_end_x : number
+    --
+    +constructor(enemies, clouds, bg, bottles, coins)
+  }
+
+  class Keyboard {
+    +LEFT / RIGHT / UP / DOWN : boolean
+    +SPACE / D : boolean
+  }
+
+  class SoundManager {
+    +sounds : Object
+    --
+    +register(name, sound, volume, loop)
+    +play(name) / stop(name) / stopAll()
+    +setVolume(name, volume)
+    +isPlaying(name) : boolean
+    +setMasterVolume(muted)
+  }
+
+  class DamageText {
+    +x / y : number
+    +text : string
+    +createdAt : number
+    --
+    +isExpired() : boolean
+  }
+
+  class World {
+    +character : Character
+    +level : Level
+    +keyboard : Keyboard
+    +camera_x : number
+    +bottleCount / coinCount\ntotalCoins / extraLives : number
+    +gameWon / gameOver : boolean
+    +levelNumber : number
+    +soundManager : SoundManager
+    -intervalId1 / intervalId2 : number
+    --
+    +setWorld()
+    +run() / draw()
+    +checkCollisions()
+    +checkBottleCollisions()
+    +checkThrowObjects()
+    +checkCollectibleCollisions()
+    +checkGameOver()
+    +checkEndbossTrigger()
+    +checkChickenWakeup()
+    +destroy()
+  }
+}
+
+' ─────────────────────────────────────────
+'  ASSOCIATIONS
+' ─────────────────────────────────────────
+
+World "1" *-- "1" Character
+World "1" *-- "1" Level
+World "1" *-- "1" Keyboard
+World "1" *-- "1" SoundManager
+World "1" *-- "1" Statusbar
+World "1" *-- "1" BottleStatusbar
+World "1" *-- "1" CoinStatusbar
+World "1" *-- "1" EndbossStatusbar
+World "1" *-- "0..*" ThrowableObject
+World "1" *-- "0..*" DamageText
+
+Level "1" *-- "0..*" Chicken
+Level "1" *-- "0..*" BabyChicken
+Level "1" *-- "0..1" Endboss
+Level "1" *-- "0..*" Cloud
+Level "1" *-- "0..*" BackgroundObject
+Level "1" *-- "0..*" CollectibleBottle
+Level "1" *-- "0..*" CollectibleCoin
+
+Character ..> World : world
+Chicken ..> World : world
+BabyChicken ..> World : world
+Endboss ..> World : world
+ThrowableObject ..> World : world
+
+@enduml
