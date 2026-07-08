@@ -14,6 +14,10 @@ const LEVELS = [createLevel1, createLevel2, createLevel3];
 const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.wav');
 const menuSoundManager = new SoundManager();
 menuSoundManager.register('menuMusic', menuMusic, 0.05, true);
+const winImage = new Image();
+winImage.src = 'assets/img/You won, you lost/You Win A.png';
+const gameOverImage = new Image();
+gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
 
 
 // Menu music starts on first user interaction to comply with browser autoplay policy.

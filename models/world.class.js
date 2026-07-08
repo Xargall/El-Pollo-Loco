@@ -67,6 +67,8 @@ class World {
   oneUpSound = new Audio('assets/audio/sound/ui/1-up.mp3');
   /** @type {number} Timestamp of level start, used for the level banner fade-out. */
   levelBannerStart = new Date().getTime();
+  /** @type {Audio} Sound played when bouncing on enemy. */
+  bounceSound = new Audio('assets/audio/sound/ui/bounce.wav');
 
   /**
    * Creates a new World instance and initializes all game systems.
@@ -85,6 +87,8 @@ class World {
     this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
     this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
     this.pepeIcon.src = 'assets/icons/extraLife.png';
+    this.winImage = winImage;
+    this.gameOverImage = gameOverImage;
     this.draw();
     this.setWorld();
     this.run();
@@ -102,6 +106,7 @@ class World {
       enemy.registerSounds?.(this.soundManager);
     });
     this.soundManager.register('backgroundMusic', this.backgroundMusic, VOLUMES.backgroundMusic, true);
+    this.soundManager.register('bounce', this.bounceSound, VOLUMES.bounce);
     this.level.bottles.forEach(b => b.registerSounds(this.soundManager));
     this.level.coins.forEach(c => c.registerSounds(this.soundManager));
     this.soundManager.register('gameOver', this.gameOverSound, VOLUMES.gameOver);
@@ -145,6 +150,8 @@ class World {
       if (this.character.isCollidingFromAbove(enemy)) {
         this.character.bounce();
         enemy.hit();
+        this.soundManager.stop('bounce');
+        this.soundManager.play('bounce');
         this.damageTexts.push(new DamageText(enemy.x, enemy.y, "-1"));
         this.checkBossDefeat(enemy);
       } else if (this.character.isColliding(enemy) && !this.character.isHurt() && this.character.speedY <= 0) {
