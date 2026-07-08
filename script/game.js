@@ -223,6 +223,7 @@ function toggleMute() {
   document.getElementById('muteIcon').src = isMuted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
+  document.getElementById('muteButton').setAttribute('aria-pressed', isMuted);
   canvas.focus();
 }
 
@@ -237,4 +238,5 @@ function toggleMenuMute() {
   document.getElementById('menuMuteIcon').src = menuMusic.muted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
+  document.getElementById('menuMuteButton').setAttribute('aria-pressed', menuMuted);
 }

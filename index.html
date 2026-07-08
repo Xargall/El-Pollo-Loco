@@ -41,31 +41,36 @@
     <script src="./script/game.js"></script>
   </head>
   <body>
-    <h1>El Pollo Loco!</h1>
+    <h1 aria-label="El Pollo Loco">El Pollo Loco!</h1>
+
     <div class="game-container">
       <div id="startScreen" class="screen-overlay">
         <img
           src="assets/img/9_intro_outro_screens/start/startscreen_3.png"
           class="start-bg" />
         <button
+          type="button"
           class="start-btn"
           style="left: 4.8%; top: 72%; width: 19.3%; height: 22.1%;"
           onclick="startGame(createLevel1)">
           Game Start
         </button>
         <button
+          type="button"
           class="start-btn"
           style="left: 28.5%; top: 72%; width: 19.3%; height: 22.1%;"
           onclick="openPanel('levelSelectPanel')">
           Level Select
         </button>
         <button
+          type="button"
           class="start-btn"
           style="left: 52.1%; top: 72%; width: 19.3%; height: 22.1%;"
           onclick="openPanel('controlsPanel')">
           Controls
         </button>
         <button
+          type="button"
           class="start-btn"
           style="left: 75.7%; top: 72%; width: 19.3%; height: 22.1%;"
           onclick="openPanel('imprintPanel')">
@@ -74,15 +79,26 @@
       </div>
 
       <button
+        type="button"
         id="menuMuteButton"
         class="game-icon-btn"
+        aria-label="Menü-Musik stummschalten"
+        aria-pressed="false"
         style="position:absolute; top:4%; right:2%; z-index:10;"
         onclick="toggleMenuMute()">
-        <img id="menuMuteIcon" src="./assets/icons/sound_on.png" alt="Mute" />
+        <img
+          id="menuMuteIcon"
+          src="./assets/icons/sound_on.png"
+          alt="Mute"
+          aria-hidden="true" />
       </button>
 
       <div
         id="controlsPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="controlsPanelTitle"
+        class="screen-overlay panel"
         class="screen-overlay panel"
         style="display: none;">
         <h2>Controls</h2>
@@ -114,6 +130,9 @@
 
       <div
         id="levelSelectPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="levelSelectPanelTitle"
         class="screen-overlay panel"
         style="display: none;">
         <h2>Choose Level</h2>
@@ -137,6 +156,9 @@
 
       <div
         id="imprintPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="imprintPanelTitle"
         class="screen-overlay panel"
         style="display: none;">
         <h2>Impressum</h2>
@@ -179,43 +201,97 @@
         </div>
       </div>
 
-      <div id="rotateHint" class="rotate-hint">
-        <img src="./assets/icons/Film Illustration GIF.gif" alt="" />
+      <div
+        id="rotateHint"
+        class="rotate-hint"
+        role="alert"
+        aria-live="assertive"
+        aria-label="Rotate your device">
+        <img
+          src="./assets/icons/Film Illustration GIF.gif"
+          alt="Turn into landscape mode" />
       </div>
 
       <canvas
         id="canvas"
-        width="720px"
-        height="480px"
+        width="720"
+        height="480"
+        role="application"
+        aria-label="El Pollo Loco Spielfeld"
         style="display: none;"
         tabindex="0">
       </canvas>
 
-      <div id="touchControls">
+      <div id="touchControls" role="group" aria-label="Touch-Steuerung">
         <div class="touch-left">
-          <button class="touch-btn" id="btn-left">◀</button>
-          <button class="touch-btn" id="btn-right">▶</button>
+          <button
+            type="button"
+            class="touch-btn"
+            id="btn-left"
+            aria-label="Links bewegen">
+            ◀
+          </button>
+          <button
+            type="button"
+            class="touch-btn"
+            id="btn-right"
+            aria-label="Rechts bewegen">
+            ▶
+          </button>
         </div>
         <div class="touch-right">
-          <button class="touch-btn" id="btn-jump">
-            <img src="./assets/icons/jump.png" alt="Jump" />
+          <button
+            type="button"
+            class="touch-btn"
+            id="btn-jump"
+            aria-label="Springen">
+            <img src="./assets/icons/jump.png" alt="Jump" aria-hidden="true" />
           </button>
-          <button class="touch-btn" id="btn-throw">
-            <img src="./assets/icons/throw.png" alt="Throw" />
+          <button
+            type="button"
+            class="touch-btn"
+            id="btn-throw"
+            aria-label="Flasche werfen">
+            <img
+              src="./assets/icons/throw.png"
+              alt="Throw"
+              aria-hidden="true" />
           </button>
         </div>
       </div>
 
-      <div id="gameControls" style="display: none;">
-        <button id="homeButton" class="game-icon-btn" onclick="goToMainMenu()">
-          <img src="./assets/icons/home.png" alt="Home" />
-        </button>
-        <button id="muteButton" class="game-icon-btn" onclick="toggleMute()">
-          <img id="muteIcon" src="./assets/icons/sound_on.png" alt="Mute" />
+      <div
+        id="gameControls"
+        role="toolbar"
+        aria-label="Game controls"
+        style="display: none;">
+        <button
+          type="button"
+          id="homeButton"
+          class="game-icon-btn"
+          aria-label="Back to main menu"
+          onclick="goToMainMenu()">
+          <img src="./assets/icons/home.png" alt="Home" aria-hidden="true" />
         </button>
         <button
+          type="button"
+          id="muteButton"
+          class="game-icon-btn"
+          aria-label="mute sounds"
+          aria-pressed="false"
+          onclick="toggleMute()">
+          <img
+            id="muteIcon"
+            src="./assets/icons/sound_on.png"
+            alt="Mute"
+            aria-hidden="true" />
+        </button>
+        <button
+          type="button"
           id="fullscreenButton"
           class="game-icon-btn"
+          aria-label="toggle fullscreen"
+          aria-pressed="false"
           onclick="toggleFullscreen()">
           <img src="./assets/icons/expand.png" alt="Fullscreen" />
         </button>
@@ -223,15 +299,26 @@
 
       <div
         id="endScreenButtons"
+        role="group"
+        aria-label="Spielende-Optionen"
         class="end-screen-buttons"
         style="display: none;">
-        <button id="restartButton" class="wood-btn" onclick="restartGame()">
+        <button
+          type="button"
+          id="restartButton"
+          class="wood-btn"
+          onclick="restartGame()">
           Restart
         </button>
-        <button id="mainMenuButton" class="wood-btn" onclick="goToMainMenu()">
+        <button
+          type="button"
+          id="mainMenuButton"
+          class="wood-btn"
+          onclick="goToMainMenu()">
           Main Menu
         </button>
         <button
+          type="button"
           id="nextLevelButton"
           class="wood-btn"
           style="display: none;"
