@@ -33,18 +33,16 @@ class World {
   bossStatusBar = new EndbossStatusbar();
   /** @type {boolean} Whether the player has won the level. */
   gameWon = false;
-  /** @type {HTMLImageElement} The win screen image. */
-  winImage = new Image();
   /** @type {boolean} Whether the game is over. */
   gameOver = false;
-  /** @type {HTMLImageElement} The game over screen image. */
-  gameOverImage = new Image();
+  /** @type {HTMLImageElement} Preloaded win screen image, shared from game.js. */
+  winImage;
+  /** @type {HTMLImageElement} Preloaded game over screen image, shared from game.js. */
+  gameOverImage;
   /** @type {Audio} Background music for the level. */
   backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.mp3');
   /** @type {DamageText[]} All currently active floating damage texts. */
   damageTexts = [];
-  /** @type {number|null} Timestamp of the last "no bottles" warning. */
-  lastNoBottleWarning = null;
   /** @type {number|null} Timestamp of the last bottle warning shown. */
   lastBottleWarning = null;
   /** @type {number|null} Timestamp of the last throw, used to enforce throw cooldown. */
@@ -84,8 +82,6 @@ class World {
     this.keyboard = keyboard;
     this.level = level;
     this.totalCoins = this.level.coins.length;
-    this.winImage.src = 'assets/img/You won, you lost/You Win A.png';
-    this.gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
     this.pepeIcon.src = 'assets/icons/extraLife.png';
     this.winImage = winImage;
     this.gameOverImage = gameOverImage;

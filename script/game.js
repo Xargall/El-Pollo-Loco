@@ -10,20 +10,24 @@ let currentLevelCreator = null;
 const LEVELS = [createLevel1, createLevel2, createLevel3];
 /** @type {Audio} Background music played on the main menu. */
 const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.mp3');
+/** @type {SoundManager} Sound manager instance for the main menu music. */
 const menuSoundManager = new SoundManager();
 menuSoundManager.register('menuMusic', menuMusic, 0.05, true);
+/** @type {HTMLImageElement} Preloaded win screen image. */
 const winImage = new Image();
 winImage.src = 'assets/img/You won, you lost/You Win A.png';
+/** @type {HTMLImageElement} Preloaded game over screen image. */
 const gameOverImage = new Image();
 gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
+/** @type {boolean} Whether the game audio is currently muted. Persisted in localStorage. */
 let isMuted = localStorage.getItem('isMuted') === 'true';
 menuMusic.muted = isMuted;
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('menuMuteIcon').src = isMuted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
 });
-
 
 // Menu music starts on first user interaction to comply with browser autoplay policy.
 document.addEventListener('click', () => {
@@ -33,10 +37,11 @@ document.addEventListener('click', () => {
 }, { once: true });
 
 /**
- * Initializes and starts the game with the given level.
+ * Initializes and starts the game with the given level instance.
+ * Shows a loading screen while preloading assets, then creates the World.
  * Destroys any existing World instance before creating a new one.
  *
- * @param {Level} selectedLevel - The level instance to load.
+ * @param {Level} levelInstance - The pre-created level instance to load.
  */
 async function init(levelInstance) {
   if (world) world.destroy();
@@ -90,7 +95,10 @@ function restartGame() {
   init(currentLevelCreator());
 }
 
-/** Destroys the current World, stops the game, and returns to the main menu. */
+/**
+ * Destroys the current World, stops the game, and returns to the main menu.
+ * Restores the menu music and updates the mute icon state.
+ */
 function goToMainMenu() {
   if (world) world.destroy();
   hideGameControls();
@@ -133,14 +141,18 @@ window.addEventListener('keyup', (event) => {
   if (event.keyCode == 32) keyboard.SPACE = false;
 });
 
-/** Shows the in-game control buttons and touch controls. */
+/**
+ * Shows the in-game control buttons, hides menu controls, and activates touch controls.
+ */
 function showGameControls() {
   document.getElementById("gameControls").style.display = "flex";
   document.getElementById('menuControls').style.display = 'none';
   showTouchControls();
 }
 
-/** Hides the in-game control buttons and touch controls. */
+/**
+ * Hides the in-game control buttons, restores menu controls, and deactivates touch controls.
+ */
 function hideGameControls() {
   document.getElementById("gameControls").style.display = "none";
   document.getElementById('menuControls').style.display = 'flex';
@@ -185,13 +197,10 @@ function hideTouchControls() {
   document.getElementById('touchControls').classList.remove('visible');
 }
 
-/** Toggles the visibility of the touch control overlay. */
-function toggleTouchControls() {
-  const tc = document.getElementById('touchControls');
-  tc.classList.toggle('visible');
-}
-
-/** Toggles fullscreen mode for the game container. */
+/**
+ * Toggles fullscreen mode for the game container.
+ * Focuses the canvas after the transition if the game is running.
+ */
 function toggleFullscreen() {
   const container = document.querySelector('.game-container');
   if (!document.fullscreenElement) {
@@ -203,7 +212,7 @@ function toggleFullscreen() {
   } else {
     document.exitFullscreen();
   }
-  canvas.focus();
+  if (canvas) canvas.focus();
 }
 
 /** Toggles mute state for all in-game sounds and updates the mute button icon. */
@@ -220,38 +229,22 @@ function toggleMute() {
 
 /**
  * Toggles the mute state of the main menu background music.
- * Updates the mute button icon to reflect the current state.
+ * Persists the mute state in localStorage and updates the mute button icon.
  */
 function toggleMenuMute() {
   menuMusic.muted = !menuMusic.muted;
   isMuted = menuMusic.muted;
   localStorage.setItem('isMuted', isMuted);
-  document.getElementById('menuMuteIcon').src = menuMusic.muted
+  document.getElementById('menuMuteIcon').src = isMuted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
-  document.getElementById('menuMuteButton').setAttribute('aria-pressed', menuMuted);
+  document.getElementById('menuMuteButton').setAttribute('aria-pressed', isMuted);
 }
 
-function animateLoadingBar() {
-  const fill = document.getElementById("loadingBarFill");
-  const bar = fill.parentElement;
-  fill.style.width = "0%";
-  let progress = 0;
-  const id = setInterval(() => {
-    progress = Math.min(progress + (Math.random() * 15 + 5), 85);
-    fill.style.width = progress + "%";
-    bar.setAttribute("aria-valuenow", Math.round(progress));
-    if (progress >= 85) clearInterval(id);
-  }, 120);
-
-  // Auf 100% springen wenn World fertig ist — wird von init() getriggert
-  window._finishLoadingBar = () => {
-    clearInterval(id);
-    fill.style.width = "100%";
-    bar.setAttribute("aria-valuenow", 100);
-  };
-}
-
+/**
+ * Prepares the loading screen by hiding the start screen,
+ * showing the loading overlay, and initializing the canvas.
+ */
 function prepareLoadingScreen() {
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("loadingScreen").style.display = "flex";
@@ -260,6 +253,14 @@ function prepareLoadingScreen() {
   showGameControls();
 }
 
+/**
+ * Runs the asset preloader for the given level instance.
+ * Collects all image paths from game objects and preloads them,
+ * updating the loading bar. Waits 300ms after completion so the
+ * full bar is briefly visible before the game starts.
+ *
+ * @param {Level} levelInstance - The level whose assets should be preloaded.
+ */
 async function runPreloader(levelInstance) {
   const fill = document.getElementById("loadingBarFill");
   const sources = buildPreloadSources(levelInstance);
@@ -268,6 +269,14 @@ async function runPreloader(levelInstance) {
   await new Promise(r => setTimeout(r, 300));
 }
 
+/**
+ * Builds the list of objects whose IMAGES_* arrays should be preloaded.
+ * Uses Character.prototype to collect image paths without triggering
+ * the constructor or animation loops.
+ *
+ * @param {Level} levelInstance - The current level instance.
+ * @returns {Object[]} Array of objects with IMAGES_* properties.
+ */
 function buildPreloadSources(levelInstance) {
   return [
     Character.prototype,
@@ -279,6 +288,13 @@ function buildPreloadSources(levelInstance) {
   ];
 }
 
+/**
+ * Finalizes the loading sequence and creates the World instance.
+ * Shows the canvas, hides the loading screen, starts background music,
+ * and stops the menu music.
+ *
+ * @param {Level} levelInstance - The level instance to pass to the World.
+ */
 function startWorld(levelInstance) {
   canvas.style.display = "block";
   document.getElementById("loadingScreen").style.display = "none";
