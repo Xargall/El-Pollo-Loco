@@ -73,7 +73,7 @@ canvas {
   border-radius: 12px;
   cursor: pointer;
   font-family: "zabars";
-  font-size: clamp(0.7rem, 2.5vmin, 2.1rem);
+  font-size: clamp(1rem, 2.5cqw, 3.5rem);
   color: #ffe0a0;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
@@ -361,6 +361,59 @@ canvas {
   width: clamp(24px, 4vw, 36px);
   height: clamp(24px, 4vw, 36px);
   pointer-events: none;
+}
+
+.loading-screen {
+  background: #1a1208;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 500;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-title {
+  font-family: "zabars", serif;
+  font-size: clamp(1.5rem, 5vmin, 3rem);
+  color: #f4a93a;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: clamp(12px, 2vmin, 24px);
+  letter-spacing: 3px;
+}
+
+.loading-bar-track {
+  width: clamp(160px, 40vmin, 300px);
+  height: clamp(12px, 2vmin, 20px);
+  background: #3a2510;
+  border: 3px solid #4a2510;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.loading-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #b5651d, #f4a93a);
+  border-radius: 2px;
+  transition: width 200ms ease;
+}
+
+.menu-controls {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+  z-index: 10;
+  display: flex;
+  gap: clamp(4px, 1vmin, 12px);
 }
 
 @media only screen and (max-height: 500px) {

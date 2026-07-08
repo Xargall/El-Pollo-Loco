@@ -40,7 +40,7 @@ class World {
   /** @type {HTMLImageElement} The game over screen image. */
   gameOverImage = new Image();
   /** @type {Audio} Background music for the level. */
-  backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.wav');
+  backgroundMusic = new Audio('assets/audio/music/bgm/kf013818-la-casa.mp3');
   /** @type {DamageText[]} All currently active floating damage texts. */
   damageTexts = [];
   /** @type {number|null} Timestamp of the last "no bottles" warning. */

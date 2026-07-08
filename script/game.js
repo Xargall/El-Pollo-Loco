@@ -9,7 +9,7 @@ let currentLevelCreator = null;
 /** @type {Function[]} Ordered list of all level creator functions. */
 const LEVELS = [createLevel1, createLevel2, createLevel3];
 /** @type {Audio} Background music played on the main menu. */
-const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.wav');
+const menuMusic = new Audio('assets/audio/music/bgm/kf013823-friday-fiesta.mp3');
 const menuSoundManager = new SoundManager();
 menuSoundManager.register('menuMusic', menuMusic, 0.05, true);
 const winImage = new Image();
@@ -38,20 +38,11 @@ document.addEventListener('click', () => {
  *
  * @param {Level} selectedLevel - The level instance to load.
  */
-function init(selectedLevel) {
+async function init(levelInstance) {
   if (world) world.destroy();
-  document.getElementById("startScreen").style.display = "none";
-  canvas = document.getElementById("canvas");
-  canvas.style.display = "block";
-  showGameControls();
-  world = new World(canvas, keyboard, selectedLevel);
-  world.soundManager.setMasterVolume(isMuted);
-  document.getElementById('muteIcon').src = isMuted
-    ? './assets/icons/sound_off.png'
-    : './assets/icons/sound_on.png';
-  menuSoundManager.stop('menuMusic');
-  world.soundManager.play('backgroundMusic');
-
+  prepareLoadingScreen();
+  await runPreloader(levelInstance);
+  startWorld(levelInstance);
 }
 
 /**
@@ -145,14 +136,14 @@ window.addEventListener('keyup', (event) => {
 /** Shows the in-game control buttons and touch controls. */
 function showGameControls() {
   document.getElementById("gameControls").style.display = "flex";
-  document.getElementById('menuMuteButton').style.display = 'none';
+  document.getElementById('menuControls').style.display = 'none';
   showTouchControls();
 }
 
 /** Hides the in-game control buttons and touch controls. */
 function hideGameControls() {
   document.getElementById("gameControls").style.display = "none";
-  document.getElementById('menuMuteButton').style.display = 'block';
+  document.getElementById('menuControls').style.display = 'flex';
   hideTouchControls();
 }
 
@@ -239,4 +230,60 @@ function toggleMenuMute() {
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
   document.getElementById('menuMuteButton').setAttribute('aria-pressed', menuMuted);
+}
+
+function animateLoadingBar() {
+  const fill = document.getElementById("loadingBarFill");
+  const bar = fill.parentElement;
+  fill.style.width = "0%";
+  let progress = 0;
+  const id = setInterval(() => {
+    progress = Math.min(progress + (Math.random() * 15 + 5), 85);
+    fill.style.width = progress + "%";
+    bar.setAttribute("aria-valuenow", Math.round(progress));
+    if (progress >= 85) clearInterval(id);
+  }, 120);
+
+  // Auf 100% springen wenn World fertig ist — wird von init() getriggert
+  window._finishLoadingBar = () => {
+    clearInterval(id);
+    fill.style.width = "100%";
+    bar.setAttribute("aria-valuenow", 100);
+  };
+}
+
+function prepareLoadingScreen() {
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("loadingScreen").style.display = "flex";
+  document.getElementById("loadingBarFill").style.width = "0%";
+  canvas = document.getElementById("canvas");
+  showGameControls();
+}
+
+async function runPreloader(levelInstance) {
+  const fill = document.getElementById("loadingBarFill");
+  const sources = buildPreloadSources(levelInstance);
+  const paths = collectImagePaths(sources);
+  await preloadImages(paths, fill);
+  await new Promise(r => setTimeout(r, 300));
+}
+
+function buildPreloadSources(levelInstance) {
+  return [
+    Character.prototype,
+    ...levelInstance.enemies,
+    new Statusbar(),
+    new BottleStatusbar(),
+    new CoinStatusbar(),
+    new EndbossStatusbar(),
+  ];
+}
+
+function startWorld(levelInstance) {
+  canvas.style.display = "block";
+  document.getElementById("loadingScreen").style.display = "none";
+  world = new World(canvas, keyboard, levelInstance);
+  world.backgroundMusic.play().catch(() => { });
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
 }

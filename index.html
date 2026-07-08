@@ -38,6 +38,7 @@
     <script src="./levels/level1.js"></script>
     <script src="./levels/level2.js"></script>
     <script src="./levels/level3.js"></script>
+    <script src="./script/preloader.js"></script>
     <script src="./script/game.js"></script>
   </head>
   <body>
@@ -53,14 +54,14 @@
           class="start-btn"
           style="left: 4.8%; top: 72%; width: 19.3%; height: 22.1%;"
           onclick="startGame(createLevel1)">
-          Game Start
+          Start
         </button>
         <button
           type="button"
           class="start-btn"
           style="left: 28.5%; top: 72%; width: 19.3%; height: 22.1%;"
           onclick="openPanel('levelSelectPanel')">
-          Level Select
+          Level
         </button>
         <button
           type="button"
@@ -78,20 +79,50 @@
         </button>
       </div>
 
-      <button
-        type="button"
-        id="menuMuteButton"
-        class="game-icon-btn"
-        aria-label="Menü-Musik stummschalten"
-        aria-pressed="false"
-        style="position:absolute; top:4%; right:2%; z-index:10;"
-        onclick="toggleMenuMute()">
-        <img
-          id="menuMuteIcon"
-          src="./assets/icons/sound_on.png"
-          alt="Mute"
-          aria-hidden="true" />
-      </button>
+      <div id="menuControls" class="menu-controls">
+        <button
+          type="button"
+          id="menuMuteButton"
+          class="game-icon-btn"
+          aria-label="Menü-Musik stummschalten"
+          aria-pressed="false"
+          onclick="toggleMenuMute()">
+          <img
+            id="menuMuteIcon"
+            src="./assets/icons/sound_on.png"
+            alt=""
+            aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          id="menuFullscreenButton"
+          class="game-icon-btn"
+          aria-label="Vollbild umschalten"
+          onclick="toggleFullscreen()">
+          <img src="./assets/icons/expand.png" alt="" aria-hidden="true" />
+        </button>
+      </div>
+
+      <div
+        id="loadingScreen"
+        class="screen-overlay loading-screen"
+        style="display: none;"
+        role="status"
+        aria-live="polite"
+        aria-label="Spiel wird geladen">
+        <div class="loading-content">
+          <p class="loading-title">Loading...</p>
+          <div
+            class="loading-bar-track"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            aria-label="Ladefortschritt">
+            <div id="loadingBarFill" class="loading-bar-fill"></div>
+          </div>
+        </div>
+      </div>
 
       <div
         id="controlsPanel"
