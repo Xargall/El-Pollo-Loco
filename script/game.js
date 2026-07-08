@@ -6,8 +6,6 @@ let world;
 let keyboard = new Keyboard();
 /** @type {Function|null} The level creator function for the currently active level. */
 let currentLevelCreator = null;
-/** @type {boolean} Whether the game audio is currently muted. */
-let isMuted = false;
 /** @type {Function[]} Ordered list of all level creator functions. */
 const LEVELS = [createLevel1, createLevel2, createLevel3];
 /** @type {Audio} Background music played on the main menu. */
@@ -18,6 +16,13 @@ const winImage = new Image();
 winImage.src = 'assets/img/You won, you lost/You Win A.png';
 const gameOverImage = new Image();
 gameOverImage.src = 'assets/img/You won, you lost/You lost.png';
+let isMuted = localStorage.getItem('isMuted') === 'true';
+menuMusic.muted = isMuted;
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('menuMuteIcon').src = isMuted
+    ? './assets/icons/sound_off.png'
+    : './assets/icons/sound_on.png';
+});
 
 
 // Menu music starts on first user interaction to comply with browser autoplay policy.
@@ -40,6 +45,10 @@ function init(selectedLevel) {
   canvas.style.display = "block";
   showGameControls();
   world = new World(canvas, keyboard, selectedLevel);
+  world.soundManager.setMasterVolume(isMuted);
+  document.getElementById('muteIcon').src = isMuted
+    ? './assets/icons/sound_off.png'
+    : './assets/icons/sound_on.png';
   menuSoundManager.stop('menuMusic');
   world.soundManager.play('backgroundMusic');
 
@@ -98,6 +107,9 @@ function goToMainMenu() {
   canvas.style.display = "none";
   document.getElementById("startScreen").style.display = "block";
   menuSoundManager.play('menuMusic');
+  document.getElementById('menuMuteIcon').src = isMuted
+    ? './assets/icons/sound_off.png'
+    : './assets/icons/sound_on.png';
 }
 
 /**
@@ -133,12 +145,14 @@ window.addEventListener('keyup', (event) => {
 /** Shows the in-game control buttons and touch controls. */
 function showGameControls() {
   document.getElementById("gameControls").style.display = "flex";
+  document.getElementById('menuMuteButton').style.display = 'none';
   showTouchControls();
 }
 
 /** Hides the in-game control buttons and touch controls. */
 function hideGameControls() {
   document.getElementById("gameControls").style.display = "none";
+  document.getElementById('menuMuteButton').style.display = 'block';
   hideTouchControls();
 }
 
@@ -204,11 +218,23 @@ function toggleFullscreen() {
 /** Toggles mute state for all in-game sounds and updates the mute button icon. */
 function toggleMute() {
   isMuted = !isMuted;
-  world.soundManager.setMasterVolume(isMuted);
-  menuSoundManager.setMasterVolume(isMuted);
+  localStorage.setItem('isMuted', isMuted);
   world.soundManager.setMasterVolume(isMuted);
   document.getElementById('muteIcon').src = isMuted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
   canvas.focus();
+}
+
+/**
+ * Toggles the mute state of the main menu background music.
+ * Updates the mute button icon to reflect the current state.
+ */
+function toggleMenuMute() {
+  menuMusic.muted = !menuMusic.muted;
+  isMuted = menuMusic.muted;
+  localStorage.setItem('isMuted', isMuted);
+  document.getElementById('menuMuteIcon').src = menuMusic.muted
+    ? './assets/icons/sound_off.png'
+    : './assets/icons/sound_on.png';
 }
