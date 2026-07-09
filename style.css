@@ -417,6 +417,18 @@ canvas {
   gap: clamp(4px, 1vmin, 12px);
 }
 
+.panel a {
+  color: #f4a93a;
+}
+
+.panel a:visited {
+  color: #c47a1e;
+}
+
+.panel a:hover {
+  color: #ffd080;
+}
+
 @media only screen and (max-height: 500px) {
   h1 {
     display: none;
