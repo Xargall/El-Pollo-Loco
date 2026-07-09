@@ -184,9 +184,10 @@ function initTouchControls() {
   });
 }
 
-/** Shows touch controls if the device supports touch input. */
+/** Shows touch controls if the primary input device is a coarse pointer (e.g. touchscreen). */
+
 function showTouchControls() {
-  if (navigator.maxTouchPoints > 0) {
+  if (window.matchMedia('(pointer: coarse)').matches) {
     document.getElementById('touchControls').classList.add('visible');
     initTouchControls();
   }

@@ -47,9 +47,10 @@ canvas {
 
 .game-container {
   position: relative;
-  width: min(720px, 90vmin, 100vw);
+  width: min(720px, 100vw);
   min-width: 320px;
   aspect-ratio: 3 / 2;
+  max-height: 100dvh;
   margin: 0 auto;
 }
 
@@ -419,6 +420,11 @@ canvas {
 @media only screen and (max-height: 500px) {
   h1 {
     display: none;
+  }
+
+  .game-container {
+    width: auto;
+    height: 100dvh;
   }
 }
 

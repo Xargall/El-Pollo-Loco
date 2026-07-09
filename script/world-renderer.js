@@ -101,6 +101,7 @@ function drawBannerText(ctx, cx, cy, levelNumber) {
 /**
  * Renders the animated level banner at the start of each level.
  * Fades out during the last second of its 3-second display window.
+ * Also renders the level objective below the banner with the same fade.
  *
  * @param {World} world - The current World instance.
  * @param {number} elapsed - Seconds elapsed since the level started.
@@ -108,9 +109,15 @@ function drawBannerText(ctx, cx, cy, levelNumber) {
 function drawLevelBanner(world, elapsed) {
     const alpha = elapsed > 2 ? 1 - (elapsed - 2) : 1;
     const cx = 360, cy = 190, w = 180, h = 60;
+    const hasEndboss = world.level.enemies.some(e => e instanceof Endboss);
+    const objective = hasEndboss ? 'Defeat the Boss Chicken!' : 'Defeat all Chickens!';
     world.ctx.save();
     world.ctx.globalAlpha = alpha;
     drawBannerFrame(world.ctx, cx - w / 2, cy - h / 2, w, h);
     drawBannerText(world.ctx, cx, cy, world.levelNumber);
+    world.ctx.fillStyle = '#2a1500';
+    world.ctx.font = 'bold 16px Georgia, serif';
+    world.ctx.textAlign = 'center';
+    world.ctx.fillText(objective, cx, cy + h / 2 + 25);
     world.ctx.restore();
 }
