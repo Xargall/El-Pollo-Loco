@@ -67,6 +67,8 @@ class World {
   levelBannerStart = new Date().getTime();
   /** @type {Audio} Sound played when bouncing on enemy. */
   bounceSound = new Audio('assets/audio/sound/ui/bounce.mp3');
+  /** @type {boolean} Whether the draw loop should stop rendering. */
+  isDestroyed = false;
 
   /**
    * Creates a new World instance and initializes all game systems.
@@ -350,6 +352,7 @@ class World {
    * otherwise renders the world, HUD, and foreground each frame.
    */
   draw() {
+    if (this.isDestroyed) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (this.gameWon) {
       getGameWonState(this.ctx, this.camera_x, this.canvas, this.winImage, this.level);
@@ -379,6 +382,7 @@ class World {
    * Should be called before creating a new World instance.
    */
   destroy() {
+    this.isDestroyed = true;
     clearInterval(this.intervalId1);
     clearInterval(this.intervalId2);
     this.character.destroy();
