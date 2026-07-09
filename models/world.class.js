@@ -66,7 +66,7 @@ class World {
   /** @type {number} Timestamp of level start, used for the level banner fade-out. */
   levelBannerStart = new Date().getTime();
   /** @type {Audio} Sound played when bouncing on enemy. */
-  bounceSound = new Audio('assets/audio/sound/ui/bounce.wav');
+  bounceSound = new Audio('assets/audio/sound/ui/bounce.mp3');
 
   /**
    * Creates a new World instance and initializes all game systems.
@@ -354,11 +354,13 @@ class World {
     if (this.gameWon) {
       getGameWonState(this.ctx, this.camera_x, this.canvas, this.winImage, this.level);
       showWinButtons();
+      requestAnimationFrame(() => this.draw());
       return;
     }
     if (this.gameOver) {
       getGameOverState(this.ctx, this.camera_x, this.canvas, this.gameOverImage, this.level);
       showGameOverButtons();
+      requestAnimationFrame(() => this.draw());
       return;
     }
     drawWorld(this);

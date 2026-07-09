@@ -20,7 +20,7 @@ const VOLUMES = {
     gameOver: 0.4,
     gameWon: 0.4,
     oneUp: 0.3,
-    bounce: 0.3
+    bounce: 0.5,
 };
 
 /**
