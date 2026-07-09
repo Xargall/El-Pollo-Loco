@@ -48,7 +48,8 @@
       <div id="startScreen" class="screen-overlay">
         <img
           src="assets/img/9_intro_outro_screens/start/startscreen_3.png"
-          class="start-bg" />
+          class="start-bg"
+          alt="El Pollo Loco Startscreen" />
         <button
           type="button"
           class="start-btn"
@@ -84,7 +85,7 @@
           type="button"
           id="menuMuteButton"
           class="game-icon-btn"
-          aria-label="Menü-Musik stummschalten"
+          aria-label="Mute menu music"
           aria-pressed="false"
           onclick="toggleMenuMute()">
           <img
@@ -97,7 +98,7 @@
           type="button"
           id="menuFullscreenButton"
           class="game-icon-btn"
-          aria-label="Vollbild umschalten"
+          aria-label="Toggle fullscreen"
           onclick="toggleFullscreen()">
           <img src="./assets/icons/expand.png" alt="" aria-hidden="true" />
         </button>
@@ -132,7 +133,7 @@
         class="screen-overlay panel"
         class="screen-overlay panel"
         style="display: none;">
-        <h2>Controls</h2>
+        <h2 id="controlsPanelTitle">Controls</h2>
         <div class="control-row">
           <div class="key-group">
             <span class="key">←</span>
@@ -166,7 +167,7 @@
         aria-labelledby="levelSelectPanelTitle"
         class="screen-overlay panel"
         style="display: none;">
-        <h2>Choose Level</h2>
+        <h2 id="levelSelectPanelTitle">Choose Level</h2>
         <div class="button-row">
           <button class="wood-btn" onclick="startGame(createLevel1)">
             Level 1
@@ -192,7 +193,7 @@
         aria-labelledby="imprintPanelTitle"
         class="screen-overlay panel"
         style="display: none;">
-        <h2>Impressum</h2>
+        <h2 id="imprintPanelTitle">Impressum</h2>
         <p>Mathias Mayer</p>
         <p>Martinshöhe 24A, 04158 Leipzig</p>
         <p>
@@ -223,7 +224,8 @@
           <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>
         </p>
         <p>
-          <a href="./docs/index.html" target="_blank">JS Doc</a> - Technical Documentation
+          <a href="./docs/index.html" target="_blank">JS Doc</a> - Technical
+          Documentation
         </p>
         <div class="back-row">
           <button class="wood-btn" onclick="closePanel('imprintPanel')">
@@ -248,25 +250,25 @@
         width="720"
         height="480"
         role="application"
-        aria-label="El Pollo Loco Spielfeld"
+        aria-label="El Pollo Loco Game Canvas"
         style="display: none;"
         tabindex="0">
       </canvas>
 
-      <div id="touchControls" role="group" aria-label="Touch-Steuerung">
+      <div id="touchControls" role="group" aria-label="Touch-Controls">
         <div class="touch-left">
           <button
             type="button"
             class="touch-btn"
             id="btn-left"
-            aria-label="Links bewegen">
+            aria-label="Move left">
             ◀
           </button>
           <button
             type="button"
             class="touch-btn"
             id="btn-right"
-            aria-label="Rechts bewegen">
+            aria-label="Move right">
             ▶
           </button>
         </div>
@@ -275,14 +277,14 @@
             type="button"
             class="touch-btn"
             id="btn-jump"
-            aria-label="Springen">
+            aria-label="Jump">
             <img src="./assets/icons/jump.png" alt="Jump" aria-hidden="true" />
           </button>
           <button
             type="button"
             class="touch-btn"
             id="btn-throw"
-            aria-label="Flasche werfen">
+            aria-label="Throw bottle">
             <img
               src="./assets/icons/throw.png"
               alt="Throw"
@@ -331,7 +333,7 @@
       <div
         id="endScreenButtons"
         role="group"
-        aria-label="Spielende-Optionen"
+        aria-label="Game end Screen"
         class="end-screen-buttons"
         style="display: none;">
         <button
