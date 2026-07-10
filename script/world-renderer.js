@@ -35,7 +35,7 @@ function drawHUD(world) {
     }
 
     const elapsed = (new Date().getTime() - world.levelBannerStart) / 1000;
-    if (elapsed < 3) drawLevelBanner(world, elapsed);
+    if (elapsed < 7) drawLevelBanner(world, elapsed);
 }
 
 /**
@@ -113,7 +113,10 @@ function drawBannerText(ctx, cx, cy, levelNumber) {
  * @param {number} elapsed - Seconds elapsed since the level started.
  */
 function drawLevelBanner(world, elapsed) {
-    const alpha = elapsed > 2 ? 1 - (elapsed - 2) : 1;
+    const fadeDuration = 2;
+    const alpha = elapsed <= 5
+        ? 1
+        : Math.max(0, 1 - (elapsed - 5) / fadeDuration);
     const hasEndboss = world.level.enemies.some(e => e instanceof Endboss);
     const objective = hasEndboss ? 'Defeat the Boss Chicken!' : 'Defeat all Chickens!';
     world.ctx.save();
