@@ -70,6 +70,12 @@ class ThrowableObject extends MovableObject {
             if (this.isSplashing) return;
             this.y -= this.speedY;
             this.speedY -= this.acceleration;
+
+            if (this.y >= 380) {
+                this.y = 380;
+                this.hit();
+                this.world.soundManager.play(`bottleBreak_${this.id}`);
+            }
         }, 1000 / 25);
 
         this.intervalId2 = setInterval(() => {

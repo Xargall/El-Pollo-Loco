@@ -114,3 +114,64 @@ function getGameOverState(ctx, camera_x, canvas, gameOverImage, level) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(gameOverImage, 60, 40, 600, 400);
 }
+
+/**
+ * Draws a comic-style speech bubble above the given position.
+ * Used to show Pepe saying "No bottles!" when trying to throw without bottles.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+ * @param {number} x - Horizontal center of the bubble tail in world coordinates.
+ * @param {number} y - Vertical position of the bubble tail tip in world coordinates.
+ */
+function drawSpeechBubble(ctx, x, y) {
+    const text = 'No bottles!';
+    const padding = 10;
+    ctx.font = 'bold 14px Georgia';
+    const bw = ctx.measureText(text).width + padding * 2;
+    const bh = 30;
+    drawBubbleShape(ctx, x - bw / 2, y - bh - 10, bw, bh, x);
+    drawBubbleText(ctx, x, y - bh - 10, bh, text);
+}
+
+/**
+ * Draws the rounded rectangle background and tail of a speech bubble.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+ * @param {number} bx - Left edge of the bubble box.
+ * @param {number} by - Top edge of the bubble box.
+ * @param {number} bw - Width of the bubble box in pixels.
+ * @param {number} bh - Height of the bubble box in pixels.
+ * @param {number} x - Horizontal center of the bubble tail.
+ */
+function drawBubbleShape(ctx, bx, by, bw, bh, x) {
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw, bh, 6);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x - 8, by + bh);
+    ctx.lineTo(x + 8, by + bh);
+    ctx.lineTo(x, by + bh + 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+}
+
+/**
+ * Draws the text content inside a speech bubble.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+ * @param {number} x - Horizontal center for the text.
+ * @param {number} by - Top edge of the bubble box.
+ * @param {number} bh - Height of the bubble box in pixels.
+ * @param {string} text - The text to display inside the bubble.
+ */
+function drawBubbleText(ctx, x, by, bh, text) {
+    ctx.fillStyle = '#222';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, x, by + bh - 9);
+    ctx.textAlign = 'left';
+}

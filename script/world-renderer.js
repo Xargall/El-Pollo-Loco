@@ -47,6 +47,11 @@ function drawHUD(world) {
 function drawForeground(world) {
     world.ctx.translate(world.camera_x, 0);
     addToMap(world.ctx, world.character);
+    const bubbleActive = world.showNoBottlesBubble &&
+        (Date.now() - world.noBottlesBubbleStart < 1500);
+    if (bubbleActive) {
+        drawSpeechBubble(world.ctx, world.character.x + 60, world.character.y + 80);
+    }
     addObjectsToMap(world.ctx, world.throwableObjects);
     addObjectsToMap(world.ctx, world.level.enemies);
     drawDamageTexts(world.ctx, world.damageTexts);
@@ -100,24 +105,65 @@ function drawBannerText(ctx, cx, cy, levelNumber) {
 
 /**
  * Renders the animated level banner at the start of each level.
+ * Displays two western-style wooden signs connected by ropes:
+ * the upper shows the level number, the lower shows the objective.
  * Fades out during the last second of its 3-second display window.
- * Also renders the level objective below the banner with the same fade.
  *
  * @param {World} world - The current World instance.
  * @param {number} elapsed - Seconds elapsed since the level started.
  */
 function drawLevelBanner(world, elapsed) {
     const alpha = elapsed > 2 ? 1 - (elapsed - 2) : 1;
-    const cx = 360, cy = 190, w = 180, h = 60;
     const hasEndboss = world.level.enemies.some(e => e instanceof Endboss);
     const objective = hasEndboss ? 'Defeat the Boss Chicken!' : 'Defeat all Chickens!';
     world.ctx.save();
     world.ctx.globalAlpha = alpha;
-    drawBannerFrame(world.ctx, cx - w / 2, cy - h / 2, w, h);
-    drawBannerText(world.ctx, cx, cy, world.levelNumber);
-    world.ctx.fillStyle = '#2a1500';
-    world.ctx.font = 'bold 16px Georgia, serif';
-    world.ctx.textAlign = 'center';
-    world.ctx.fillText(objective, cx, cy + h / 2 + 25);
+    drawBannerPair(world.ctx, 360, 140, 60, 220, 240, 44, world.levelNumber, objective);
     world.ctx.restore();
+}
+
+/**
+ * Draws both banner signs with connecting ropes.
+ * Upper sign shows the level number, lower sign shows the objective text.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+ * @param {number} cx - Horizontal center of the banner pair in canvas coordinates.
+ * @param {number} y1 - Top edge of the upper sign.
+ * @param {number} h1 - Height of the upper sign in pixels.
+ * @param {number} y2 - Top edge of the lower sign.
+ * @param {number} w2 - Width of the lower sign in pixels.
+ * @param {number} h2 - Height of the lower sign in pixels.
+ * @param {number} levelNumber - The current level number to display.
+ * @param {string} objective - The objective text to display on the lower sign.
+ */
+function drawBannerPair(ctx, cx, y1, h1, y2, w2, h2, levelNumber, objective) {
+    drawRopes(ctx, cx, y1 + h1, y2);
+    drawBannerFrame(ctx, cx - 90, y1, 180, h1);
+    drawBannerText(ctx, cx, y1 + h1 / 2, levelNumber);
+    drawBannerFrame(ctx, cx - w2 / 2, y2, w2, h2);
+    ctx.fillStyle = '#2a1500';
+    ctx.font = 'bold 14px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(objective, cx, y2 + h2 / 2 + 6);
+}
+
+/**
+ * Draws two vertical ropes connecting the upper and lower level banner signs.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+ * @param {number} cx - Horizontal center of the banner pair in canvas coordinates.
+ * @param {number} y1Bottom - Y coordinate of the bottom edge of the upper sign.
+ * @param {number} y2Top - Y coordinate of the top edge of the lower sign.
+ */
+function drawRopes(ctx, cx, y1Bottom, y2Top) {
+    const ropeX1 = cx - 50;
+    const ropeX2 = cx + 50;
+    ctx.strokeStyle = '#5a3a1a';
+    ctx.lineWidth = 2;
+    [ropeX1, ropeX2].forEach(rx => {
+        ctx.beginPath();
+        ctx.moveTo(rx, y1Bottom);
+        ctx.lineTo(rx, y2Top);
+        ctx.stroke();
+    });
 }

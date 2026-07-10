@@ -67,8 +67,12 @@ class World {
   levelBannerStart = new Date().getTime();
   /** @type {Audio} Sound played when bouncing on enemy. */
   bounceSound = new Audio('assets/audio/sound/ui/bounce.mp3');
-  /** @type {boolean} Whether the draw loop should stop rendering. */
+  /** @type {boolean} Whether the draw loop has been stopped via destroy(). */
   isDestroyed = false;
+  /** @type {boolean} Whether the no-bottles speech bubble is currently active. */
+  showNoBottlesBubble = false;
+  /** @type {number|null} Timestamp when the no-bottles bubble was last shown. */
+  noBottlesBubbleStart = null;
 
   /**
    * Creates a new World instance and initializes all game systems.
@@ -218,9 +222,10 @@ class World {
   }
 
   /**
-   * Handles the D-key throw input.
-   * Enforces a cooldown between throws and shows a warning if no bottles are held.
-   */
+ * Handles the D-key throw input.
+ * Enforces a cooldown between throws and activates the speech bubble
+ * if no bottles are held, instead of showing a damage text.
+ */
   checkThrowObjects() {
     if (this.character.isDead()) return;
     if (!this.keyboard.D) return;
@@ -229,11 +234,8 @@ class World {
 
     if (this.bottleCount === 0) {
       if (!this.lastBottleWarning || now - this.lastBottleWarning > 1500) {
-        this.damageTexts.push(new DamageText(
-          this.character.x + this.character.offset.left,
-          this.character.y + this.character.offset.top,
-          "No Bottles to throw!"
-        ));
+        this.showNoBottlesBubble = true;
+        this.noBottlesBubbleStart = now;
         this.lastBottleWarning = now;
       }
       return;
@@ -348,9 +350,11 @@ class World {
   }
 
   /**
-   * Main draw loop. Renders the win or game over screen if the game has ended,
-   * otherwise renders the world, HUD, and foreground each frame.
-   */
+ * Main draw loop driven by requestAnimationFrame.
+ * Renders the win or game over screen if the game has ended (rAF continues in both states),
+ * otherwise renders the world, HUD, and foreground each frame.
+ * Stops immediately if isDestroyed is true.
+ */
   draw() {
     if (this.isDestroyed) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -378,9 +382,10 @@ class World {
   }
 
   /**
-   * Cleans up all intervals, destroys all game objects, and stops all sounds.
-   * Should be called before creating a new World instance.
-   */
+ * Cleans up all intervals, destroys all game objects, and stops all sounds.
+ * Sets isDestroyed to true to halt the requestAnimationFrame loop.
+ * Should be called before creating a new World instance.
+ */
   destroy() {
     this.isDestroyed = true;
     clearInterval(this.intervalId1);
