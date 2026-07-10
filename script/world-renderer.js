@@ -24,7 +24,7 @@ function drawHUD(world) {
     addToMap(world.ctx, world.statusBar);
     world.ctx.drawImage(world.pepeIcon, 250, 10, 40, 40);
     world.ctx.fillStyle = "white";
-    world.ctx.font = 'bold 20px Georgia';
+    world.ctx.font = 'bold 20px Roboto';
     world.ctx.fillText(`x ${world.extraLives}`, 295, 45);
     addToMap(world.ctx, world.bottleStatusBar);
     addToMap(world.ctx, world.coinStatusBar);
@@ -77,7 +77,7 @@ function drawBannerFrame(ctx, x, y, w, h) {
     ctx.lineWidth = 1.5;
     ctx.strokeRect(x + 6, y + 6, w - 12, h - 12);
     ctx.fillStyle = '#6b4f00';
-    ctx.font = '10px Georgia, serif';
+    ctx.font = '10px Roboto, serif';
     ctx.textAlign = 'center';
     [[x + 10, y + 16], [x + w - 10, y + 16],
     [x + 10, y + h - 5], [x + w - 10, y + h - 5]
@@ -95,11 +95,11 @@ function drawBannerFrame(ctx, x, y, w, h) {
  */
 function drawBannerText(ctx, cx, cy, levelNumber) {
     ctx.fillStyle = '#4a2c00';
-    ctx.font = 'bold 9px Georgia, serif';
+    ctx.font = 'bold 9px Roboto, serif';
     ctx.textAlign = 'center';
     ctx.fillText('— WANTED —', cx, cy - 6);
     ctx.fillStyle = '#2a1500';
-    ctx.font = 'bold 20px Georgia, serif';
+    ctx.font = 'bold 20px Roboto, serif';
     ctx.fillText(`LEVEL ${levelNumber}`, cx, cy + 16);
 }
 
@@ -145,7 +145,7 @@ function drawBannerPair(ctx, cx, y1, h1, y2, w2, h2, levelNumber, objective) {
     drawBannerText(ctx, cx, y1 + h1 / 2, levelNumber);
     drawBannerFrame(ctx, cx - w2 / 2, y2, w2, h2);
     ctx.fillStyle = '#2a1500';
-    ctx.font = 'bold 14px Georgia, serif';
+    ctx.font = 'bold 14px Roboto, serif';
     ctx.textAlign = 'center';
     ctx.fillText(objective, cx, y2 + h2 / 2 + 6);
 }
