@@ -15,6 +15,8 @@ class Character extends MovableObject {
   lastY = 80;
   /** @type {number} Horizontal movement speed. */
   speed = 10;
+  /** @type {number} Starting hit points. Pepe dies after 5 hits (each hit subtracts 10). */
+  energy = 50;
   /** @type {number} Interval ID for the movement and input loop. */
   intervalId1;
   /** @type {number} Interval ID for the death animation loop. */

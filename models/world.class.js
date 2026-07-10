@@ -158,6 +158,7 @@ class World {
         this.checkBossDefeat(enemy);
       } else if (this.character.isColliding(enemy) && !this.character.isHurt() && this.character.speedY <= 0) {
         this.character.hit();
+        this.statusBar.setPercentage(calculatePercentage(this.character.energy, 50));
         this.damageTexts.push(new DamageText(
           this.character.x + this.character.offset.left,
           this.character.y + this.character.offset.top,
@@ -165,7 +166,7 @@ class World {
         ));
         this.soundManager.stop('characterDamage');
         this.soundManager.play('characterDamage');
-        this.statusBar.setPercentage(this.character.energy);
+
       }
     });
     this.character.lastY = this.character.y;
@@ -229,9 +230,7 @@ class World {
   checkThrowObjects() {
     if (this.character.isDead()) return;
     if (!this.keyboard.D) return;
-
     const now = Date.now();
-
     if (this.bottleCount === 0) {
       if (!this.lastBottleWarning || now - this.lastBottleWarning > 1500) {
         this.showNoBottlesBubble = true;
@@ -240,9 +239,11 @@ class World {
       }
       return;
     }
-
     if (!this.lastThrowTime || now - this.lastThrowTime > 800) {
-      let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+      const throwX = this.character.otherDirection
+        ? this.character.x - 50
+        : this.character.x + 100;
+      let bottle = new ThrowableObject(throwX, this.character.y + 100, this.character.otherDirection);
       bottle.world = this;
       bottle.registerSounds(this.soundManager);
       this.throwableObjects.push(bottle);
@@ -329,7 +330,7 @@ class World {
     if (this.character.isDead() && this.character.currentImage >= this.character.IMAGES_DEAD.length) {
       if (this.extraLives > 0) {
         this.extraLives--;
-        this.character.energy = 100;
+        this.character.energy = 50;
         this.statusBar.setPercentage(100);
       } else {
         this.gameOver = true;

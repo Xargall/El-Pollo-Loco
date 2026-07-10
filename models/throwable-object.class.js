@@ -45,7 +45,7 @@ class ThrowableObject extends MovableObject {
      * @param {number} x - Horizontal starting position in the game world.
      * @param {number} y - Vertical starting position in the game world.
      */
-    constructor(x, y) {
+    constructor(x, y, otherDirection = false) {
         super().loadImage(this.IMAGES_THROW[0]);
         this.loadImages(this.IMAGES_THROW);
         this.loadImages(this.IMAGES_SPLASH);
@@ -54,6 +54,7 @@ class ThrowableObject extends MovableObject {
         this.height = 60;
         this.width = 50;
         this.id = Math.random().toString(36).substr(2, 9);
+        this.otherDirection = otherDirection;
         this.throw();
         this.animate();
     }
@@ -80,7 +81,7 @@ class ThrowableObject extends MovableObject {
 
         this.intervalId2 = setInterval(() => {
             if (this.isSplashing) return;
-            this.x += 10;
+            this.x += this.otherDirection ? -10 : 10;
         }, 25);
     }
 
