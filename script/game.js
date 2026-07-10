@@ -70,7 +70,10 @@ function startGame(levelCreator) {
 function openPanel(panelId) {
   document.getElementById("startScreen").style.display = "none";
   document.getElementById(panelId).style.display = "flex";
-  if (panelId === 'imprintPanel') initCreditsAccordion();
+  if (panelId === 'imprintPanel' && !document.querySelector('.credits-accordion').dataset.init) {
+    initCreditsAccordion();
+    document.querySelector('.credits-accordion').dataset.init = 'true';
+  }
 }
 
 /**
@@ -354,7 +357,7 @@ function closeAccordion(details, body) {
   requestAnimationFrame(() => {
     body.style.height = '0px';
   });
-  body.addEventListener('transitionend', () => {
+  setTimeout(() => {
     details.open = false;
-  }, { once: true });
+  }, 300);
 }
