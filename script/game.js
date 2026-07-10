@@ -273,6 +273,7 @@ function startWorld(levelInstance) {
   canvas.style.display = "block";
   document.getElementById("loadingScreen").style.display = "none";
   world = new World(canvas, keyboard, levelInstance);
+  world.soundManager.setMasterVolume(isMuted);
   world.backgroundMusic.play().catch(() => { });
   menuMusic.pause();
   menuMusic.currentTime = 0;

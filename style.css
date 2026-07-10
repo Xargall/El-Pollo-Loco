@@ -3,6 +3,15 @@
   src: url(./assets/fonts/Zabars.ttf);
 }
 
+/* afacad-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Afacad";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./assets/fonts/afacad-v3-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
 * {
   margin: 0;
   box-sizing: border-box;
@@ -177,7 +186,7 @@ canvas {
 }
 
 .panel p {
-  font-family: "Georgia", serif;
+  font-family: "Afacad";
   font-size: clamp(12px, 2vw, 18px);
   margin: 10px 0;
   color: #f4e4c1;
