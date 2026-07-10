@@ -110,30 +110,6 @@ class Endboss extends MovableObject {
     }
 
     /**
-     * Triggers a jump attack if the Endboss is not already jumping.
-     * Plays the alert sound and runs a physics loop until landing.
-     */
-    triggerRandomJump() {
-        if (this.isJumping || !this.hasNoticed) return;
-        this.isJumping = true;
-        this.speedY = 25;
-        this.currentImage = 0;
-        this.world.soundManager.stop('endbossAlert');
-        this.world.soundManager.play('endbossAlert');
-
-        let jumpInterval = setInterval(() => {
-            this.y -= this.speedY;
-            this.speedY -= 2;
-
-            if (this.y >= this.groundY && this.speedY < 0) {
-                this.y = this.groundY;
-                this.isJumping = false;
-                clearInterval(jumpInterval);
-            }
-        }, 1000 / 25);
-    }
-
-    /**
      * Schedules the next jump after a random delay between 2 and 5 seconds.
      * Keeps rescheduling itself until the Endboss is dead.
      */
@@ -150,39 +126,79 @@ class Endboss extends MovableObject {
     }
 
     /**
-     * Starts the movement and animation loops.
-     * Movement runs every 200ms, animation updates every 150ms.
-     * Animation state is determined by current boss state (dead, hurt, jumping, walking, alert).
+     * Starts the boss behavior loops.
+     *
+     * Schedules the first jump, updates movement every 200 ms,
+     * and updates the animation every 150 ms.
      */
     animate() {
         this.scheduleNextJump();
+        this.intervalId1 = setInterval(() => this.handleMovement(), 200);
+        this.intervalId2 = setInterval(() => this.handleAnimation(), 150);
+    }
 
-        this.intervalId1 = setInterval(() => {
-            if (this.isDead()) return;
-            if (this.hasNoticed) {
-                this.moveLeft();
-            }
-        }, 200);
+    /**
+     * Handles the boss's movement.
+     *
+     * The boss moves left only after noticing the player
+     * and while it is still alive.
+     */
+    handleMovement() {
+        if (!this.isDead() && this.hasNoticed) this.moveLeft();
+    }
 
-        this.intervalId2 = setInterval(() => {
-            if (this.isDead()) {
-                if (!this.hasDeadSoundPlayed) {
-                    this.world.soundManager.play('endbossDead');
-                    this.hasDeadSoundPlayed = true;
-                }
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.playAnimation(this.IMAGES_DEAD);
-                }
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isJumping) {
-                this.playAnimation(this.IMAGES_ATTACK);
-            } else if (this.hasNoticed) {
-                this.playAnimation(this.IMAGES_WALKING);
-            } else {
-                this.playAnimation(this.IMAGES_ALERT);
-            }
-        }, 150);
+    /**
+     * Handles the boss's animation state.
+     *
+     * Animation priority:
+     * 1. Death
+     * 2. Hurt
+     * 3. Jump attack
+     * 4. Walking
+     * 5. Alert
+     */
+    handleAnimation() {
+        if (this.isDead()) {
+            this.handleDeathAnimation();
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isJumping) {
+            this.playAnimation(this.IMAGES_ATTACK);
+        } else if (this.hasNoticed) {
+            this.playAnimation(this.IMAGES_WALKING);
+        } else {
+            this.playAnimation(this.IMAGES_ALERT);
+        }
+    }
+
+    handleDeathAnimation() {
+        if (!this.hasDeadSoundPlayed) {
+            this.world.soundManager.play('endbossDead');
+            this.hasDeadSoundPlayed = true;
+        }
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.playAnimation(this.IMAGES_DEAD);
+        }
+    }
+
+    triggerRandomJump() {
+        if (this.isJumping || !this.hasNoticed) return;
+        this.isJumping = true;
+        this.speedY = 25;
+        this.currentImage = 0;
+        this.world.soundManager.stop('endbossAlert');
+        this.world.soundManager.play('endbossAlert');
+        let jumpInterval = setInterval(() => this.tickJump(jumpInterval), 1000 / 25);
+    }
+
+    tickJump(jumpInterval) {
+        this.y -= this.speedY;
+        this.speedY -= 2;
+        if (this.y >= this.groundY && this.speedY < 0) {
+            this.y = this.groundY;
+            this.isJumping = false;
+            clearInterval(jumpInterval);
+        }
     }
 
     /**

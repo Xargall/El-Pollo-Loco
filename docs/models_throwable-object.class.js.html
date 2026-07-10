@@ -73,7 +73,7 @@ class ThrowableObject extends MovableObject {
      * @param {number} x - Horizontal starting position in the game world.
      * @param {number} y - Vertical starting position in the game world.
      */
-    constructor(x, y) {
+    constructor(x, y, otherDirection = false) {
         super().loadImage(this.IMAGES_THROW[0]);
         this.loadImages(this.IMAGES_THROW);
         this.loadImages(this.IMAGES_SPLASH);
@@ -82,34 +82,50 @@ class ThrowableObject extends MovableObject {
         this.height = 60;
         this.width = 50;
         this.id = Math.random().toString(36).substr(2, 9);
+        this.otherDirection = otherDirection;
         this.throw();
         this.animate();
     }
 
     /**
-     * Starts the physics loops for the throw.
-     * Vertical movement uses gravity, horizontal movement is constant.
-     * Both loops stop while the bottle is splashing.
+     * Throws the bottle by applying an initial upward velocity
+     * and starting the vertical and horizontal movement loops.
      */
     throw() {
         this.speedY = 30;
+        this.intervalId1 = setInterval(() => this.tickVertical(), 1000 / 25);
+        this.intervalId2 = setInterval(() => this.tickHorizontal(), 25);
+    }
 
-        this.intervalId1 = setInterval(() => {
-            if (this.isSplashing) return;
-            this.y -= this.speedY;
-            this.speedY -= this.acceleration;
+    /**
+     * Updates the bottle's vertical movement.
+     *
+     * Simulates gravity by decreasing the vertical speed over time.
+     * When the bottle reaches the ground, it stops falling,
+     * triggers the splash state, and plays the breaking sound.
+     */
+    tickVertical() {
+        if (this.isSplashing) return;
 
-            if (this.y >= 380) {
-                this.y = 380;
-                this.hit();
-                this.world.soundManager.play(`bottleBreak_${this.id}`);
-            }
-        }, 1000 / 25);
+        this.y -= this.speedY;
+        this.speedY -= this.acceleration;
 
-        this.intervalId2 = setInterval(() => {
-            if (this.isSplashing) return;
-            this.x += 10;
-        }, 25);
+        if (this.y >= 380) {
+            this.y = 380;
+            this.hit();
+            this.world.soundManager.play(`bottleBreak_${this.id}`);
+        }
+    }
+
+    /**
+     * Updates the bottle's horizontal movement.
+     *
+     * Moves the bottle left or right until it starts splashing.
+     */
+    tickHorizontal() {
+        if (!this.isSplashing) {
+            this.x += this.otherDirection ? -10 : 10;
+        }
     }
 
     /**
@@ -176,13 +192,13 @@ class ThrowableObject extends MovableObject {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#buildPreloadSources">buildPreloadSources</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAccordion">closeAccordion</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#collectImagePaths">collectImagePaths</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawBannerFrame">drawBannerFrame</a></li><li><a href="global.html#drawBannerPair">drawBannerPair</a></li><li><a href="global.html#drawBannerText">drawBannerText</a></li><li><a href="global.html#drawBubbleShape">drawBubbleShape</a></li><li><a href="global.html#drawBubbleText">drawBubbleText</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawLevelBanner">drawLevelBanner</a></li><li><a href="global.html#drawRopes">drawRopes</a></li><li><a href="global.html#drawSpeechBubble">drawSpeechBubble</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#gameOverImage">gameOverImage</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initCreditsAccordion">initCreditsAccordion</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#menuSoundManager">menuSoundManager</a></li><li><a href="global.html#openAccordion">openAccordion</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#preloadImages">preloadImages</a></li><li><a href="global.html#prepareLoadingScreen">prepareLoadingScreen</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#runPreloader">runPreloader</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startWorld">startWorld</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMenuMute">toggleMenuMute</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#winImage">winImage</a></li><li><a href="global.html#world">world</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#buildPreloadSources">buildPreloadSources</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAccordion">closeAccordion</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#collectImagePaths">collectImagePaths</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawBannerFrame">drawBannerFrame</a></li><li><a href="global.html#drawBannerPair">drawBannerPair</a></li><li><a href="global.html#drawBannerText">drawBannerText</a></li><li><a href="global.html#drawBubbleShape">drawBubbleShape</a></li><li><a href="global.html#drawBubbleText">drawBubbleText</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawLevelBanner">drawLevelBanner</a></li><li><a href="global.html#drawRopes">drawRopes</a></li><li><a href="global.html#drawSpeechBubble">drawSpeechBubble</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#gameOverImage">gameOverImage</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initCreditsAccordion">initCreditsAccordion</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#menuSoundManager">menuSoundManager</a></li><li><a href="global.html#openAccordion">openAccordion</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#preloadImages">preloadImages</a></li><li><a href="global.html#prepareLoadingScreen">prepareLoadingScreen</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#runPreloader">runPreloader</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startWorld">startWorld</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#winImage">winImage</a></li><li><a href="global.html#world">world</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Jul 10 2026 10:20:21 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Jul 10 2026 13:42:25 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

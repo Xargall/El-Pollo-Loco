@@ -94,32 +94,57 @@ class Chicken extends MovableObject {
   }
 
   /**
-   * Starts the movement and animation loops for the Chicken.
-   * Movement runs at 60fps, animation frames update every 200ms.
+   * Starts the enemy animation and movement loops.
+   * 
+   * - Movement is updated at approximately 60 FPS.
+   * - Animation frames are updated every 200 ms.
    */
   animate() {
-    this.intervalId1 = setInterval(() => {
-      if (this.isDead() || !this.isAwake || (this.world && this.world.gameWon)) return;
-      if (this.direction === -1) {
-        this.moveLeft();
-        this.otherDirection = false;
-      } else if (this.direction === 1) {
-        this.moveRight();
-        this.otherDirection = true;
-      }
-    }, 1000 / 60)
+    this.intervalId1 = setInterval(() => this.handleMovement(), 1000 / 60);
+    this.intervalId2 = setInterval(() => this.handleAnimation(), 200);
+  }
 
-    this.intervalId2 = setInterval(() => {
-      if (this.isDead()) {
-        if (!this.hasDeadSoundPlayed) {
-          this.world.soundManager.play(`chickenDead_${this.id}`);
-          this.hasDeadSoundPlayed = true;
-        }
-        this.playAnimation(this.IMAGES_DEAD);
-      } else if (this.isAwake && !(this.world && this.world.gameWon)) {
-        this.playAnimation(this.IMAGES_WALKING);
+  /**
+   * Handles the movement logic of the enemy.
+   *
+   * The enemy will not move if:
+   * - it is dead,
+   * - it is not awake,
+   * - or the game has already been won.
+   *
+   * Depending on the current direction, the enemy moves left or right
+   * and updates its facing direction.
+   */
+  handleMovement() {
+    if (this.isDead() || !this.isAwake || (this.world && this.world.gameWon)) return;
+
+    if (this.direction === -1) {
+      this.moveLeft();
+      this.otherDirection = false;
+    } else if (this.direction === 1) {
+      this.moveRight();
+      this.otherDirection = true;
+    }
+  }
+
+  /**
+   * Handles the enemy animation state.
+   *
+   * - Plays the death sound once and displays the death animation
+   *   when the enemy dies.
+   * - Plays the walking animation while the enemy is awake and
+   *   the game has not been won.
+   */
+  handleAnimation() {
+    if (this.isDead()) {
+      if (!this.hasDeadSoundPlayed) {
+        this.world.soundManager.play(`chickenDead_${this.id}`);
+        this.hasDeadSoundPlayed = true;
       }
-    }, 200)
+      this.playAnimation(this.IMAGES_DEAD);
+    } else if (this.isAwake && !(this.world && this.world.gameWon)) {
+      this.playAnimation(this.IMAGES_WALKING);
+    }
   }
 
   /**

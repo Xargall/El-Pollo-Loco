@@ -24,7 +24,7 @@ let isMuted = localStorage.getItem('isMuted') === 'true';
 menuMusic.muted = isMuted;
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('menuMuteIcon').src = isMuted
+  document.getElementById('muteIcon').src = isMuted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
 });
@@ -110,9 +110,6 @@ function goToMainMenu() {
   canvas.style.display = "none";
   document.getElementById("startScreen").style.display = "block";
   menuSoundManager.play('menuMusic');
-  document.getElementById('menuMuteIcon').src = isMuted
-    ? './assets/icons/sound_off.png'
-    : './assets/icons/sound_on.png';
 }
 
 /**
@@ -145,11 +142,13 @@ window.addEventListener('keyup', (event) => {
   if (event.keyCode == 32) keyboard.SPACE = false;
 });
 
+/** Shows the home button and touch controls when a game session starts. */
 function showGameControls() {
   document.getElementById("homeButton").style.display = "flex";
   showTouchControls();
 }
 
+/** Hides the home button and touch controls when returning to the menu. */
 function hideGameControls() {
   document.getElementById("homeButton").style.display = "none";
   hideTouchControls();
@@ -166,22 +165,14 @@ function initTouchControls() {
     { id: 'btn-jump', key: 'SPACE' },
     { id: 'btn-throw', key: 'D' },
   ];
-
   buttons.forEach(({ id, key }) => {
     const btn = document.getElementById(id);
-    btn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      keyboard[key] = true;
-    });
-    btn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      keyboard[key] = false;
-    });
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); keyboard[key] = true; });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); keyboard[key] = false; });
   });
 }
 
-/** Shows touch controls if the primary input device is a coarse pointer (e.g. touchscreen). */
-
+/** Shows touch controls if the primary input device is a coarse pointer (touchscreen). */
 function showTouchControls() {
   if (window.matchMedia('(pointer: coarse)').matches) {
     document.getElementById('touchControls').classList.add('visible');
@@ -208,6 +199,10 @@ function toggleFullscreen() {
   if (canvas) canvas.focus();
 }
 
+/**
+ * Toggles mute state for all sounds including menu music and in-game audio.
+ * Persists the state in localStorage and updates the mute button icon and aria-pressed.
+ */
 function toggleMute() {
   isMuted = !isMuted;
   localStorage.setItem('isMuted', isMuted);
@@ -292,46 +287,35 @@ function initCreditsAccordion() {
   if (!details) return;
   const body = details.querySelector('.credits-body');
   const summary = details.querySelector('summary');
-
   summary.addEventListener('click', (e) => {
     e.preventDefault();
-
-    if (details.open) {
-      closeAccordion(details, body);
-    } else {
-      openAccordion(details, body);
-    }
+    if (details.open) { closeAccordion(details, body); }
+    else { openAccordion(details, body); }
   });
 }
 
 /**
  * Opens the accordion by animating height from 0 to scrollHeight.
  *
- * @param {HTMLDetailsElement} details
- * @param {HTMLElement} body
+ * @param {HTMLDetailsElement} details - The details element to open.
+ * @param {HTMLElement} body - The collapsible body element.
  */
 function openAccordion(details, body) {
   details.open = true;
   const targetHeight = body.scrollHeight;
   body.style.height = '0px';
-  requestAnimationFrame(() => {
-    body.style.height = targetHeight + 'px';
-  });
+  requestAnimationFrame(() => { body.style.height = targetHeight + 'px'; });
 }
 
 /**
  * Closes the accordion by animating height back to 0.
  * Removes the open attribute after the transition ends.
  *
- * @param {HTMLDetailsElement} details
- * @param {HTMLElement} body
+ * @param {HTMLDetailsElement} details - The details element to close.
+ * @param {HTMLElement} body - The collapsible body element.
  */
 function closeAccordion(details, body) {
   body.style.height = body.scrollHeight + 'px';
-  requestAnimationFrame(() => {
-    body.style.height = '0px';
-  });
-  setTimeout(() => {
-    details.open = false;
-  }, 300);
+  requestAnimationFrame(() => { body.style.height = '0px'; });
+  setTimeout(() => { details.open = false; }, 300);
 }

@@ -30,7 +30,7 @@ class Character extends MovableObject {
   /** @type {number} Interval ID for the idle animation loop. */
   intervalId6;
   /** @type {{top: number, bottom: number, left: number, right: number}} Hitbox offsets in pixels. */
-  offset = { top: 110, bottom: 10, left: 25, right: 30, };
+  offset = { top: 110, bottom: 10, left: 25, right: 30 };
   /** @type {string[]} Animation frames for the short idle state. */
   IMAGES_IDLE = [
     "assets/img/2_character_pepe/1_idle/idle/I-1.png",
@@ -87,13 +87,13 @@ class Character extends MovableObject {
     'assets/img/2_character_pepe/5_dead/D-55.png',
     'assets/img/2_character_pepe/5_dead/D-56.png',
     'assets/img/2_character_pepe/5_dead/D-57.png',
-  ]
+  ];
   /** @type {string[]} Animation frames for the hurt state. */
   IMAGES_HURT = [
     'assets/img/2_character_pepe/4_hurt/H-41.png',
     'assets/img/2_character_pepe/4_hurt/H-42.png',
     'assets/img/2_character_pepe/4_hurt/H-43.png',
-  ]
+  ];
   /** @type {Audio} Sound played while walking. */
   walkSound = new Audio('assets/audio/character/characterRun.mp3');
   /** @type {Audio} Sound played when jumping. */
@@ -137,101 +137,112 @@ class Character extends MovableObject {
     return timepassed > 15;
   }
 
-  /**
-   * Starts all animation and movement intervals.
-   * Handles input, camera tracking, and all animation states
-   * (movement, death, hurt, jump, walk, idle).
-   */
+  /** Starts all six animation and movement intervals. */
   animate() {
-    this.intervalId1 = setInterval(() => {
-      if (this.isDead() || this.world.gameWon) return;
+    this.intervalId1 = setInterval(() => this.handleMovement(), 1000 / 60);
+    this.intervalId2 = setInterval(() => this.handleDeathAnimation(), 200);
+    this.intervalId3 = setInterval(() => this.handleHurtAnimation(), 100);
+    this.intervalId4 = setInterval(() => this.handleJumpAnimation(), 115);
+    this.intervalId5 = setInterval(() => this.handleWalkAnimation(), 150);
+    this.intervalId6 = setInterval(() => this.handleIdleAnimation(), 200);
+  }
 
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.otherDirection = false;
-        this.idleStart = new Date().getTime();
+  /** Processes keyboard input and updates camera position each frame. */
+  handleMovement() {
+    if (this.isDead() || this.world.gameWon) return;
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      this.moveRight();
+      this.otherDirection = false;
+      this.idleStart = new Date().getTime();
+    }
+    if (this.world.keyboard.LEFT && this.x > 0) {
+      this.moveLeft();
+      this.otherDirection = true;
+      this.idleStart = new Date().getTime();
+    }
+    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+      this.handleJumpInput();
+    }
+    this.world.camera_x = -this.x + 100;
+  }
+
+  /** Evaluates jump conditions and triggers normal or high jump with sound. */
+  handleJumpInput() {
+    const noBottlesLeft = this.world.bottleCount === 0 && this.world.level.bottles.length === 0;
+    const boss = this.world.level.enemies.find(e => e instanceof Endboss);
+    const bossAlive = boss && !boss.isDead();
+    if (noBottlesLeft && bossAlive) {
+      this.jumpHigh();
+    } else {
+      this.jump();
+    }
+    this.world.soundManager.stop('characterJump');
+    this.world.soundManager.play('characterJump');
+    this.idleStart = new Date().getTime();
+  }
+
+  /** Plays the death animation once and triggers the death sound on first call. */
+  handleDeathAnimation() {
+    if (!this.isDead() || this.currentImage >= this.IMAGES_DEAD.length) return;
+    if (!this.hasDeadSoundPlayed) {
+      this.world.soundManager.play('characterDead');
+      this.hasDeadSoundPlayed = true;
+    }
+    this.playAnimation(this.IMAGES_DEAD);
+  }
+
+  /** Plays the hurt animation while the character is in the hurt window. */
+  handleHurtAnimation() {
+    if (!this.isDead() && !this.world.gameWon && this.isHurt()) {
+      this.playAnimation(this.IMAGES_HURT);
+    }
+  }
+
+  /** Plays the jump animation while the character is airborne and not hurt. */
+  handleJumpAnimation() {
+    if (!this.isDead() && !this.world.gameWon && !this.isHurt() && this.isAboveGround()) {
+      this.playAnimation(this.IMAGES_JUMPING);
+    }
+  }
+
+  /** Plays the walk animation and walk sound while moving horizontally on the ground. */
+  handleWalkAnimation() {
+    const isWalking = !this.isDead() && !this.world.gameWon && !this.isHurt() &&
+      !this.isAboveGround() && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
+    if (isWalking) {
+      if (!this.world.soundManager.isPlaying('characterWalk')) {
+        this.world.soundManager.play('characterWalk');
       }
+      this.playAnimation(this.IMAGES_WALKING);
+    } else {
+      this.world.soundManager.stop('characterWalk');
+    }
+  }
 
-      if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        this.idleStart = new Date().getTime();
+  /** Plays the idle or long-idle animation based on how long the character has been still. */
+  handleIdleAnimation() {
+    const isIdle = !this.isDead() && !this.world.gameWon && !this.isHurt() &&
+      !this.isAboveGround() && !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
+    if (isIdle) {
+      this.handleIdleState();
+    } else {
+      this.world.soundManager.stop('characterSnoring');
+    }
+  }
+
+  /** Plays the correct idle animation and manages the snoring sound. */
+  handleIdleState() {
+    if (this.isLongIdle()) {
+      if (!this.world.soundManager.isPlaying('characterSnoring')) {
+        this.world.soundManager.play('characterSnoring');
       }
-
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        const noBottlesLeft = this.world.bottleCount === 0 && this.world.level.bottles.length === 0;
-        const boss = this.world.level.enemies.find(e => e instanceof Endboss);
-        const bossAlive = boss && !boss.isDead();
-
-        if (noBottlesLeft && bossAlive) {
-          this.jumpHigh();
-        } else {
-          this.jump();
-        }
-        this.world.soundManager.stop('characterJump');
-        this.world.soundManager.play('characterJump');
-        this.idleStart = new Date().getTime();
+      this.playAnimation(this.IMAGES_IDLE_LONG);
+    } else {
+      if (this.world.soundManager.isPlaying('characterSnoring')) {
+        this.world.soundManager.stop('characterSnoring');
       }
-
-      this.world.camera_x = -this.x + 100;
-    }, 1000 / 60)
-
-    this.intervalId2 = setInterval(() => {
-      if (this.isDead() && this.currentImage < this.IMAGES_DEAD.length) {
-        if (!this.hasDeadSoundPlayed) {
-          this.world.soundManager.play('characterDead');
-          this.hasDeadSoundPlayed = true;
-        }
-        if (this.currentImage < this.IMAGES_DEAD.length) {
-          this.playAnimation(this.IMAGES_DEAD);
-        }
-      }
-    }, 200)
-
-    this.intervalId3 = setInterval(() => {
-      if (!this.isDead() && !this.world.gameWon && this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
-      }
-    }, 100)
-
-    this.intervalId4 = setInterval(() => {
-      if (!this.isDead() && !this.world.gameWon && !this.isHurt() && this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
-      }
-    }, 115)
-
-    this.intervalId5 = setInterval(() => {
-      if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
-        (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        if (!this.world.soundManager.isPlaying('characterWalk')) {
-          this.world.soundManager.play('characterWalk');
-        }
-        this.playAnimation(this.IMAGES_WALKING);
-      } else {
-        this.world.soundManager.stop('characterWalk');
-      }
-    }, 150)
-
-    this.intervalId6 = setInterval(() => {
-      if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
-        !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        if (this.isLongIdle()) {
-          if (!this.world.soundManager.isPlaying('characterSnoring')) {
-            this.world.soundManager.play('characterSnoring');
-          }
-          this.playAnimation(this.IMAGES_IDLE_LONG);
-        } else {
-          if (this.world.soundManager.isPlaying('characterSnoring')) {
-            this.world.soundManager.stop('characterSnoring');
-          }
-          this.playAnimation(this.IMAGES_IDLE);
-        }
-      } else {
-        if (!this.world.soundManager.isPlaying('characterSnoring')) {
-          this.world.soundManager.stop('characterSnoring');
-        }
-      }
-    }, 200)
+      this.playAnimation(this.IMAGES_IDLE);
+    }
   }
 
   /**
@@ -242,9 +253,7 @@ class Character extends MovableObject {
     this.speedY = 42;
   }
 
-  /**
-   * Clears all animation intervals and calls the parent destroy method.
-   */
+  /** Clears all animation intervals and calls the parent destroy method. */
   destroy() {
     super.destroy();
     clearInterval(this.intervalId1);

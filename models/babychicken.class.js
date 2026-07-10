@@ -92,32 +92,53 @@ class BabyChicken extends MovableObject {
     }
 
     /**
-     * Starts the animation and movement loops for the Baby Chicken.
-     * Movement runs at 60fps, animation frames update every 150ms.
+     * Starts the movement and animation loops for the chicken.
+     *
+     * - Movement is updated at approximately 60 FPS.
+     * - Animation frames are updated every 150 ms.
      */
     animate() {
-        this.intervalId1 = setInterval(() => {
-            if (this.isDead() || !this.isAwake || (this.world && this.world.gameWon)) return;
-            if (this.direction === -1) {
-                this.moveLeft();
-                this.otherDirection = false;
-            } else if (this.direction === 1) {
-                this.moveRight();
-                this.otherDirection = true;
-            }
-        }, 1000 / 60);
+        this.intervalId1 = setInterval(() => this.handleMovement(), 1000 / 60);
+        this.intervalId2 = setInterval(() => this.handleAnimation(), 150);
+    }
 
-        this.intervalId2 = setInterval(() => {
-            if (this.isDead()) {
-                if (!this.hasDeadSoundPlayed) {
-                    this.world.soundManager.play(`chickenDead_${this.id}`);
-                    this.hasDeadSoundPlayed = true;
-                }
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isAwake) {
-                this.playAnimation(this.IMAGES_WALKING);
+    /**
+     * Handles the chicken's movement.
+     *
+     * The chicken will not move if it is dead, asleep,
+     * or the game has already been won.
+     * Depending on its current direction, it moves left or right
+     * and updates its facing direction.
+     */
+    handleMovement() {
+        if (this.isDead() || !this.isAwake || (this.world && this.world.gameWon)) return;
+
+        if (this.direction === -1) {
+            this.moveLeft();
+            this.otherDirection = false;
+        } else if (this.direction === 1) {
+            this.moveRight();
+            this.otherDirection = true;
+        }
+    }
+
+    /**
+     * Handles the chicken's animation state.
+     *
+     * Plays the death sound once and shows the death animation
+     * when the chicken dies. Otherwise, it plays the walking
+     * animation while the chicken is awake.
+     */
+    handleAnimation() {
+        if (this.isDead()) {
+            if (!this.hasDeadSoundPlayed) {
+                this.world.soundManager.play(`chickenDead_${this.id}`);
+                this.hasDeadSoundPlayed = true;
             }
-        }, 150);
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isAwake) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
     }
 
     /**

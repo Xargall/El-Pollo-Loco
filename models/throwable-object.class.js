@@ -60,29 +60,44 @@ class ThrowableObject extends MovableObject {
     }
 
     /**
-     * Starts the physics loops for the throw.
-     * Vertical movement uses gravity, horizontal movement is constant.
-     * Both loops stop while the bottle is splashing.
+     * Throws the bottle by applying an initial upward velocity
+     * and starting the vertical and horizontal movement loops.
      */
     throw() {
         this.speedY = 30;
+        this.intervalId1 = setInterval(() => this.tickVertical(), 1000 / 25);
+        this.intervalId2 = setInterval(() => this.tickHorizontal(), 25);
+    }
 
-        this.intervalId1 = setInterval(() => {
-            if (this.isSplashing) return;
-            this.y -= this.speedY;
-            this.speedY -= this.acceleration;
+    /**
+     * Updates the bottle's vertical movement.
+     *
+     * Simulates gravity by decreasing the vertical speed over time.
+     * When the bottle reaches the ground, it stops falling,
+     * triggers the splash state, and plays the breaking sound.
+     */
+    tickVertical() {
+        if (this.isSplashing) return;
 
-            if (this.y >= 380) {
-                this.y = 380;
-                this.hit();
-                this.world.soundManager.play(`bottleBreak_${this.id}`);
-            }
-        }, 1000 / 25);
+        this.y -= this.speedY;
+        this.speedY -= this.acceleration;
 
-        this.intervalId2 = setInterval(() => {
-            if (this.isSplashing) return;
+        if (this.y >= 380) {
+            this.y = 380;
+            this.hit();
+            this.world.soundManager.play(`bottleBreak_${this.id}`);
+        }
+    }
+
+    /**
+     * Updates the bottle's horizontal movement.
+     *
+     * Moves the bottle left or right until it starts splashing.
+     */
+    tickHorizontal() {
+        if (!this.isSplashing) {
             this.x += this.otherDirection ? -10 : 10;
-        }, 25);
+        }
     }
 
     /**
