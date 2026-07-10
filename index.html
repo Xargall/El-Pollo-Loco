@@ -83,20 +83,28 @@
       <div id="menuControls" class="menu-controls">
         <button
           type="button"
-          id="menuMuteButton"
+          id="homeButton"
           class="game-icon-btn"
-          aria-label="Mute menu music"
+          aria-label="Back to main menu"
+          style="display: none;"
+          onclick="goToMainMenu()">
+          <img src="./assets/icons/home.png" alt="Home" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          id="muteButton"
+          class="game-icon-btn"
+          aria-label="Toggle mute"
           aria-pressed="false"
-          onclick="toggleMenuMute()">
+          onclick="toggleMute()">
           <img
-            id="menuMuteIcon"
+            id="muteIcon"
             src="./assets/icons/sound_on.png"
             alt=""
             aria-hidden="true" />
         </button>
         <button
           type="button"
-          id="menuFullscreenButton"
           class="game-icon-btn"
           aria-label="Toggle fullscreen"
           onclick="toggleFullscreen()">
@@ -298,43 +306,6 @@
               aria-hidden="true" />
           </button>
         </div>
-      </div>
-
-      <div
-        id="gameControls"
-        role="toolbar"
-        aria-label="Game controls"
-        style="display: none;">
-        <button
-          type="button"
-          id="homeButton"
-          class="game-icon-btn"
-          aria-label="Back to main menu"
-          onclick="goToMainMenu()">
-          <img src="./assets/icons/home.png" alt="Home" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          id="muteButton"
-          class="game-icon-btn"
-          aria-label="mute sounds"
-          aria-pressed="false"
-          onclick="toggleMute()">
-          <img
-            id="muteIcon"
-            src="./assets/icons/sound_on.png"
-            alt="Mute"
-            aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          id="fullscreenButton"
-          class="game-icon-btn"
-          aria-label="toggle fullscreen"
-          aria-pressed="false"
-          onclick="toggleFullscreen()">
-          <img src="./assets/icons/expand.png" alt="Fullscreen" />
-        </button>
       </div>
 
       <div

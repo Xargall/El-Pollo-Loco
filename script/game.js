@@ -145,21 +145,13 @@ window.addEventListener('keyup', (event) => {
   if (event.keyCode == 32) keyboard.SPACE = false;
 });
 
-/**
- * Shows the in-game control buttons, hides menu controls, and activates touch controls.
- */
 function showGameControls() {
-  document.getElementById("gameControls").style.display = "flex";
-  document.getElementById('menuControls').style.display = 'none';
+  document.getElementById("homeButton").style.display = "flex";
   showTouchControls();
 }
 
-/**
- * Hides the in-game control buttons, restores menu controls, and deactivates touch controls.
- */
 function hideGameControls() {
-  document.getElementById("gameControls").style.display = "none";
-  document.getElementById('menuControls').style.display = 'flex';
+  document.getElementById("homeButton").style.display = "none";
   hideTouchControls();
 }
 
@@ -209,41 +201,23 @@ function hideTouchControls() {
 function toggleFullscreen() {
   const container = document.querySelector('.game-container');
   if (!document.fullscreenElement) {
-    if (container.requestFullscreen) {
-      container.requestFullscreen();
-    } else if (container.webkitRequestFullscreen) {
-      container.webkitRequestFullscreen();
-    }
+    container.requestFullscreen?.() || container.webkitRequestFullscreen?.();
   } else {
     document.exitFullscreen();
   }
   if (canvas) canvas.focus();
 }
 
-/** Toggles mute state for all in-game sounds and updates the mute button icon. */
 function toggleMute() {
   isMuted = !isMuted;
   localStorage.setItem('isMuted', isMuted);
-  world.soundManager.setMasterVolume(isMuted);
+  if (world) world.soundManager.setMasterVolume(isMuted);
+  menuMusic.muted = isMuted;
   document.getElementById('muteIcon').src = isMuted
     ? './assets/icons/sound_off.png'
     : './assets/icons/sound_on.png';
   document.getElementById('muteButton').setAttribute('aria-pressed', isMuted);
-  canvas.focus();
-}
-
-/**
- * Toggles the mute state of the main menu background music.
- * Persists the mute state in localStorage and updates the mute button icon.
- */
-function toggleMenuMute() {
-  menuMusic.muted = !menuMusic.muted;
-  isMuted = menuMusic.muted;
-  localStorage.setItem('isMuted', isMuted);
-  document.getElementById('menuMuteIcon').src = isMuted
-    ? './assets/icons/sound_off.png'
-    : './assets/icons/sound_on.png';
-  document.getElementById('menuMuteButton').setAttribute('aria-pressed', isMuted);
+  if (canvas) canvas.focus();
 }
 
 /**

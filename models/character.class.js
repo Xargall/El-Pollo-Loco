@@ -10,7 +10,7 @@ class Character extends MovableObject {
   /** @type {number} Width of the character in pixels. */
   width = 120;
   /** @type {number} Vertical starting position. */
-  y = 80;
+  y = 180;
   /** @type {number} Vertical position from the previous frame, used for stomp detection. */
   lastY = 80;
   /** @type {number} Horizontal movement speed. */
