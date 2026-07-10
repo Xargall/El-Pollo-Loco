@@ -1531,7 +1531,7 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line281">line 281</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line285">line 285</a>
     </li></ul></dd>
     
 
@@ -1859,6 +1859,166 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
 
     
+    <h4 class="name" id="closeAccordion"><span class="type-signature"></span>closeAccordion<span class="signature">(details, body)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Closes the accordion by animating height back to 0.Removes the open attribute after the transition ends.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>details</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLDetailsElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line355">line 355</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="closeAllPanels"><span class="type-signature"></span>closeAllPanels<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
@@ -1911,7 +2071,7 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line86">line 86</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line90">line 90</a>
     </li></ul></dd>
     
 
@@ -2048,7 +2208,7 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line80">line 80</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -2762,7 +2922,328 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line66">line 66</a>
+        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="drawBannerPair"><span class="type-signature"></span>drawBannerPair<span class="signature">(ctx, cx, y1, h1, y2, w2, h2, levelNumber, objective)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draws both banner signs with connecting ropes.Upper sign shows the level number, lower sign shows the objective text.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvas rendering context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Horizontal center of the banner pair in canvas coordinates.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Top edge of the upper sign.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>h1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Height of the upper sign in pixels.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Top edge of the lower sign.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>w2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Width of the lower sign in pixels.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>h2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Height of the lower sign in pixels.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>levelNumber</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current level number to display.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>objective</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The objective text to display on the lower sign.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line139">line 139</a>
     </li></ul></dd>
     
 
@@ -2968,7 +3449,488 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line91">line 91</a>
+        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line96">line 96</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="drawBubbleShape"><span class="type-signature"></span>drawBubbleShape<span class="signature">(ctx, bx, by, bw, bh, x)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draws the rounded rectangle background and tail of a speech bubble.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvas rendering context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Left edge of the bubble box.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>by</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Top edge of the bubble box.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Width of the bubble box in pixels.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bh</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Height of the bubble box in pixels.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Horizontal center of the bubble tail.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_utilities.js.html">script/utilities.js</a>, <a href="script_utilities.js.html#line146">line 146</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="drawBubbleText"><span class="type-signature"></span>drawBubbleText<span class="signature">(ctx, x, by, bh, text)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draws the text content inside a speech bubble.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvas rendering context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Horizontal center for the text.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>by</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Top edge of the bubble box.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bh</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Height of the bubble box in pixels.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The text to display inside the bubble.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_utilities.js.html">script/utilities.js</a>, <a href="script_utilities.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -3446,7 +4408,7 @@ Handles horizontal mirroring for objects facing the opposite direction.
 
 
 <div class="description">
-    Renders the animated level banner at the start of each level.Fades out during the last second of its 3-second display window.Also renders the level objective below the banner with the same fade.
+    Renders the animated level banner at the start of each level.Displays two western-style wooden signs connected by ropes:the upper shows the level number, the lower shows the objective.Fades out during the last second of its 3-second display window.
 </div>
 
 
@@ -3562,7 +4524,397 @@ Handles horizontal mirroring for objects facing the opposite direction.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line109">line 109</a>
+        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line115">line 115</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="drawRopes"><span class="type-signature"></span>drawRopes<span class="signature">(ctx, cx, y1Bottom, y2Top)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draws two vertical ropes connecting the upper and lower level banner signs.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvas rendering context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Horizontal center of the banner pair in canvas coordinates.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y1Bottom</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Y coordinate of the bottom edge of the upper sign.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y2Top</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Y coordinate of the top edge of the lower sign.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_world-renderer.js.html">script/world-renderer.js</a>, <a href="script_world-renderer.js.html#line158">line 158</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="drawSpeechBubble"><span class="type-signature"></span>drawSpeechBubble<span class="signature">(ctx, x, y)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draws a comic-style speech bubble above the given position.
+Used to show Pepe saying "No bottles!" when trying to throw without bottles.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvas rendering context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Horizontal center of the bubble tail in world coordinates.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vertical position of the bubble tail tip in world coordinates.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_utilities.js.html">script/utilities.js</a>, <a href="script_utilities.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -6217,7 +7569,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line102">line 102</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line106">line 106</a>
     </li></ul></dd>
     
 
@@ -6305,7 +7657,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line156">line 156</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line160">line 160</a>
     </li></ul></dd>
     
 
@@ -6393,7 +7745,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line197">line 197</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line201">line 201</a>
     </li></ul></dd>
     
 
@@ -6566,6 +7918,94 @@ Restores the canvas state and resets the x position.
     
 
     
+    <h4 class="name" id="initCreditsAccordion"><span class="type-signature"></span>initCreditsAccordion<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Animates the credits accordion open and closed.Intercepts the native details toggle to control height manually.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line316">line 316</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="initTouchControls"><span class="type-signature"></span>initTouchControls<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
@@ -6618,7 +8058,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line166">line 166</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -6706,7 +8146,167 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line118">line 118</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line122">line 122</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="openAccordion"><span class="type-signature"></span>openAccordion<span class="signature">(details, body)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Opens the accordion by animating height from 0 to scrollHeight.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>details</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLDetailsElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line339">line 339</a>
     </li></ul></dd>
     
 
@@ -7109,7 +8709,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line249">line 249</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line253">line 253</a>
     </li></ul></dd>
     
 
@@ -7197,7 +8797,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line93">line 93</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line97">line 97</a>
     </li></ul></dd>
     
 
@@ -7334,7 +8934,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line265">line 265</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line269">line 269</a>
     </li></ul></dd>
     
 
@@ -7422,7 +9022,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line147">line 147</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -7598,7 +9198,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line189">line 189</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line193">line 193</a>
     </li></ul></dd>
     
 
@@ -7960,7 +9560,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line299">line 299</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line303">line 303</a>
     </li></ul></dd>
     
 
@@ -8048,7 +9648,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line205">line 205</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line209">line 209</a>
     </li></ul></dd>
     
 
@@ -8136,7 +9736,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line235">line 235</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -8224,7 +9824,7 @@ Restores the canvas state and resets the x position.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line220">line 220</a>
+        <a href="script_game.js.html">script/game.js</a>, <a href="script_game.js.html#line224">line 224</a>
     </li></ul></dd>
     
 
@@ -8452,13 +10052,13 @@ Restores the canvas state and resets the x position.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#buildPreloadSources">buildPreloadSources</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#collectImagePaths">collectImagePaths</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawBannerFrame">drawBannerFrame</a></li><li><a href="global.html#drawBannerText">drawBannerText</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawLevelBanner">drawLevelBanner</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#gameOverImage">gameOverImage</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#menuSoundManager">menuSoundManager</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#preloadImages">preloadImages</a></li><li><a href="global.html#prepareLoadingScreen">prepareLoadingScreen</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#runPreloader">runPreloader</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startWorld">startWorld</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMenuMute">toggleMenuMute</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#winImage">winImage</a></li><li><a href="global.html#world">world</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BabyChicken.html">BabyChicken</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="BottleStatusbar.html">BottleStatusbar</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CoinStatusbar.html">CoinStatusbar</a></li><li><a href="Collectible.html">Collectible</a></li><li><a href="CollectibleBottle.html">CollectibleBottle</a></li><li><a href="CollectibleCoin.html">CollectibleCoin</a></li><li><a href="DamageText.html">DamageText</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="EndbossStatusbar.html">EndbossStatusbar</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COIN_PATTERNS">COIN_PATTERNS</a></li><li><a href="global.html#LEVELS">LEVELS</a></li><li><a href="global.html#SEGMENT_WIDTH">SEGMENT_WIDTH</a></li><li><a href="global.html#VOLUMES">VOLUMES</a></li><li><a href="global.html#addObjectsToMap">addObjectsToMap</a></li><li><a href="global.html#addToMap">addToMap</a></li><li><a href="global.html#allIntervalIds">allIntervalIds</a></li><li><a href="global.html#buildPreloadSources">buildPreloadSources</a></li><li><a href="global.html#calculatePercentage">calculatePercentage</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeAccordion">closeAccordion</a></li><li><a href="global.html#closeAllPanels">closeAllPanels</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#collectImagePaths">collectImagePaths</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#createLevel2">createLevel2</a></li><li><a href="global.html#createLevel3">createLevel3</a></li><li><a href="global.html#currentLevelCreator">currentLevelCreator</a></li><li><a href="global.html#drawBannerFrame">drawBannerFrame</a></li><li><a href="global.html#drawBannerPair">drawBannerPair</a></li><li><a href="global.html#drawBannerText">drawBannerText</a></li><li><a href="global.html#drawBubbleShape">drawBubbleShape</a></li><li><a href="global.html#drawBubbleText">drawBubbleText</a></li><li><a href="global.html#drawDamageTexts">drawDamageTexts</a></li><li><a href="global.html#drawForeground">drawForeground</a></li><li><a href="global.html#drawHUD">drawHUD</a></li><li><a href="global.html#drawLevelBanner">drawLevelBanner</a></li><li><a href="global.html#drawRopes">drawRopes</a></li><li><a href="global.html#drawSpeechBubble">drawSpeechBubble</a></li><li><a href="global.html#drawWorld">drawWorld</a></li><li><a href="global.html#flipImage">flipImage</a></li><li><a href="global.html#flipReverse">flipReverse</a></li><li><a href="global.html#gameOverImage">gameOverImage</a></li><li><a href="global.html#generateBackgroundObjects">generateBackgroundObjects</a></li><li><a href="global.html#generateClouds">generateClouds</a></li><li><a href="global.html#generateCoinPatterns">generateCoinPatterns</a></li><li><a href="global.html#generateCollectibles">generateCollectibles</a></li><li><a href="global.html#generateEnemies">generateEnemies</a></li><li><a href="global.html#generateLevel">generateLevel</a></li><li><a href="global.html#generateSpacedPositions">generateSpacedPositions</a></li><li><a href="global.html#getGameOverState">getGameOverState</a></li><li><a href="global.html#getGameWonState">getGameWonState</a></li><li><a href="global.html#goToMainMenu">goToMainMenu</a></li><li><a href="global.html#hideGameControls">hideGameControls</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initCreditsAccordion">initCreditsAccordion</a></li><li><a href="global.html#initTouchControls">initTouchControls</a></li><li><a href="global.html#isMuted">isMuted</a></li><li><a href="global.html#keyboard">keyboard</a></li><li><a href="global.html#loadNextLevel">loadNextLevel</a></li><li><a href="global.html#menuMusic">menuMusic</a></li><li><a href="global.html#menuSoundManager">menuSoundManager</a></li><li><a href="global.html#openAccordion">openAccordion</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#preloadImages">preloadImages</a></li><li><a href="global.html#prepareLoadingScreen">prepareLoadingScreen</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#runPreloader">runPreloader</a></li><li><a href="global.html#showGameControls">showGameControls</a></li><li><a href="global.html#showGameOverButtons">showGameOverButtons</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#showWinButtons">showWinButtons</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startWorld">startWorld</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMenuMute">toggleMenuMute</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#trackedSetInterval">trackedSetInterval</a></li><li><a href="global.html#winImage">winImage</a></li><li><a href="global.html#world">world</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 10:00:38 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Jul 10 2026 10:20:21 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>
