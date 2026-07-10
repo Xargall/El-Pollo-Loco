@@ -429,6 +429,49 @@ canvas {
   color: #ffd080;
 }
 
+.credits-accordion {
+  border: 1px solid rgba(244, 164, 58, 0.3);
+  border-radius: 6px;
+  margin: 12px 0;
+}
+
+.credits-accordion summary {
+  font-family: "zabars", serif;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: #f4a93a;
+  padding: clamp(8px, 1.5vmin, 14px) clamp(12px, 2vmin, 20px);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.credits-accordion summary::before {
+  content: "▶";
+  font-size: 0.75em;
+  transition: transform 200ms ease;
+  display: inline-block;
+}
+
+.credits-accordion[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.credits-body {
+  overflow: hidden;
+  height: 0; /* startet zugeklappt */
+  transition: height 300ms ease;
+  padding: 0 clamp(12px, 2vmin, 20px);
+}
+
+.credits-body p {
+  font-size: 1rem;
+  margin: 6px 0;
+  text-align: left;
+}
+
 @media only screen and (max-height: 500px) {
   h1 {
     display: none;

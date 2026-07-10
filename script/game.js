@@ -70,6 +70,7 @@ function startGame(levelCreator) {
 function openPanel(panelId) {
   document.getElementById("startScreen").style.display = "none";
   document.getElementById(panelId).style.display = "flex";
+  if (panelId === 'imprintPanel') initCreditsAccordion();
 }
 
 /**
@@ -303,4 +304,57 @@ function startWorld(levelInstance) {
   world.backgroundMusic.play().catch(() => { });
   menuMusic.pause();
   menuMusic.currentTime = 0;
+}
+
+/**
+ * Animates the credits accordion open and closed.
+ * Intercepts the native details toggle to control height manually.
+ */
+function initCreditsAccordion() {
+  const details = document.querySelector('.credits-accordion');
+  if (!details) return;
+  const body = details.querySelector('.credits-body');
+  const summary = details.querySelector('summary');
+
+  summary.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (details.open) {
+      closeAccordion(details, body);
+    } else {
+      openAccordion(details, body);
+    }
+  });
+}
+
+/**
+ * Opens the accordion by animating height from 0 to scrollHeight.
+ *
+ * @param {HTMLDetailsElement} details
+ * @param {HTMLElement} body
+ */
+function openAccordion(details, body) {
+  details.open = true;
+  const targetHeight = body.scrollHeight;
+  body.style.height = '0px';
+  requestAnimationFrame(() => {
+    body.style.height = targetHeight + 'px';
+  });
+}
+
+/**
+ * Closes the accordion by animating height back to 0.
+ * Removes the open attribute after the transition ends.
+ *
+ * @param {HTMLDetailsElement} details
+ * @param {HTMLElement} body
+ */
+function closeAccordion(details, body) {
+  body.style.height = body.scrollHeight + 'px';
+  requestAnimationFrame(() => {
+    body.style.height = '0px';
+  });
+  body.addEventListener('transitionend', () => {
+    details.open = false;
+  }, { once: true });
 }
