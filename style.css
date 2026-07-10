@@ -92,7 +92,7 @@ canvas {
   border-radius: 12px;
   cursor: pointer;
   font-family: "zabars";
-  font-size: clamp(1rem, 2.5cqw, 3.5rem);
+  font-size: clamp(1rem, 2.5cqw, 3rem);
   color: #ffe0a0;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
@@ -142,7 +142,6 @@ canvas {
   border-radius: 4px;
   color: #f4e4c1;
   font-family: "Roboto";
-  font-weight: bold;
   font-size: clamp(0.65rem, 1.8vw, 1rem);
   padding: clamp(5px, 1.2vw, 10px) clamp(10px, 2.5vw, 24px);
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
@@ -214,7 +213,6 @@ canvas {
   border-radius: 6px;
   color: #f4e4c1;
   font-family: "Roboto";
-  font-weight: bold;
   font-size: clamp(10px, 1.8vw, 18px);
   padding: clamp(4px, 1vw, 8px) clamp(8px, 1.5vw, 14px);
   box-shadow:

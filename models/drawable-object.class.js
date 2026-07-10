@@ -51,26 +51,18 @@ class DrawableObject {
     }
 
     /**
-     * Draws the hitbox outline for debugging purposes.
-     * Currently disabled — uncomment the inner blocks to re-enable.
-     *
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-     */
-    drawHitbox(ctx) {
-        // if (this instanceof Character || this instanceof Chicken || this instanceof BabyChicken || this instanceof Endboss) {
-        //     ctx.beginPath();
-        //     ctx.lineWidth = '5';
-        //     ctx.strokeStyle = 'blue';
-        //     ctx.rect(this.x, this.y, this.width, this.height)
-        //     ctx.stroke();
-        // }
-
-        // if (this instanceof Character || this instanceof Endboss) {
-        //     ctx.beginPath();
-        //     ctx.lineWidth = '5';
-        //     ctx.strokeStyle = 'red';
-        //     ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.left - this.offset.right, this.height - this.offset.top - this.offset.bottom)
-        //     ctx.stroke();
-        // }
+ * Resolves an image index from a percentage value using standard 20-point steps.
+ * Used by all status bar subclasses.
+ *
+ * @param {number} percentage - A value between 0 and 100.
+ * @returns {number} Index into the status bar IMAGES array (0–5).
+ */
+    resolveImageIndex() {
+        if (this.percentage >= 100) return 5;
+        if (this.percentage >= 80) return 4;
+        if (this.percentage >= 60) return 3;
+        if (this.percentage >= 40) return 2;
+        if (this.percentage >= 20) return 1;
+        return 0;
     }
 }

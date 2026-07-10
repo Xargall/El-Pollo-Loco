@@ -40,19 +40,4 @@ class Statusbar extends DrawableObject {
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
-
-    /**
-     * Resolves the correct image index based on the current percentage.
-     * Uses strict equality for 100% to ensure the full bar is shown only at max health.
-     *
-     * @returns {number} Index into the IMAGES array (0–5).
-     */
-    resolveImageIndex() {
-        if (this.percentage >= 100) return 5;
-        if (this.percentage >= 80) return 4;
-        if (this.percentage >= 60) return 3;
-        if (this.percentage >= 40) return 2;
-        if (this.percentage >= 20) return 1;
-        return 0;
-    }
 }

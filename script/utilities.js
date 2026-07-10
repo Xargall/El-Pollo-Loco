@@ -22,7 +22,6 @@ function addToMap(ctx, mo) {
         flipImage(ctx, mo);
     }
     mo.draw(ctx);
-    mo.drawHitbox(ctx);
     if (mo.otherDirection) {
         flipReverse(ctx, mo);
     }
