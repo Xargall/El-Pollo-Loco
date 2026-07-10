@@ -126,13 +126,13 @@ class Character extends MovableObject {
   }
 
   /**
-   * Returns true if the character has been idle for more than 5 seconds.
+   * Returns true if the character has been idle for more than 15 seconds.
    *
    * @returns {boolean}
    */
   isLongIdle() {
     let timepassed = (new Date().getTime() - this.idleStart) / 1000;
-    return timepassed > 5;
+    return timepassed > 15;
   }
 
   /**
@@ -196,7 +196,7 @@ class Character extends MovableObject {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
-    }, 90)
+    }, 115)
 
     this.intervalId5 = setInterval(() => {
       if (!this.isDead() && !this.world.gameWon && !this.isHurt() && !this.isAboveGround() &&
